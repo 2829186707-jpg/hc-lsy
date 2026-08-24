@@ -526,6 +526,7 @@ body.dark-mode .mood-btn { background:rgba(255,255,255,0.08); }
 .lightbox-caption { position:absolute; bottom:-34px; left:50%; transform:translateX(-50%); color:white; font-size:12px; text-align:center; white-space:nowrap; max-width:80vw; overflow:hidden; text-overflow:ellipsis; }
 .lightbox-delete { position:absolute; top:-32px; right:38px; padding:4px 10px; border-radius:14px; background:rgba(196,92,92,0.3); color:white; font-size:10px; transition:var(--transition); z-index:10; }
 .lightbox-delete:hover { background:rgba(196,92,92,0.6); }
+#lightboxAlbum option { background:#2a2520; color:white; padding:4px 8px; }
 
 /* Toast */
 .toast-container { position:fixed; top:16px; right:16px; z-index:2000; display:flex; flex-direction:column; gap:7px; }
