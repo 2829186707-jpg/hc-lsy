@@ -91,7 +91,8 @@
         pendingFiles: [], diaryPendingPhotos: [], music: null, audio: null,
         isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [],
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
-        slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000
+        slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
+        syncTimer: null
     };
 
     // ========== 工具 ==========
@@ -547,8 +548,31 @@
             }
             theme.init(); cover.init(); music.init(); recycle.init(); weather.init(); period.init();
             app.loadData();
+            app.startAutoSync();
+        },
+        startAutoSync() {
+            // 停止旧的定时器
+            if (state.syncTimer) clearInterval(state.syncTimer);
+            // 每60秒自动拉取最新数据
+            state.syncTimer = setInterval(() => {
+                if (github.isConfigured() && document.visibilityState === 'visible') {
+                    app.loadData();
+                }
+            }, 60000);
+            // 页面从后台切回前台时立即拉取
+            document.addEventListener('visibilitychange', app._onVisibilityChange);
+        },
+        _onVisibilityChange() {
+            if (document.visibilityState === 'visible' && github.isConfigured()) {
+                app.loadData();
+            }
+        },
+        stopAutoSync() {
+            if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
+            document.removeEventListener('visibilitychange', app._onVisibilityChange);
         },
         logout() {
+            app.stopAutoSync();
             storage.remove(CONFIG.storageKeys.auth); storage.remove(CONFIG.storageKeys.currentUser);
             state.currentUser = null;
             if (state.audio) { state.audio.pause(); state.isPlaying = false; music.updateBtn(); }
