@@ -293,6 +293,7 @@
             storage.set(CONFIG.storageKeys.missYou, data);
             state.missYouToday = data[today];
             this.updateUI();
+            app.saveData();
             if (state.missYouToday.hc && state.missYouToday.lsy) { launchConfetti(); toast('今天双向奔赴 ♥', 'success'); }
             else toast(`${user.toUpperCase()} 想你了 ♥`, 'success');
         },
@@ -585,7 +586,8 @@
                 photos: state.photos, diaries: state.diaries, wishes: state.wishes,
                 messages: state.messages, anniversaries: state.anniversaries,
                 letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers,
-                albums: state.albums, anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
+                albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}),
+                anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
             };
             await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
         },
@@ -758,6 +760,7 @@
                         state.trips = r.trips || []; state.qaAnswers = r.qaAnswers || {};
                         state.albums = r.albums || [];
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
+                        if (r.missYou) storage.set(CONFIG.storageKeys.missYou, r.missYou);
                         if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary);
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         toast('已从云端同步数据', 'success');
@@ -910,6 +913,7 @@
                         if (data.trips) state.trips = data.trips;
                         if (data.qaAnswers) state.qaAnswers = data.qaAnswers;
                         if (data.albums) state.albums = data.albums;
+                        if (data.missYou) storage.set(CONFIG.storageKeys.missYou, data.missYou);
                         if (data.anniversary) storage.set(CONFIG.storageKeys.anniversary, data.anniversary);
                         this.saveData(); this.renderAll();
                         toast('数据导入成功', 'success');
@@ -1787,7 +1791,7 @@
             document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
             document.getElementById('clearDataBtn').addEventListener('click', () => {
                 if (!confirm('确定要清空所有本地数据吗？此操作不可恢复！')) return;
-                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
+                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
                 state.photos = []; state.diaries = []; state.wishes = []; state.messages = [];
                 state.anniversaries = []; state.letters = []; state.trips = []; state.qaAnswers = {};
                 state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
@@ -1842,7 +1846,7 @@
             this.renderAnniversaries(); this.renderRecycle(); this.renderAlbumList();
         },
         exportData() {
-            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
+            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}), anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `hc-lsy-data-${utils.formatDateInput()}.json`; a.click();
