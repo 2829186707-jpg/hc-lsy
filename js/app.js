@@ -1288,7 +1288,7 @@
             if (dateInput) dateInput.addEventListener('change', () => {
                 if (state.lightboxSource === 'gallery' && state.lightboxIndex >= 0) {
                     const photo = state.photos[state.lightboxIndex];
-                    if (photo && photo.uploader === state.currentUser) {
+                    if (photo) {
                         photo.date = dateInput.value || utils.formatDateInput();
                         this.saveData();
                         this.renderGallery(); this.renderTimeline(); this.renderHome();
@@ -1313,11 +1313,12 @@
             state.lightboxIndex = index; this.updateLightbox();
             const photo = this.getLightboxPhotos()[index];
             const canDelete = source === 'gallery' && photo && photo.type !== 'video' && photo.uploader === state.currentUser;
+            const canEditMeta = source === 'gallery' && photo && photo.type !== 'video';
             document.getElementById('lightboxDelete').style.display = canDelete ? 'block' : 'none';
-            // 填充相册选择（仅画廊来源且有权限）
+            // 填充相册选择（画廊来源即可编辑，不限制上传者）
             const albumSelect = document.getElementById('lightboxAlbum');
             if (albumSelect) {
-                if (source === 'gallery' && canDelete) {
+                if (canEditMeta) {
                     albumSelect.style.display = 'inline-block';
                     this.populateAlbumSelect(albumSelect);
                     albumSelect.value = photo.album || '未分类';
@@ -1325,10 +1326,10 @@
                     albumSelect.style.display = 'none';
                 }
             }
-            // 日期选择器（仅画廊来源且有权限）
+            // 日期选择器（画廊来源即可编辑，不限制上传者）
             const dateInput = document.getElementById('lightboxDate');
             if (dateInput) {
-                if (source === 'gallery' && canDelete) {
+                if (canEditMeta) {
                     dateInput.style.display = 'inline-block';
                     dateInput.value = photo.date || '';
                 } else {
@@ -1363,10 +1364,11 @@
             state.lightboxIndex = ni; this.updateLightbox();
             const photo = photos[ni];
             const canDelete = state.lightboxSource === 'gallery' && photo && photo.type !== 'video' && photo.uploader === state.currentUser;
+            const canEditMeta = state.lightboxSource === 'gallery' && photo && photo.type !== 'video';
             document.getElementById('lightboxDelete').style.display = canDelete ? 'block' : 'none';
             const albumSel = document.getElementById('lightboxAlbum');
             if (albumSel) {
-                if (canDelete) {
+                if (canEditMeta) {
                     albumSel.style.display = 'inline-block';
                     // 填充相册列表
                     const allAlbums = ['未分类', '旅行', '日常', '节日', '合照'];
@@ -1380,7 +1382,7 @@
             }
             const dateInput = document.getElementById('lightboxDate');
             if (dateInput) {
-                if (canDelete) {
+                if (canEditMeta) {
                     dateInput.style.display = 'inline-block';
                     dateInput.value = photo.date || '';
                 } else {
