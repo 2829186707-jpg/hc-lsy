@@ -139,9 +139,9 @@
   },
   "passwords": {
     "hc": "sha256_3a718d7ec7c8fa72eec3cea64d94b8d72622c21ebd970ea1697a08e6fe5369ea",
-    "lsy": "sha256_3a718d7ec7c8fa72eec3cea64d94b8d72622c21ebd970ea1697a08e6fe5369ea"
+    "lsy": "sha256_a2ba3fce4d1c852a075a39d4c0755785d060704945f3a0708bf28e2919cec581"
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787580212320
+  "version": 1787580378591
 }
