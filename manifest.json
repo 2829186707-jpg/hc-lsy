@@ -1,0 +1,20 @@
+{
+  "name": "HC & LSY 专属空间",
+  "short_name": "HC&LSY",
+  "description": "HC和LSY的专属情侣空间",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6f2",
+  "theme_color": "#b89a97",
+  "orientation": "portrait-primary",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

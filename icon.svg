@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4c0bd"/>
+      <stop offset="50%" style="stop-color:#b89a97"/>
+      <stop offset="100%" style="stop-color:#c9a87c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M256 408 C256 408 112 320 112 216 C112 164 152 128 200 128 C228 128 252 144 256 168 C260 144 284 128 312 128 C360 128 400 164 400 216 C400 320 256 408 256 408 Z" fill="#faf6f2" opacity="0.95"/>
+  <text x="256" y="470" text-anchor="middle" font-family="serif" font-size="28" fill="#faf6f2" opacity="0.7" letter-spacing="6">HC &amp; LSY</text>
+</svg>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HC & LSY · 我们的专属空间</title>
+    <meta name="theme-color" content="#b89a97">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HC&LSY">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="hearts-bg" id="heartsBg"></div>
+    <div class="confetti-layer" id="confettiLayer"></div>
+
+    <div class="music-control" id="musicControl" style="display:none;">
+        <button class="music-btn" id="musicToggle"><span class="music-icon" id="musicIcon">♪</span></button>
+        <div class="music-info"><span class="music-name" id="musicName">未设置音乐</span></div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">🌙</button>
+
+    <!-- 登录页 -->
+    <div class="login-page" id="loginPage">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="couple-avatar"><span class="avatar-hc">H</span><span class="heart-icon">♥</span><span class="avatar-lsy">L</span></div>
+                <h1 class="login-title">我们的专属空间</h1>
+                <p class="login-subtitle">HC &nbsp;&amp;&nbsp; LSY &nbsp;·&nbsp; 记录每一个心动瞬间</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group"><label>选择身份</label>
+                    <div class="role-selector">
+                        <button type="button" class="role-btn active" data-role="hc"><span class="role-initial">H</span><span class="role-name">HC</span></button>
+                        <button type="button" class="role-btn" data-role="lsy"><span class="role-initial">L</span><span class="role-name">LSY</span></button>
+                    </div>
+                </div>
+                <div class="form-group"><label for="password">密码</label><input type="password" id="password" placeholder="请输入密码" autocomplete="off"></div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="login-btn">进入我们的空间 ♥</button>
+            </form>
+            <div class="login-footer"><p>仅限 HC 和 LSY 登录 · 私有空间</p></div>
+        </div>
+    </div>
+
+    <!-- 主应用 -->
+    <div class="app-container" id="appContainer" style="display:none;">
+        <nav class="app-nav">
+            <div class="nav-brand" data-view="home"><span class="nav-heart">♥</span><span class="nav-title">HC &amp; LSY</span></div>
+            <div class="nav-menu">
+                <button class="nav-item active" data-view="home">首页</button>
+                <button class="nav-item" data-view="timeline">时光轴</button>
+                <button class="nav-item" data-view="gallery">照片墙</button>
+                <button class="nav-item" data-view="diary">生活日记</button>
+                <button class="nav-item" data-view="wishes">心愿清单</button>
+                <button class="nav-item" data-view="messages">留言板</button>
+                <button class="nav-item" data-view="letters">定时信件</button>
+                <button class="nav-item" data-view="trips">旅行计划</button>
+                <button class="nav-item" data-view="qa">问答书</button>
+                <button class="nav-item" data-view="settings">设置</button>
+            </div>
+            <div class="nav-user">
+                <span class="user-avatar" id="userAvatar">H</span>
+                <span class="user-name" id="userName">HC</span>
+                <button class="logout-btn" id="logoutBtn" title="退出">✕</button>
+            </div>
+        </nav>
+
+        <!-- 手机底部导航 -->
+        <nav class="mobile-nav">
+            <button class="mobile-nav-item active" data-view="home"><span class="mobile-nav-icon">🏠</span><span class="mobile-nav-label">首页</span></button>
+            <button class="mobile-nav-item" data-view="timeline"><span class="mobile-nav-icon">📖</span><span class="mobile-nav-label">时光轴</span></button>
+            <button class="mobile-nav-item" data-view="gallery"><span class="mobile-nav-icon">📷</span><span class="mobile-nav-label">照片</span></button>
+            <button class="mobile-nav-item" data-view="diary"><span class="mobile-nav-icon">📝</span><span class="mobile-nav-label">日记</span></button>
+            <button class="mobile-nav-item" data-view="wishes"><span class="mobile-nav-icon">⭐</span><span class="mobile-nav-label">心愿</span></button>
+            <button class="mobile-nav-item" data-view="settings"><span class="mobile-nav-icon">⚙️</span><span class="mobile-nav-label">设置</span></button>
+        </nav>
+
+        <main class="app-main">
+            <!-- 首页 -->
+            <section class="view view-home active" id="viewHome">
+                <div class="hero-cover" id="heroCover">
+                    <div class="hero-cover-bg" id="heroCoverBg"></div>
+                    <div class="hero-cover-content">
+                        <div class="hero-names"><span class="hero-name hc">HC</span><span class="hero-and">&amp;</span><span class="hero-name lsy">LSY</span></div>
+                        <div class="hero-days"><span class="hero-days-number" id="heroDaysNumber">0</span><span class="hero-days-text">天</span></div>
+                        <p class="hero-days-label">我们已经在一起</p>
+                        <div class="hero-quote"><span class="quote-text" id="quoteText">愿有岁月可回首，且以深情共白头</span></div>
+                        <button class="hero-quote-btn" id="heroQuoteBtn">换一句</button>
+                    </div>
+                    <div class="hero-scroll-hint"><span>向下滑动</span><span class="scroll-arrow">↓</span></div>
+                </div>
+
+                <!-- 天气卡片 -->
+                <div class="weather-section" id="weatherSection" style="display:none;">
+                    <div class="weather-card" id="weatherCard1">
+                        <div class="weather-city" id="weatherCity1">—</div>
+                        <div class="weather-main"><span class="weather-icon" id="weatherIcon1">☀️</span><span class="weather-temp" id="weatherTemp1">—°</span></div>
+                        <div class="weather-desc" id="weatherDesc1">—</div>
+                    </div>
+                    <div class="weather-card" id="weatherCard2">
+                        <div class="weather-city" id="weatherCity2">—</div>
+                        <div class="weather-main"><span class="weather-icon" id="weatherIcon2">☀️</span><span class="weather-temp" id="weatherTemp2">—°</span></div>
+                        <div class="weather-desc" id="weatherDesc2">—</div>
+                    </div>
+                </div>
+
+                <!-- 想你了 -->
+                <div class="miss-you-section">
+                    <div class="miss-you-card">
+                        <div class="miss-you-header"><h3>今天想你了吗</h3><span class="miss-you-date" id="missYouDate"></span></div>
+                        <div class="miss-you-buttons">
+                            <button class="miss-you-btn hc" id="missYouHc"><span class="miss-you-initial">H</span><span class="miss-you-label">HC 想你了</span><span class="miss-you-status" id="missHcStatus">未打卡</span></button>
+                            <div class="miss-you-heart" id="missYouHeart">♡</div>
+                            <button class="miss-you-btn lsy" id="missYouLsy"><span class="miss-you-initial">L</span><span class="miss-you-label">LSY 想你了</span><span class="miss-you-status" id="missLsyStatus">未打卡</span></button>
+                        </div>
+                        <div class="miss-you-result" id="missYouResult"></div>
+                    </div>
+                </div>
+
+                <!-- 快捷入口 -->
+                <div class="quick-access">
+                    <button class="quick-card" data-view="messages"><span class="quick-icon">💌</span><span class="quick-text">留言板</span></button>
+                    <button class="quick-card" data-view="letters"><span class="quick-icon">✉️</span><span class="quick-text">定时信件</span></button>
+                    <button class="quick-card" data-view="trips"><span class="quick-icon">✈️</span><span class="quick-text">旅行计划</span></button>
+                    <button class="quick-card" data-view="qa"><span class="quick-icon">💑</span><span class="quick-text">问答书</span></button>
+                    <button class="quick-card" id="quickBlindbox"><span class="quick-icon">🎁</span><span class="quick-text">约会盲盒</span></button>
+                    <button class="quick-card" id="quickAnnual"><span class="quick-icon">📊</span><span class="quick-text">年度回顾</span></button>
+                    <button class="quick-card" id="quickCollage"><span class="quick-icon">🖼️</span><span class="quick-text">照片拼贴</span></button>
+                    <button class="quick-card" data-view="timeline"><span class="quick-icon">📖</span><span class="quick-text">时光轴</span></button>
+                </div>
+
+                <!-- 倒计时 -->
+                <div class="home-section countdown-section">
+                    <div class="section-header"><h3>重要日子</h3><button class="link-btn" data-view="settings">管理 →</button></div>
+                    <div class="countdown-grid" id="countdownGrid"><div class="empty-state">还没有添加纪念日，去设置页添加吧 ♥</div></div>
+                </div>
+
+                <!-- 统计 -->
+                <div class="home-stats">
+                    <div class="stat-card"><div class="stat-icon">📷</div><div class="stat-number" id="photoCount">0</div><div class="stat-label">张照片</div></div>
+                    <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-number" id="diaryCount">0</div><div class="stat-label">篇日记</div></div>
+                    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-number" id="wishCount">0</div><div class="stat-label">个心愿</div></div>
+                    <div class="stat-card"><div class="stat-icon">💌</div><div class="stat-number" id="messageCount">0</div><div class="stat-label">条留言</div></div>
+                </div>
+
+                <div class="home-sections">
+                    <div class="home-section">
+                        <div class="section-header"><h3>最近照片</h3><button class="link-btn" data-view="gallery">查看全部 →</button></div>
+                        <div class="recent-photos" id="recentPhotos"><div class="empty-state">还没有照片，去上传第一张吧 ♥</div></div>
+                    </div>
+                    <div class="home-section">
+                        <div class="section-header"><h3>最新日记</h3><button class="link-btn" data-view="diary">查看全部 →</button></div>
+                        <div class="recent-diaries" id="recentDiaries"><div class="empty-state">还没有日记，记录今天的心情吧 ♥</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 时光轴 -->
+            <section class="view view-timeline" id="viewTimeline">
+                <div class="view-header"><div><h2>时光轴</h2><p class="view-desc">我们的故事，按时间流淌</p></div></div>
+                <div class="timeline-container" id="timelineContainer"><div class="empty-state large"><div class="empty-icon">📖</div><p>时光轴还是空的</p><p class="empty-hint">上传照片或写日记，这里会记录我们的每一刻</p></div></div>
+            </section>
+
+            <!-- 照片墙 -->
+            <section class="view view-gallery" id="viewGallery">
+                <div class="view-header">
+                    <div><h2>照片墙</h2><p class="view-desc">记录我们的每一个美好瞬间</p></div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="secondary-btn" id="slideshowBtn" style="padding:8px 14px;font-size:13px;">▶ 幻灯片</button>
+                        <button class="primary-btn" id="uploadPhotoBtn">+ 上传</button>
+                    </div>
+                </div>
+                <div class="gallery-view-toggle" style="display:flex;gap:6px;margin-bottom:14px;">
+                    <button class="gallery-toggle-btn active" data-view="time" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">📅 按时间</button>
+                    <button class="gallery-toggle-btn" data-view="album" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">📁 按相册</button>
+                </div>
+                <div class="gallery-container" id="galleryContainer"><div class="empty-state large"><div class="empty-icon">📷</div><p>还没有照片</p><p class="empty-hint">点击上方按钮上传我们的第一张照片</p></div></div>
+            </section>
+
+            <!-- 生活日记 -->
+            <section class="view view-diary" id="viewDiary">
+                <div class="view-header">
+                    <div><h2>生活日记</h2><p class="view-desc">记录每一天的心情与故事</p></div>
+                    <button class="primary-btn" id="newDiaryBtn">+ 写日记</button>
+                </div>
+                <div class="diary-timeline" id="diaryTimeline"><div class="empty-state large"><div class="empty-icon">📝</div><p>还没有日记</p><p class="empty-hint">写下今天发生的小故事吧</p></div></div>
+            </section>
+
+            <!-- 心愿清单 -->
+            <section class="view view-wishes" id="viewWishes">
+                <div class="view-header">
+                    <div><h2>心愿清单</h2><p class="view-desc">一起想做的事，一个个去实现</p></div>
+                    <button class="primary-btn" id="addWishBtn">+ 添加心愿</button>
+                </div>
+                <div class="wishes-progress"><div class="progress-bar"><div class="progress-fill" id="wishProgressFill"></div></div><span class="progress-text" id="wishProgressText">0 / 0 已完成</span></div>
+                <div class="wishes-list" id="wishesList"><div class="empty-state large"><div class="empty-icon">⭐</div><p>还没有心愿</p><p class="empty-hint">添加第一个想一起完成的心愿吧</p></div></div>
+            </section>
+
+            <!-- 留言板 -->
+            <section class="view view-messages" id="viewMessages">
+                <div class="view-header">
+                    <div><h2>留言板</h2><p class="view-desc">想对TA说的话，留在这里</p></div>
+                    <button class="primary-btn" id="addMessageBtn">+ 写留言</button>
+                </div>
+                <div class="messages-list" id="messagesList"><div class="empty-state large"><div class="empty-icon">💌</div><p>还没有留言</p><p class="empty-hint">给TA留第一条悄悄话吧</p></div></div>
+            </section>
+
+            <!-- 定时信件 -->
+            <section class="view view-letters" id="viewLetters">
+                <div class="view-header">
+                    <div><h2>定时信件</h2><p class="view-desc">写给未来的信，到了那天才能打开</p></div>
+                    <button class="primary-btn" id="addLetterBtn">+ 写一封信</button>
+                </div>
+                <div class="letters-list" id="lettersList"><div class="empty-state large"><div class="empty-icon">✉️</div><p>还没有定时信件</p><p class="empty-hint">写一封给未来的信吧</p></div></div>
+            </section>
+
+            <!-- 旅行计划 -->
+            <section class="view view-trips" id="viewTrips">
+                <div class="view-header">
+                    <div><h2>旅行计划</h2><p class="view-desc">规划我们的下一次出发</p></div>
+                    <button class="primary-btn" id="addTripBtn">+ 新建计划</button>
+                </div>
+                <div class="trips-list" id="tripsList"><div class="empty-state large"><div class="empty-icon">✈️</div><p>还没有旅行计划</p><p class="empty-hint">规划我们的第一次旅行吧</p></div></div>
+            </section>
+
+            <!-- 问答书 -->
+            <section class="view view-qa" id="viewQa">
+                <div class="view-header">
+                    <div><h2>情侣问答书</h2><p class="view-desc">一个个问题，积累成我们的专属问答书</p></div>
+                </div>
+                <div class="qa-progress"><div class="progress-bar"><div class="progress-fill" id="qaProgressFill"></div></div><span class="progress-text" id="qaProgressText">0 / 0 已回答</span></div>
+                <div class="qa-list" id="qaList"><div class="empty-state large"><div class="empty-icon">💑</div><p>加载问题中...</p></div></div>
+            </section>
+
+            <!-- 设置 -->
+            <section class="view view-settings" id="viewSettings">
+                <div class="view-header"><div><h2>设置</h2><p class="view-desc">配置空间参数与个人偏好</p></div></div>
+                <div class="settings-container">
+                    <div class="settings-card" style="border:2px solid var(--primary-light);background:linear-gradient(135deg,rgba(184,154,151,0.08),rgba(201,168,124,0.06));">
+                        <h3 style="display:flex;align-items:center;gap:8px;">👤 当前账号</h3>
+                        <p class="settings-desc">当前登录身份，可退出后切换其他账号</p>
+                        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span class="user-avatar" id="settingsUserAvatar" style="width:36px;height:36px;font-size:15px;">H</span>
+                                <div>
+                                    <div style="font-size:15px;font-weight:600;color:var(--text-primary);" id="settingsUserName">HC</div>
+                                    <div style="font-size:11px;color:var(--text-light);" id="settingsUserHint">情侣账号</div>
+                                </div>
+                            </div>
+                            <button class="danger-btn" id="settingsLogoutBtn" style="padding:10px 20px;font-size:13px;">退出登录 / 切换账号</button>
+                        </div>
+                    </div>
+                    <div class="settings-card"><h3>首页封面</h3><p class="settings-desc">上传一张合照作为首页封面背景</p>
+                        <div class="settings-row"><button class="secondary-btn" id="uploadCoverBtn">选择封面图</button><button class="danger-btn" id="removeCoverBtn" style="display:none;">移除</button><span class="cover-status" id="coverStatus">使用默认渐变</span></div>
+                        <input type="file" id="coverInput" accept="image/*" hidden>
+                    </div>
+                    <div class="settings-card"><h3>在一起的日期</h3><p class="settings-desc">设置我们在一起的纪念日</p>
+                        <div class="settings-row"><input type="date" id="anniversaryDate" class="settings-input"><button class="secondary-btn" id="saveAnniversaryBtn">保存</button></div>
+                    </div>
+                    <div class="settings-card"><h3>纪念日管理</h3><p class="settings-desc">添加生日、旅行日等，首页显示倒计时</p>
+                        <div class="anniversary-list" id="anniversaryList"></div>
+                        <div class="settings-row mt-16"><input type="text" id="newAnnivName" class="settings-input" placeholder="名称"><input type="date" id="newAnnivDate" class="settings-input"><button class="secondary-btn" id="addAnnivBtn">添加</button></div>
+                    </div>
+                    <div class="settings-card"><h3>异地天气</h3><p class="settings-desc">设置两人所在城市，首页显示两地天气</p>
+                        <div class="settings-row"><input type="text" id="weatherCity1Input" class="settings-input" placeholder="HC 所在城市"><input type="text" id="weatherCity2Input" class="settings-input" placeholder="LSY 所在城市"><button class="secondary-btn" id="saveWeatherBtn">保存</button></div>
+                    </div>
+                    <div class="settings-card"><h3>生理期提醒</h3><p class="settings-desc">记录上次生理期日期，预计下次时间</p>
+                        <div class="settings-row"><input type="date" id="periodDate" class="settings-input"><input type="number" id="periodCycle" class="settings-input" placeholder="周期(天)，默认28" min="20" max="40"><button class="secondary-btn" id="savePeriodBtn">保存</button></div>
+                        <div class="period-info" id="periodInfo" style="display:none;margin-top:10px;font-size:13px;color:var(--text-secondary);"></div>
+                    </div>
+                    <div class="settings-card"><h3>背景音乐</h3><p class="settings-desc">上传一首属于我们的歌</p>
+                        <div class="settings-row"><button class="secondary-btn" id="uploadMusicBtn">选择音乐文件</button><span class="music-status" id="musicStatus">未设置</span><button class="danger-btn" id="removeMusicBtn" style="display:none;">移除</button></div>
+                        <input type="file" id="musicFileInput" accept="audio/*" hidden>
+                    </div>
+                    <div class="settings-card"><h3>外观</h3><p class="settings-desc">深色模式 / 浅色模式切换</p>
+                        <div class="settings-row"><button class="secondary-btn" id="darkModeBtn">🌙 切换深色模式</button></div>
+                    </div>
+                    <div id="githubConfigSection" style="display:none;">
+                    <div class="settings-card"><h3>GitHub 数据同步</h3><p class="settings-desc">配置后数据自动同步到仓库，实现多设备数据共享</p>
+                        <div class="settings-group"><label>仓库所有者</label><input type="text" id="githubOwner" class="settings-input" placeholder="GitHub用户名"></div>
+                        <div class="settings-group"><label>仓库名称</label><input type="text" id="githubRepo" class="settings-input" placeholder="仓库名"></div>
+                        <div class="settings-group"><label>Token</label><input type="password" id="githubToken" class="settings-input" placeholder="github_pat_xxx"><p class="settings-hint">需要 Contents 读写权限</p></div>
+                        <button class="secondary-btn" id="saveGithubBtn">保存配置</button><span class="config-status" id="githubStatus"></span>
+                    </div>
+                    </div>
+                    <div class="settings-card"><h3>密码管理</h3><p class="settings-desc">修改 HC 或 LSY 的登录密码</p>
+                        <div class="settings-group"><label>修改谁的密码</label><select id="pwdTarget" class="settings-input"><option value="hc">HC</option><option value="lsy">LSY</option></select></div>
+                        <div class="settings-group"><label>新密码</label><input type="password" id="newPassword" class="settings-input" placeholder="至少4位"></div>
+                        <button class="secondary-btn" id="changePwdBtn">修改密码</button>
+                    </div>
+                    <div class="settings-card"><h3>数据管理</h3><p class="settings-desc">导出、导入、清空数据</p>
+                        <div class="settings-row"><button class="secondary-btn" id="exportDataBtn">导出数据</button><button class="secondary-btn" id="importDataBtn">导入数据</button><button class="danger-btn" id="clearDataBtn">清空本地数据</button></div>
+                        <input type="file" id="importInput" accept=".json" hidden>
+                    </div>
+                    <div class="settings-card"><h3>相册管理</h3><p class="settings-desc">管理照片分类相册，上传时可选择归属相册</p>
+                        <div class="album-list" id="albumList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:180px;overflow-y:auto;"></div>
+                        <div class="settings-row"><input type="text" id="newAlbumName" class="settings-input" placeholder="新相册名称"><button class="secondary-btn" id="addAlbumBtn">添加相册</button></div>
+                    </div>
+                    <div class="settings-card"><h3>回收站</h3><p class="settings-desc">删除的内容暂存7天，可恢复</p>
+                        <div class="recycle-list" id="recycleList"><div class="empty-state" style="padding:12px;">回收站为空</div></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 上传照片弹窗 -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>上传照片/视频</h3><button class="modal-close" data-close="uploadModal">✕</button></div>
+            <div class="modal-body">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div><p>点击或拖拽文件到此处</p><p class="upload-hint">支持 JPG、PNG、WEBP、MP4，可多选</p>
+                    <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden>
+                </div>
+                <div class="upload-preview" id="uploadPreview"></div>
+                <div class="form-group"><label>描述（可选）</label><input type="text" id="photoCaption" class="settings-input" placeholder="给这些内容写句话..."></div>
+                <div class="form-group"><label>日期</label><input type="date" id="photoDate" class="settings-input"></div>
+                <div class="form-group"><label>相册</label><select id="photoAlbum" class="settings-input"></select></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="uploadModal">取消</button><button class="primary-btn" id="confirmUploadBtn">上传</button></div>
+        </div>
+    </div>
+
+    <!-- 写日记弹窗 -->
+    <div class="modal" id="diaryModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3 id="diaryModalTitle">写日记</h3><button class="modal-close" data-close="diaryModal">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>标题</label><input type="text" id="diaryTitle" class="settings-input" placeholder="给今天起个标题..."></div>
+                <div class="form-row">
+                    <div class="form-group flex-1"><label>日期</label><input type="date" id="diaryDate" class="settings-input"></div>
+                    <div class="form-group flex-1"><label>心情</label>
+                        <div class="mood-selector">
+                            <button type="button" class="mood-btn" data-mood="😊">😊</button><button type="button" class="mood-btn" data-mood="🥰">🥰</button>
+                            <button type="button" class="mood-btn" data-mood="😄">😄</button><button type="button" class="mood-btn" data-mood="😌">😌</button>
+                            <button type="button" class="mood-btn" data-mood="😢">😢</button><button type="button" class="mood-btn" data-mood="😡">😡</button>
+                            <button type="button" class="mood-btn" data-mood="🤔">🤔</button><button type="button" class="mood-btn" data-mood="😴">😴</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label>日记模板（可选）</label>
+                    <div class="diary-template-selector" id="diaryTemplateSelector">
+                        <button type="button" class="diary-template-btn" data-tpl="daily">☕ 日常碎碎念</button>
+                        <button type="button" class="diary-template-btn" data-tpl="travel">✈️ 旅行日记</button>
+                        <button type="button" class="diary-template-btn" data-tpl="anniversary">🎉 纪念日</button>
+                        <button type="button" class="diary-template-btn" data-tpl="food">🍜 美食记录</button>
+                        <button type="button" class="diary-template-btn" data-tpl="reconcile">💝 吵架和好</button>
+                        <button type="button" class="diary-template-btn" data-tpl="blank">📝 空白</button>
+                    </div>
+                </div>
+                <div class="form-group"><label>内容</label><textarea id="diaryContent" class="settings-input diary-textarea" placeholder="今天发生了什么呢..."></textarea></div>
+                <div class="form-group"><label>插入照片（可选）</label>
+                    <div class="diary-photo-area">
+                        <div class="diary-photos-preview" id="diaryPhotosPreview"></div>
+                        <button type="button" class="secondary-btn" id="diaryAddPhotoBtn">+ 添加照片</button>
+                        <input type="file" id="diaryPhotoInput" accept="image/*" multiple hidden>
+                    </div>
+                </div>
+                <div class="form-group" style="display:flex;gap:10px;align-items:center;">
+                    <button type="button" class="secondary-btn" id="diaryShareBtn">📤 生成分享卡片</button>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="diaryModal">取消</button><button class="primary-btn" id="saveDiaryBtn">保存</button></div>
+        </div>
+    </div>
+
+    <!-- 心愿弹窗 -->
+    <div class="modal" id="wishModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="wishModalTitle">添加心愿</h3><button class="modal-close" data-close="wishModal">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>心愿内容</label><input type="text" id="wishContent" class="settings-input" placeholder="例如：一起去看海"></div>
+                <div class="form-group"><label>分类</label><select id="wishCategory" class="settings-input"><option value="旅行">旅行</option><option value="美食">美食</option><option value="生活">生活</option><option value="礼物">礼物</option><option value="其他">其他</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="wishModal">取消</button><button class="primary-btn" id="saveWishBtn">保存</button></div>
+        </div>
+    </div>
+
+    <!-- 留言弹窗 -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>写留言</h3><button class="modal-close" data-close="messageModal">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>留言内容</label><textarea id="messageContent" class="settings-input diary-textarea" placeholder="想对TA说的话..."></textarea></div>
+                <div class="form-group"><label>便签颜色</label>
+                    <div class="color-selector">
+                        <button type="button" class="color-btn active" data-color="pink" style="background:#f5c6cf;"></button>
+                        <button type="button" class="color-btn" data-color="cream" style="background:#f0e0c8;"></button>
+                        <button type="button" class="color-btn" data-color="mint" style="background:#c8e0d0;"></button>
+                        <button type="button" class="color-btn" data-color="lavender" style="background:#d8c8e8;"></button>
+                        <button type="button" class="color-btn" data-color="peach" style="background:#f5d8c0;"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="messageModal">取消</button><button class="primary-btn" id="saveMessageBtn">发送</button></div>
+        </div>
+    </div>
+
+    <!-- 定时信件弹窗 -->
+    <div class="modal" id="letterModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3>写一封信</h3><button class="modal-close" data-close="letterModal">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>信件标题</label><input type="text" id="letterTitle" class="settings-input" placeholder="给这封信起个标题..."></div>
+                <div class="form-group"><label>解锁日期</label><input type="date" id="letterUnlockDate" class="settings-input"></div>
+                <div class="form-group"><label>信件内容</label><textarea id="letterContent" class="settings-input diary-textarea" style="min-height:200px;" placeholder="写给未来的话..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="letterModal">取消</button><button class="primary-btn" id="saveLetterBtn">封存信件</button></div>
+        </div>
+    </div>
+
+    <!-- 查看信件弹窗 -->
+    <div class="modal" id="letterViewModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3 id="letterViewTitle">信件</h3><button class="modal-close" data-close="letterViewModal">✕</button></div>
+            <div class="modal-body">
+                <div class="letter-view-meta" id="letterViewMeta"></div>
+                <div class="letter-view-content" id="letterViewContent"></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="letterViewModal">关闭</button></div>
+        </div>
+    </div>
+
+    <!-- 旅行计划弹窗 -->
+    <div class="modal" id="tripModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3 id="tripModalTitle">新建旅行计划</h3><button class="modal-close" data-close="tripModal">✕</button></div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group flex-1"><label>旅行名称</label><input type="text" id="tripName" class="settings-input" placeholder="例如：三亚五日游"></div>
+                    <div class="form-group flex-1"><label>目的地</label><input type="text" id="tripDestination" class="settings-input" placeholder="例如：三亚"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1"><label>出发日期</label><input type="date" id="tripStartDate" class="settings-input"></div>
+                    <div class="form-group flex-1"><label>返回日期</label><input type="date" id="tripEndDate" class="settings-input"></div>
+                </div>
+                <div class="form-group"><label>预算（元）</label><input type="number" id="tripBudget" class="settings-input" placeholder="例如：5000"></div>
+                <div class="form-group"><label>行程清单（每行一项）</label><textarea id="tripItems" class="settings-input diary-textarea" style="min-height:120px;" placeholder="订机票&#10;订酒店&#10;去海边"></textarea></div>
+                <div class="form-group"><label>备注</label><textarea id="tripNotes" class="settings-input" style="min-height:60px;" placeholder="其他注意事项..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="tripModal">取消</button><button class="primary-btn" id="saveTripBtn">保存计划</button></div>
+        </div>
+    </div>
+
+    <!-- 问答弹窗 -->
+    <div class="modal" id="qaModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="qaModalTitle">回答问题</h3><button class="modal-close" data-close="qaModal">✕</button></div>
+            <div class="modal-body">
+                <div class="qa-question" id="qaQuestionText"></div>
+                <div class="form-group"><label>你的回答</label><textarea id="qaAnswer" class="settings-input diary-textarea" style="min-height:100px;" placeholder="写下你的答案..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="qaModal">取消</button><button class="primary-btn" id="saveQaBtn">保存回答</button></div>
+        </div>
+    </div>
+
+    <!-- 约会盲盒弹窗 -->
+    <div class="modal" id="blindboxModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>🎁 约会盲盒</h3><button class="modal-close" data-close="blindboxModal">✕</button></div>
+            <div class="modal-body" style="text-align:center;padding:40px 20px;">
+                <div class="blindbox-box" id="blindboxBox">🎁</div>
+                <div class="blindbox-result" id="blindboxResult" style="display:none;">
+                    <div class="blindbox-title" id="blindboxTitle"></div>
+                    <div class="blindbox-desc" id="blindboxDesc"></div>
+                </div>
+                <button class="primary-btn" id="blindboxDrawBtn" style="margin-top:20px;">抽取约会灵感</button>
+                <button class="secondary-btn" id="blindboxAgainBtn" style="margin-top:10px;display:none;">再抽一次</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 年度回顾弹窗 -->
+    <div class="modal" id="annualModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3>📊 年度回顾</h3><button class="modal-close" data-close="annualModal">✕</button></div>
+            <div class="modal-body" id="annualBody">
+                <div class="annual-year-select" style="text-align:center;margin-bottom:20px;">
+                    <label style="font-size:13px;color:var(--text-secondary);">选择年份：</label>
+                    <select id="annualYear" class="settings-input" style="width:auto;display:inline-block;"></select>
+                </div>
+                <div id="annualContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 照片拼贴弹窗 -->
+    <div class="modal" id="collageModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header"><h3>🖼️ 照片拼贴</h3><button class="modal-close" data-close="collageModal">✕</button></div>
+            <div class="modal-body">
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">选择 2-9 张照片生成拼贴图（最多9张）</p>
+                <div class="collage-select" id="collageSelect" style="max-height:300px;overflow-y:auto;margin-bottom:16px;"></div>
+                <div class="settings-row">
+                    <button class="primary-btn" id="collageGenerateBtn">生成拼贴</button>
+                </div>
+                <div class="collage-result" id="collageResult" style="margin-top:16px;text-align:center;display:none;">
+                    <canvas id="collageCanvas" style="max-width:100%;border-radius:12px;box-shadow:var(--shadow-md);"></canvas>
+                    <div style="margin-top:12px;"><button class="primary-btn" id="collageDownloadBtn">下载拼贴图</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享卡片弹窗 -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>📤 分享卡片</h3><button class="modal-close" data-close="shareModal">✕</button></div>
+            <div class="modal-body" style="text-align:center;">
+                <canvas id="shareCanvas" style="max-width:100%;border-radius:16px;box-shadow:var(--shadow-lg);"></canvas>
+                <div style="margin-top:16px;"><button class="primary-btn" id="shareDownloadBtn">下载卡片</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 灯箱 -->
+    <div class="modal lightbox" id="lightboxModal">
+        <div class="lightbox-content">
+            <button class="lightbox-close" data-close="lightboxModal">✕</button>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
+            <div class="lightbox-media" id="lightboxMedia"></div>
+            <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+            <div class="lightbox-slideshow-bar" id="lightboxSlideshowBar" style="display:none;position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);display:none;gap:10px;align-items:center;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:20px;">
+                <button id="slideshowPlayPause" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;padding:0 4px;">⏸</button>
+                <span style="color:white;font-size:11px;opacity:0.8;">间隔</span>
+                <select id="slideshowSpeed" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:2px 6px;font-size:11px;outline:none;">
+                    <option value="2000">2秒</option>
+                    <option value="3000" selected>3秒</option>
+                    <option value="5000">5秒</option>
+                    <option value="8000">8秒</option>
+                </select>
+                <span id="slideshowCounter" style="color:white;font-size:11px;opacity:0.8;">1/1</span>
+            </div>
+            <div style="position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;">
+                <select id="lightboxAlbum" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:4px 10px;font-size:11px;outline:none;">
+                    <option value="">移动到相册...</option>
+                </select>
+            </div>
+            <button class="lightbox-delete" id="lightboxDelete">删除</button>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="js/app.js?v=5"></script>
+</body>
+</html>
