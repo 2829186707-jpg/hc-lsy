@@ -377,7 +377,7 @@
             const city2 = document.getElementById('weatherCity2Input').value.trim();
             if (!city1 || !city2) { toast('请填写两个城市', 'error'); return; }
             storage.set(CONFIG.storageKeys.weather, { city1, city2 });
-            this.loadWeather(city1, city2);
+            this.loadWeather(city1, city2); app.saveData();
             toast('天气配置已保存', 'success');
         }
     };
@@ -542,6 +542,7 @@
             const pws = storage.get(CONFIG.storageKeys.passwords, {});
             pws[target] = await utils.hashPassword(np);
             storage.set(CONFIG.storageKeys.passwords, pws);
+            app.saveData();
             toast(`${target.toUpperCase()} 的密码已修改`, 'success'); return true;
         }
     };
@@ -592,6 +593,9 @@
                 recycleBin: state.recycleBin, music: state.music,
                 coverImage: storage.get(CONFIG.storageKeys.coverImage, null),
                 period: storage.get(CONFIG.storageKeys.period, null),
+                weather: storage.get(CONFIG.storageKeys.weather, null),
+                passwords: storage.get(CONFIG.storageKeys.passwords, {}),
+                pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0),
                 anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
             };
             await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
@@ -770,13 +774,16 @@
                         if (r.music) { state.music = r.music; storage.set(CONFIG.storageKeys.music, r.music); }
                         if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage);
                         if (r.period) storage.set(CONFIG.storageKeys.period, r.period);
+                        if (r.weather) storage.set(CONFIG.storageKeys.weather, r.weather);
+                        if (r.passwords) storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                        if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                         if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary);
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
-                    cover.init(); music.init(); period.init();
-                }).catch(() => { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); cover.init(); music.init(); period.init(); });
+                    cover.init(); music.init(); period.init(); weather.init();
+                }).catch(() => { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); cover.init(); music.init(); period.init(); weather.init(); });
             } else { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); }
         },
         loadLocalData() {
@@ -928,6 +935,9 @@
                         if (data.music) { state.music = data.music; storage.set(CONFIG.storageKeys.music, data.music); }
                         if (data.coverImage) storage.set(CONFIG.storageKeys.coverImage, data.coverImage);
                         if (data.period) storage.set(CONFIG.storageKeys.period, data.period);
+                        if (data.weather) storage.set(CONFIG.storageKeys.weather, data.weather);
+                        if (data.passwords) storage.set(CONFIG.storageKeys.passwords, data.passwords);
+                        if (data.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, data.pwdVersion);
                         if (data.anniversary) storage.set(CONFIG.storageKeys.anniversary, data.anniversary);
                         this.saveData(); this.renderAll();
                         toast('数据导入成功', 'success');
@@ -1805,7 +1815,7 @@
             document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
             document.getElementById('clearDataBtn').addEventListener('click', () => {
                 if (!confirm('确定要清空所有本地数据吗？此操作不可恢复！')) return;
-                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou', 'recycleBin', 'music', 'coverImage', 'period'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
+                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou', 'recycleBin', 'music', 'coverImage', 'period', 'weather', 'passwords', 'pwdVersion'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
                 state.photos = []; state.diaries = []; state.wishes = []; state.messages = [];
                 state.anniversaries = []; state.letters = []; state.trips = []; state.qaAnswers = {};
                 state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
@@ -1861,7 +1871,7 @@
             this.renderAnniversaries(); this.renderRecycle(); this.renderAlbumList();
         },
         exportData() {
-            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}), recycleBin: state.recycleBin, music: state.music, coverImage: storage.get(CONFIG.storageKeys.coverImage, null), period: storage.get(CONFIG.storageKeys.period, null), anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
+            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}), recycleBin: state.recycleBin, music: state.music, coverImage: storage.get(CONFIG.storageKeys.coverImage, null), period: storage.get(CONFIG.storageKeys.period, null), weather: storage.get(CONFIG.storageKeys.weather, null), passwords: storage.get(CONFIG.storageKeys.passwords, {}), pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0), anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `hc-lsy-data-${utils.formatDateInput()}.json`; a.click();
