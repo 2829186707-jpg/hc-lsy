@@ -17,3 +17,7 @@ desktop.ini
 # 本地数据（不提交个人数据到公开仓库）
 # 如需同步数据，请在网站内配置 GitHub Token
 # data/app-data.json
+
+temp_screenshot.png
+*.png
+*.jpg
