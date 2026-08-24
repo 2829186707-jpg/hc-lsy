@@ -93,7 +93,16 @@
   ],
   "diaries": [],
   "wishes": [],
-  "messages": [],
+  "messages": [
+    {
+      "id": "mt6s5gq17bn5bbe4k",
+      "content": "测试",
+      "color": "pink",
+      "author": "hc",
+      "createdAt": "2026-08-24T05:12:59.113Z",
+      "replies": []
+    }
+  ],
   "anniversaries": [
     {
       "id": "mt71xubmisyqj83vv",
@@ -143,5 +152,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787570992703
+  "version": 1787571688573
 }
