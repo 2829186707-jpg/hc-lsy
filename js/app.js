@@ -1280,6 +1280,19 @@
                     this.updateLightbox();
                 }
             });
+            const dateInput = document.getElementById('lightboxDate');
+            if (dateInput) dateInput.addEventListener('change', () => {
+                if (state.lightboxSource === 'gallery' && state.lightboxIndex >= 0) {
+                    const photo = state.photos[state.lightboxIndex];
+                    if (photo && photo.uploader === state.currentUser) {
+                        photo.date = dateInput.value || utils.formatDateInput();
+                        this.saveData();
+                        this.renderGallery(); this.renderTimeline(); this.renderHome();
+                        this.updateLightbox();
+                        toast('日期已更新', 'success');
+                    }
+                }
+            });
             document.addEventListener('keydown', e => {
                 if (!document.getElementById('lightboxModal').classList.contains('active')) return;
                 if (e.key === 'ArrowLeft') this.navigateLightbox(-1);
@@ -1343,6 +1356,15 @@
                     albumSel.value = photo.album || '未分类';
                 } else {
                     albumSel.style.display = 'none';
+                }
+            }
+            const dateInput = document.getElementById('lightboxDate');
+            if (dateInput) {
+                if (canDelete) {
+                    dateInput.style.display = 'inline-block';
+                    dateInput.value = photo.date || '';
+                } else {
+                    dateInput.style.display = 'none';
                 }
             }
         },
