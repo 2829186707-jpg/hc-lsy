@@ -2,16 +2,7 @@
   "photos": [],
   "diaries": [],
   "wishes": [],
-  "messages": [
-    {
-      "id": "mt6z1076havhzudp2",
-      "content": "1",
-      "color": "pink",
-      "author": "hc",
-      "createdAt": "2026-08-24T08:25:28.386Z",
-      "replies": []
-    }
-  ],
+  "messages": [],
   "anniversaries": [],
   "letters": [],
   "trips": [],
@@ -30,6 +21,20 @@
     }
   },
   "recycleBin": [
+    {
+      "id": "mt70h3zurinczd9o1",
+      "type": "message",
+      "data": {
+        "id": "mt6z1076havhzudp2",
+        "content": "1",
+        "color": "pink",
+        "author": "hc",
+        "createdAt": "2026-08-24T08:25:28.386Z",
+        "replies": []
+      },
+      "deletedAt": "2026-08-24T09:05:59.418Z",
+      "expiresAt": "2026-08-31T09:05:59.418Z"
+    },
     {
       "id": "mt6yrs5q2r069fvw7",
       "type": "message",
@@ -86,5 +91,5 @@
   },
   "pwdVersion": 2,
   "anniversary": null,
-  "version": 1787562298024
+  "version": 1787562359419
 }
