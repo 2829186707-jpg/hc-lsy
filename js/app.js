@@ -657,6 +657,16 @@
         },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
+            // 安全保护：如果本地数据基本为空（0照片+0日记+默认密码），拒绝推送，防止覆盖云端
+            const pws = storage.get(CONFIG.storageKeys.passwords, {});
+            const defaultHash = 'sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92';
+            const isEmptyLocal = state.photos.length === 0 && state.diaries.length === 0 && state.messages.length === 0
+                && (!pws.hc || pws.hc === defaultHash) && (!pws.lsy || pws.lsy === defaultHash);
+            if (isEmptyLocal) {
+                console.warn('[sync] 本地数据为空，拒绝推送以防止覆盖云端，改为拉取');
+                state.dirty = false; syncState.save();
+                return;
+            }
             state.syncing = true;
             try {
                 // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
