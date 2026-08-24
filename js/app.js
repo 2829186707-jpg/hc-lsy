@@ -458,7 +458,7 @@
         init() {
             // 页面加载时主动从 GitHub 拉取最新密码（异步，不阻塞界面）
             if (github.isConfigured()) {
-                github.getFile('data/app-data.json').then(r => {
+                github.pullData().then(r => {
                     if (r && r.passwords) {
                         storage.set(CONFIG.storageKeys.passwords, r.passwords);
                         if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
@@ -508,7 +508,7 @@
                 // 本地验证失败，尝试从 GitHub 拉取最新密码再验证
                 if (github.isConfigured()) {
                     try {
-                        const r = await github.getFile('data/app-data.json');
+                        const r = await github.pullData();
                         if (r && r.passwords) {
                             storage.set(CONFIG.storageKeys.passwords, r.passwords);
                             if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
@@ -553,18 +553,18 @@
         startAutoSync() {
             // 停止旧的定时器
             if (state.syncTimer) clearInterval(state.syncTimer);
-            // 每60秒自动拉取最新数据
+            // 每60秒自动拉取最新数据（静默模式，不弹提示）
             state.syncTimer = setInterval(() => {
                 if (github.isConfigured() && document.visibilityState === 'visible') {
-                    app.loadData();
+                    app.loadData(true);
                 }
             }, 60000);
-            // 页面从后台切回前台时立即拉取
+            // 页面从后台切回前台时立即拉取（静默模式）
             document.addEventListener('visibilitychange', app._onVisibilityChange);
         },
         _onVisibilityChange() {
             if (document.visibilityState === 'visible' && github.isConfigured()) {
-                app.loadData();
+                app.loadData(true);
             }
         },
         stopAutoSync() {
@@ -808,7 +808,7 @@
             this.bindImportEvents();
         },
 
-        loadData() {
+        loadData(silent = false) {
             if (github.isConfigured()) {
                 github.pullData().then(r => {
                     if (r) {
@@ -818,17 +818,17 @@
                         state.trips = r.trips || []; state.qaAnswers = r.qaAnswers || {};
                         state.albums = r.albums || [];
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
-                        if (r.missYou) storage.set(CONFIG.storageKeys.missYou, r.missYou);
-                        if (r.recycleBin) state.recycleBin = r.recycleBin;
-                        if (r.music) { state.music = r.music; storage.set(CONFIG.storageKeys.music, r.music); }
-                        if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage);
-                        if (r.period) storage.set(CONFIG.storageKeys.period, r.period);
-                        if (r.weather) storage.set(CONFIG.storageKeys.weather, r.weather);
-                        if (r.passwords) storage.set(CONFIG.storageKeys.passwords, r.passwords);
-                        if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
-                        if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary);
+                        if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, r.missYou);
+                        if (r.recycleBin !== undefined) state.recycleBin = r.recycleBin;
+                        if (r.music !== undefined) { state.music = r.music; if (r.music) storage.set(CONFIG.storageKeys.music, r.music); else storage.remove(CONFIG.storageKeys.music); }
+                        if (r.coverImage !== undefined) { if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage); else storage.remove(CONFIG.storageKeys.coverImage); }
+                        if (r.period !== undefined) { if (r.period) storage.set(CONFIG.storageKeys.period, r.period); else storage.remove(CONFIG.storageKeys.period); }
+                        if (r.weather !== undefined) { if (r.weather) storage.set(CONFIG.storageKeys.weather, r.weather); else storage.remove(CONFIG.storageKeys.weather); }
+                        if (r.passwords !== undefined) storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                        if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
+                        if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
-                        toast('已从云端同步数据', 'success');
+                        if (!silent) toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
                     cover.init(); music.init(); period.init(); weather.init();
