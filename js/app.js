@@ -225,6 +225,9 @@
         remove() {
             const hero = document.getElementById('heroCover'), bg = document.getElementById('heroCoverBg');
             bg.style.backgroundImage = ''; hero.classList.remove('has-custom-bg');
+            const oldUrl = storage.get(CONFIG.storageKeys.coverImage);
+            const path = github.getPathFromUrl(oldUrl);
+            if (path) github.deleteFile(path);
             storage.remove(CONFIG.storageKeys.coverImage);
             document.getElementById('coverStatus').textContent = '使用默认渐变';
             document.getElementById('removeCoverBtn').style.display = 'none';
@@ -234,14 +237,19 @@
             if (!file.type.startsWith('image/')) { toast('请选择图片文件', 'error'); return; }
             const compressed = await utils.compressImage(file, 1920, 0.85);
             const dataUrl = await utils.fileToBase64(compressed);
-            storage.set(CONFIG.storageKeys.coverImage, dataUrl);
-            this.apply(dataUrl); app.saveData(); toast('封面已设置 ♥', 'success');
+            // 上传到 GitHub 存为独立文件，数据里只存 URL
+            const b64 = dataUrl.replace(/^data:[^;]+;base64,/, '');
+            const cdnUrl = await github.uploadFile('data/cover.jpg', b64);
+            const finalUrl = cdnUrl || dataUrl;
+            storage.set(CONFIG.storageKeys.coverImage, finalUrl);
+            this.apply(finalUrl); app.saveData(); toast('封面已设置 ♥', 'success');
         }
     };
 
     // ========== 音乐 ==========
     const music = {
-        init() { const s = storage.get(CONFIG.storageKeys.music); if (s && s.dataUrl) { state.music = s; this.show(); this.updateUI(); } },
+        init() { const s = storage.get(CONFIG.storageKeys.music); if (s && (s.dataUrl || s.url)) { state.music = s; this.show(); this.updateUI(); } },
+        getUrl() { return state.music ? (state.music.url || state.music.dataUrl) : null; },
         show() { document.getElementById('musicControl').style.display = 'flex'; },
         hide() { document.getElementById('musicControl').style.display = 'none'; },
         updateUI() {
@@ -253,8 +261,12 @@
         },
         async set(file) {
             if (!file.type.startsWith('audio/')) { toast('请选择音频文件', 'error'); return; }
+            toast('正在上传音乐...', 'info');
             const dataUrl = await utils.fileToBase64(file);
-            state.music = { name: file.name, dataUrl };
+            const b64 = dataUrl.replace(/^data:[^;]+;base64,/, '');
+            const ext = file.name.split('.').pop() || 'mp3';
+            const cdnUrl = await github.uploadFile(`data/music/bg.${ext}`, b64);
+            state.music = { name: file.name, url: cdnUrl || dataUrl };
             storage.set(CONFIG.storageKeys.music, state.music);
             if (state.audio) { state.audio.pause(); state.audio = null; }
             this.show(); this.updateUI(); app.saveData(); toast('音乐已设置 ♪', 'success');
@@ -262,7 +274,7 @@
         toggle() {
             if (!state.music) return;
             if (!state.audio) {
-                state.audio = new Audio(state.music.dataUrl);
+                state.audio = new Audio(this.getUrl());
                 state.audio.loop = true;
                 state.audio.onended = () => { state.isPlaying = false; this.updateBtn(); };
             }
@@ -277,6 +289,9 @@
         },
         remove() {
             if (state.audio) { state.audio.pause(); state.audio = null; }
+            const oldUrl = this.getUrl();
+            const path = github.getPathFromUrl(oldUrl);
+            if (path) github.deleteFile(path);
             state.music = null; state.isPlaying = false;
             storage.remove(CONFIG.storageKeys.music);
             this.hide(); document.getElementById('musicStatus').textContent = '未设置';
@@ -667,6 +682,35 @@
             const r = await this.getFile('data/app-data.json');
             if (r && r.content) { try { return JSON.parse(r.content); } catch { return null; } }
             return null;
+        },
+        // 上传二进制文件（照片/封面/音乐）到 GitHub 仓库，返回 jsdelivr CDN URL
+        async uploadFile(path, base64Content) {
+            if (!this.isConfigured()) return null;
+            try {
+                const url = `${CONFIG.githubApiBase}/repos/${this.config.owner}/${this.config.repo}/contents/${path}`;
+                const body = { message: `Upload ${path}`, content: base64Content };
+                const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `token ${this.config.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || `GitHub: ${res.status}`); }
+                return `https://cdn.jsdelivr.net/gh/${this.config.owner}/${this.config.repo}@main/${path}`;
+            } catch (e) { console.error(e); toast('文件上传失败：' + e.message, 'error'); return null; }
+        },
+        // 删除 GitHub 仓库中的文件
+        async deleteFile(path) {
+            if (!this.isConfigured()) return false;
+            try {
+                const ex = await this.getFile(path);
+                if (!ex || !ex.sha) return false;
+                const url = `${CONFIG.githubApiBase}/repos/${this.config.owner}/${this.config.repo}/contents/${path}`;
+                const body = { message: `Delete ${path}`, sha: ex.sha };
+                const res = await fetch(url, { method: 'DELETE', headers: { 'Authorization': `token ${this.config.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                return res.ok;
+            } catch (e) { console.error(e); return false; }
+        },
+        // 从 URL 中提取文件路径（用于删除）
+        getPathFromUrl(url) {
+            if (!url || !url.includes('cdn.jsdelivr.net')) return null;
+            const m = url.match(/@main\/(.+)$/);
+            return m ? m[1] : null;
         }
     };
 
@@ -1145,8 +1189,20 @@
             const cap = document.getElementById('photoCaption').value.trim(), date = document.getElementById('photoDate').value;
             const album = document.getElementById('photoAlbum').value || '未分类';
             const n = state.pendingFiles.length;
+            toast('正在上传文件...', 'info');
             for (const f of state.pendingFiles) {
-                state.photos.push({ id: utils.generateId(), url: f.url, type: f.type || 'image', caption: cap, date: date || utils.formatDateInput(), album: album, uploader: state.currentUser, createdAt: new Date().toISOString() });
+                let photoUrl = f.url;
+                // 如果是 base64 data URL，上传到 GitHub 存为独立文件
+                if (f.url && f.url.startsWith('data:')) {
+                    const id = utils.generateId();
+                    const ext = f.type === 'video' ? 'mp4' : 'jpg';
+                    const b64 = f.url.replace(/^data:[^;]+;base64,/, '');
+                    const cdnUrl = await github.uploadFile(`data/photos/${id}.${ext}`, b64);
+                    if (cdnUrl) photoUrl = cdnUrl;
+                    state.photos.push({ id, url: photoUrl, type: f.type || 'image', caption: cap, date: date || utils.formatDateInput(), album: album, uploader: state.currentUser, createdAt: new Date().toISOString() });
+                } else {
+                    state.photos.push({ id: utils.generateId(), url: f.url, type: f.type || 'image', caption: cap, date: date || utils.formatDateInput(), album: album, uploader: state.currentUser, createdAt: new Date().toISOString() });
+                }
             }
             this.saveData(); this.closeModal('uploadModal'); this.renderGallery(); this.renderTimeline(); this.renderHome();
             toast(`成功上传 ${n} 个文件 ♥`, 'success'); state.pendingFiles = [];
@@ -1341,7 +1397,14 @@
             document.getElementById('diaryPhotoInput').addEventListener('change', async e => {
                 for (const f of e.target.files) {
                     if (!f.type.startsWith('image/')) continue;
-                    try { const c = await utils.compressImage(f, 1000, 0.8); const b = await utils.fileToBase64(c); state.diaryPendingPhotos.push({ url: b, caption: '' }); } catch (err) { console.error(err); }
+                    try {
+                        const c = await utils.compressImage(f, 1000, 0.8);
+                        const b = await utils.fileToBase64(c);
+                        const b64 = b.replace(/^data:[^;]+;base64,/, '');
+                        const id = utils.generateId();
+                        const cdnUrl = await github.uploadFile(`data/diary/${id}.jpg`, b64);
+                        state.diaryPendingPhotos.push({ url: cdnUrl || b, caption: '' });
+                    } catch (err) { console.error(err); }
                 }
                 this.renderDiaryPhotoPreview(); e.target.value = '';
             });
@@ -1979,4 +2042,5 @@
     });
 
 })();
+
 
