@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="icon.svg">
     <link rel="apple-touch-icon" href="icon.svg">
-    <link rel="stylesheet" href="css/style.css?v=23">
+    <link rel="stylesheet" href="css/style.css?v=19">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -540,18 +540,18 @@
                 </select>
                 <span id="slideshowCounter" style="color:white;font-size:11px;opacity:0.8;">1/1</span>
             </div>
-            <div style="position:absolute;bottom:-64px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;">
-                <select id="lightboxAlbum" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:4px 10px;font-size:11px;outline:none;">
+            <div style="position:absolute;bottom:-64px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;">
+                <select id="lightboxAlbum" style="min-width:110px;background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:14px;padding:5px 24px 5px 10px;font-size:11px;outline:none;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%2210%22 viewBox=%220 0 10 10%22><path fill=%22white%22 d=%22M0 3l5 5 5-5z%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;">
                     <option value="">移动到相册...</option>
                 </select>
-                <input type="date" id="lightboxDate" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:4px 10px;font-size:11px;outline:none;color-scheme:dark;">
+                <input type="date" id="lightboxDate" style="background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:14px;padding:5px 10px;font-size:11px;outline:none;color-scheme:dark;">
             </div>
             <button class="lightbox-delete" id="lightboxDelete">删除</button>
         </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-    <script src="js/app.js?v=23"></script>
+    <script src="js/app.js?v=19"></script>
 </body>
 </html>
 
