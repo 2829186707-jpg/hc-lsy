@@ -658,6 +658,37 @@
             if (!this.isConfigured() || state.syncing) return;
             state.syncing = true;
             try {
+                // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
+                const cover = storage.get(CONFIG.storageKeys.coverImage, null);
+                if (cover && cover.startsWith('data:')) {
+                    const b64 = cover.replace(/^data:[^;]+;base64,/, '');
+                    const cdnUrl = await this.uploadFile('data/cover.jpg', b64);
+                    if (cdnUrl) { storage.set(CONFIG.storageKeys.coverImage, cdnUrl); }
+                }
+                if (state.music && state.music.dataUrl) {
+                    const b64 = state.music.dataUrl.replace(/^data:[^;]+;base64,/, '');
+                    const ext = (state.music.name || 'bg.mp3').split('.').pop() || 'mp3';
+                    const cdnUrl = await this.uploadFile(`data/music/bg.${ext}`, b64);
+                    if (cdnUrl) { state.music = { name: state.music.name, url: cdnUrl }; storage.set(CONFIG.storageKeys.music, state.music); }
+                }
+                for (const p of state.photos) {
+                    if (p.url && p.url.startsWith('data:')) {
+                        const b64 = p.url.replace(/^data:[^;]+;base64,/, '');
+                        const ext = p.type === 'video' ? 'mp4' : 'jpg';
+                        const cdnUrl = await this.uploadFile(`data/photos/${p.id}.${ext}`, b64);
+                        if (cdnUrl) p.url = cdnUrl;
+                    }
+                }
+                for (const d of state.diaries) {
+                    if (d.photos) for (const dp of d.photos) {
+                        if (dp.url && dp.url.startsWith('data:')) {
+                            const b64 = dp.url.replace(/^data:[^;]+;base64,/, '');
+                            const id = utils.generateId();
+                            const cdnUrl = await this.uploadFile(`data/diary/${id}.jpg`, b64);
+                            if (cdnUrl) dp.url = cdnUrl;
+                        }
+                    }
+                }
                 const data = {
                     photos: state.photos, diaries: state.diaries, wishes: state.wishes,
                     messages: state.messages, anniversaries: state.anniversaries,
