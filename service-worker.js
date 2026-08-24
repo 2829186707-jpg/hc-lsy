@@ -1,13 +1,12 @@
 /* HC & LSY 专属空间 - Service Worker (PWA 离线支持) */
-const CACHE_NAME = 'hc-lsy-cache-v4';
+const CACHE_NAME = 'hc-lsy-cache-v5';
 const ASSETS = [
     './',
     './index.html',
     './css/style.css',
     './js/app.js',
     './manifest.json',
-    './icon.svg',
-    './data/app-data.json'
+    './icon.svg'
 ];
 
 // 安装：缓存核心资源
