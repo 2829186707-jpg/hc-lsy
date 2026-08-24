@@ -514,7 +514,7 @@ body.dark-mode .mood-btn { background:rgba(255,255,255,0.08); }
 
 /* 灯箱 */
 .modal.lightbox { background:rgba(0,0,0,0.82); padding:0; }
-.lightbox-content { position:relative; max-width:92vw; max-height:88vh; display:flex; align-items:center; justify-content:center; background:transparent; box-shadow:none; animation:none; }
+.lightbox-content { position:relative; max-width:92vw; max-height:88vh; display:flex; align-items:center; justify-content:center; background:transparent; box-shadow:none; animation:none; overflow:visible; }
 .lightbox-media { max-width:92vw; max-height:76vh; display:flex; align-items:center; justify-content:center; }
 .lightbox-media img,.lightbox-media video { max-width:92vw; max-height:76vh; object-fit:contain; border-radius:var(--radius-md); box-shadow:0 0 50px rgba(0,0,0,0.4); }
 .lightbox-close { position:absolute; top:-32px; right:0; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.15); color:white; font-size:13px; display:flex; align-items:center; justify-content:center; transition:var(--transition); z-index:10; }
@@ -603,3 +603,4 @@ body.dark-mode .mood-btn { background:rgba(255,255,255,0.08); }
     .blindbox-box { font-size:48px; }
     .annual-number { font-size:28px; }
 }
+
