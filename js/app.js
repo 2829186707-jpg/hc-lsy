@@ -1111,11 +1111,15 @@
         populateAlbumSelect(selectEl, includeAll = false) {
             if (!selectEl) return;
             const current = selectEl.value;
+            // 确保包含默认相册和当前相册
+            const allAlbums = ['未分类', '旅行', '日常', '节日', '合照'];
+            state.albums.forEach(a => { if (!allAlbums.includes(a)) allAlbums.push(a); });
+            if (current && !allAlbums.includes(current)) allAlbums.push(current);
             let opts = '';
             if (includeAll) opts += '<option value="">全部相册</option>';
-            state.albums.forEach(a => { opts += `<option value="${utils.escapeHtml(a)}">${utils.escapeHtml(a)}</option>`; });
+            allAlbums.forEach(a => { opts += `<option value="${utils.escapeHtml(a)}">${utils.escapeHtml(a)}</option>`; });
             selectEl.innerHTML = opts;
-            if (current && state.albums.includes(current)) selectEl.value = current;
+            if (current) selectEl.value = current;
         },
         renderAlbumList() {
             const list = document.getElementById('albumList');
@@ -1338,7 +1342,8 @@
             } else {
                 media.innerHTML = `<img src="${p.url}" alt="">`;
             }
-            document.getElementById('lightboxCaption').textContent = p.caption ? `${utils.escapeHtml(p.caption)} · ${utils.formatDate(p.date)}` : (p.date ? utils.formatDate(p.date) : '');
+            const albumInfo = (p.album && p.album !== '未分类') ? ` · 📁${utils.escapeHtml(p.album)}` : '';
+            document.getElementById('lightboxCaption').textContent = p.caption ? `${utils.escapeHtml(p.caption)} · ${utils.formatDate(p.date)}${albumInfo}` : `${utils.formatDate(p.date)}${albumInfo}`;
         },
         navigateLightbox(dir) {
             const photos = this.getLightboxPhotos();
@@ -1353,6 +1358,11 @@
             if (albumSel) {
                 if (canDelete) {
                     albumSel.style.display = 'inline-block';
+                    // 填充相册列表
+                    const allAlbums = ['未分类', '旅行', '日常', '节日', '合照'];
+                    state.albums.forEach(a => { if (!allAlbums.includes(a)) allAlbums.push(a); });
+                    if (photo.album && !allAlbums.includes(photo.album)) allAlbums.push(photo.album);
+                    albumSel.innerHTML = allAlbums.map(a => `<option value="${a}">${a}</option>`).join('');
                     albumSel.value = photo.album || '未分类';
                 } else {
                     albumSel.style.display = 'none';
