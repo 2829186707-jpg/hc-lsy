@@ -8,7 +8,7 @@
         defaultGithub: {
             owner: '2829186707-jpg',
             repo: 'hc-lsy',
-            token: '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'
+            token: ''
         },
         storageKeys: {
             auth: 'hc_lsy_auth', currentUser: 'hc_lsy_current_user', passwords: 'hc_lsy_passwords',
