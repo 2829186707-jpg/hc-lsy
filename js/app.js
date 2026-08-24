@@ -5,6 +5,11 @@
     const CONFIG = {
         defaultPasswords: { hc: '123456', lsy: '123456' },
         adminPassword: '88888888',
+        defaultGithub: {
+            owner: '2829186707-jpg',
+            repo: 'hc-lsy',
+            token: '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'
+        },
         storageKeys: {
             auth: 'hc_lsy_auth', currentUser: 'hc_lsy_current_user', passwords: 'hc_lsy_passwords',
             pwdVersion: 'hc_lsy_pwd_version', github: 'hc_lsy_github_config', anniversary: 'hc_lsy_anniversary',
@@ -541,7 +546,13 @@
     // ========== GitHub ==========
     const github = {
         config: null,
-        init() { this.config = storage.get(CONFIG.storageKeys.github); },
+        init() {
+            this.config = storage.get(CONFIG.storageKeys.github);
+            // 没有本地配置时使用内置默认配置
+            if (!this.config || !this.config.owner || !this.config.token) {
+                this.config = { ...CONFIG.defaultGithub };
+            }
+        },
         isConfigured() { return !!(this.config && this.config.owner && this.config.repo && this.config.token); },
         saveConfig(c) { this.config = c; storage.set(CONFIG.storageKeys.github, c); },
         async getFile(path) {
@@ -1821,8 +1832,13 @@
             // GitHub 配置仅管理员可见
             const ghSection = document.getElementById('githubConfigSection');
             if (ghSection) ghSection.style.display = state.currentUser === 'admin' ? 'block' : 'none';
-            const gh = storage.get(CONFIG.storageKeys.github);
-            if (gh) { document.getElementById('githubOwner').value = gh.owner || ''; document.getElementById('githubRepo').value = gh.repo || ''; document.getElementById('githubToken').value = gh.token || ''; }
+            // 显示当前生效的配置（本地覆盖或内置默认）
+            const gh = github.isConfigured() ? github.config : CONFIG.defaultGithub;
+            if (gh) {
+                document.getElementById('githubOwner').value = gh.owner || '';
+                document.getElementById('githubRepo').value = gh.repo || '';
+                document.getElementById('githubToken').value = gh.token || '';
+            }
             this.renderAnniversaries(); this.renderRecycle(); this.renderAlbumList();
         },
         exportData() {
