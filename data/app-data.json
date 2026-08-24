@@ -2,16 +2,7 @@
   "photos": [],
   "diaries": [],
   "wishes": [],
-  "messages": [
-    {
-      "id": "mt6vp8rwpbtq6c1xk",
-      "content": "罗斯宇最聪明",
-      "color": "pink",
-      "author": "admin",
-      "createdAt": "2026-08-24T06:52:20.780Z",
-      "replies": []
-    }
-  ],
+  "messages": [],
   "anniversaries": [],
   "letters": [],
   "trips": [],
@@ -30,6 +21,20 @@
     }
   },
   "recycleBin": [
+    {
+      "id": "mt6yrksb2ga3aih0p",
+      "type": "message",
+      "data": {
+        "id": "mt6vp8rwpbtq6c1xk",
+        "content": "罗斯宇最聪明",
+        "color": "pink",
+        "author": "admin",
+        "createdAt": "2026-08-24T06:52:20.780Z",
+        "replies": []
+      },
+      "deletedAt": "2026-08-24T08:18:08.507Z",
+      "expiresAt": "2026-08-31T08:18:08.508Z"
+    },
     {
       "id": "mt6wy013spgga8vso",
       "type": "message",
@@ -72,5 +77,5 @@
   },
   "pwdVersion": 2,
   "anniversary": null,
-  "version": 1787556428968
+  "version": 1787559488509
 }
