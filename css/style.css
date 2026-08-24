@@ -129,7 +129,8 @@ body.dark-mode .login-form input[type="password"] { background:rgba(255,255,255,
 .quote-text { font-size:14px; color:rgba(255,255,255,0.9); font-style:italic; letter-spacing:1px; transition:opacity 0.3s; display:inline-block; }
 .hero-quote-btn { padding:5px 16px; background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:20px; font-size:11px; transition:var(--transition); backdrop-filter:blur(4px); }
 .hero-quote-btn:hover { background:rgba(255,255,255,0.3); }
-.hero-scroll-hint { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.6); font-size:10px; text-align:center; z-index:2; animation:scrollBounce 2s ease-in-out infinite; cursor:pointer; user-select:none; }
+html { scroll-behavior: smooth; }
+.hero-scroll-hint { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.6); font-size:10px; text-align:center; z-index:2; animation:scrollBounce 2s ease-in-out infinite; cursor:pointer; user-select:none; text-decoration:none; display:block; }
 .scroll-arrow { display:block; font-size:12px; margin-top:2px; }
 @keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
 .hero-cover.anniversary-day .hero-cover-bg { background:linear-gradient(135deg,#f0c8c8 0%,#e8b0b0 30%,#d8a890 60%,#e8c0a8 100%); }

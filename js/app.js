@@ -824,10 +824,6 @@
             document.querySelectorAll('.nav-item, .mobile-nav-item, .nav-brand, .quick-card, .link-btn').forEach(item => {
                 item.addEventListener('click', () => { if (item.dataset.view) this.switchView(item.dataset.view); });
             });
-            const scrollHint = document.getElementById('heroScrollHint');
-            if (scrollHint) scrollHint.addEventListener('click', () => {
-                window.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' });
-            });
         },
         switchView(vn) {
             state.currentView = vn;
