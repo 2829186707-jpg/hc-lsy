@@ -3,7 +3,18 @@
   "diaries": [],
   "wishes": [],
   "messages": [],
-  "anniversaries": [],
+  "anniversaries": [
+    {
+      "id": "mt71xubmisyqj83vv",
+      "name": "何超生日",
+      "date": "2027-02-18"
+    },
+    {
+      "id": "mt71ycistbu6n5xsh",
+      "name": "罗斯宇生日",
+      "date": "2026-09-05"
+    }
+  ],
   "letters": [],
   "trips": [],
   "qaAnswers": {},
@@ -91,5 +102,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787564759452
+  "version": 1787564843237
 }
