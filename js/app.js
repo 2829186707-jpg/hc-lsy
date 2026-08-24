@@ -18,7 +18,7 @@
             trips: 'hc_lsy_trips', music: 'hc_lsy_music', coverImage: 'hc_lsy_cover',
             darkMode: 'hc_lsy_dark', missYou: 'hc_lsy_missyou', recycleBin: 'hc_lsy_recycle',
             qaAnswers: 'hc_lsy_qa', weather: 'hc_lsy_weather', period: 'hc_lsy_period',
-            albums: 'hc_lsy_albums', dataVersion: 'hc_lsy_data_version'
+            albums: 'hc_lsy_albums', dataVersion: 'hc_lsy_data_version', syncState: 'hc_lsy_sync_state'
         },
         githubApiBase: 'https://api.github.com',
         passwordVersion: 2
@@ -93,6 +93,12 @@
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
         slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
         syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0
+    };
+
+    // 同步状态持久化（防止刷新后丢失未同步标记，导致旧数据覆盖新数据）
+    const syncState = {
+        save() { storage.set(CONFIG.storageKeys.syncState, { dirty: state.dirty, lastSyncVersion: state.lastSyncVersion }); },
+        load() { const s = storage.get(CONFIG.storageKeys.syncState, {}); if (s.dirty !== undefined) state.dirty = s.dirty; if (s.lastSyncVersion !== undefined) state.lastSyncVersion = s.lastSyncVersion; }
     };
 
     // ========== 工具 ==========
@@ -572,10 +578,10 @@
             document.removeEventListener('visibilitychange', app._onVisibilityChange);
         },
         logout() {
-            app.stopAutoSync();
+            try { app.stopAutoSync(); } catch(e) { console.error('stopAutoSync failed:', e); }
             storage.remove(CONFIG.storageKeys.auth); storage.remove(CONFIG.storageKeys.currentUser);
             state.currentUser = null;
-            state.dirty = false; state.syncing = false; state.lastSyncVersion = 0;
+            state.dirty = false; state.syncing = false; state.lastSyncVersion = 0; syncState.save();
             if (state.audio) { state.audio.pause(); state.isPlaying = false; music.updateBtn(); }
             // 停止幻灯片播放
             if (state.slideshowTimer) { clearTimeout(state.slideshowTimer); state.slideshowTimer = null; }
@@ -651,7 +657,7 @@
                     anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
                 };
                 const ok = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
-                if (ok) { state.dirty = false; state.lastSyncVersion = data.version; }
+                if (ok) { state.dirty = false; state.lastSyncVersion = data.version; syncState.save(); }
             } finally {
                 state.syncing = false;
             }
@@ -813,6 +819,7 @@
             this.bindLogoutEvent(); this.bindMusicEvents(); this.bindQuoteEvents();
             this.bindMissYouEvents(); this.bindThemeEvents(); this.bindCoverEvents();
             this.bindImportEvents();
+            syncState.load();
         },
 
         loadData(silent = false) {
@@ -839,7 +846,7 @@
                         if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                         if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
-                        if (r.version) state.lastSyncVersion = r.version;
+                        if (r.version) { state.lastSyncVersion = r.version; syncState.save(); }
                         if (!silent) toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
@@ -861,6 +868,7 @@
             });
             if (sync && github.isConfigured()) {
                 state.dirty = true;
+                syncState.save();
                 github.syncAll();
             }
         },
@@ -1971,3 +1979,4 @@
     });
 
 })();
+
