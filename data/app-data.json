@@ -12,27 +12,11 @@
       "replies": []
     },
     {
-      "id": "mt6v412fa4c9a8jxy",
-      "content": "测试1",
-      "color": "pink",
-      "author": "hc",
-      "createdAt": "2026-08-24T06:35:51.015Z",
-      "replies": []
-    },
-    {
       "id": "mt6vp8rwpbtq6c1xk",
       "content": "罗斯宇最聪明",
       "color": "pink",
       "author": "admin",
       "createdAt": "2026-08-24T06:52:20.780Z",
-      "replies": []
-    },
-    {
-      "id": "mt6wwhex7cz98doa3",
-      "content": "lsy最棒",
-      "color": "pink",
-      "author": "lsy",
-      "createdAt": "2026-08-24T07:25:58.187Z",
       "replies": []
     }
   ],
@@ -53,7 +37,22 @@
       "lsy": true
     }
   },
-  "recycleBin": [],
+  "recycleBin": [
+    {
+      "id": "mt6wxu3a0c7mlfn3x",
+      "type": "message",
+      "data": {
+        "id": "mt6v412fa4c9a8jxy",
+        "content": "测试1",
+        "color": "pink",
+        "author": "hc",
+        "createdAt": "2026-08-24T06:35:51.015Z",
+        "replies": []
+      },
+      "deletedAt": "2026-08-24T07:27:01.270Z",
+      "expiresAt": "2026-08-31T07:27:01.270Z"
+    }
+  ],
   "music": null,
   "coverImage": null,
   "period": null,
@@ -67,5 +66,5 @@
   },
   "pwdVersion": 2,
   "anniversary": null,
-  "version": 1787556358188
+  "version": 1787556421271
 }
