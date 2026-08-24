@@ -455,6 +455,15 @@
     const auth = {
         selectedRole: 'hc',
         init() {
+            // 页面加载时主动从 GitHub 拉取最新密码（异步，不阻塞界面）
+            if (github.isConfigured()) {
+                github.getFile('data/app-data.json').then(r => {
+                    if (r && r.passwords) {
+                        storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                        if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
+                    }
+                }).catch(() => {});
+            }
             const savedUser = storage.get(CONFIG.storageKeys.currentUser);
             if (savedUser && storage.get(CONFIG.storageKeys.auth)) { state.currentUser = savedUser; this.enterApp(); return; }
             const sv = storage.get(CONFIG.storageKeys.pwdVersion, 0);
