@@ -221,13 +221,14 @@
             storage.remove(CONFIG.storageKeys.coverImage);
             document.getElementById('coverStatus').textContent = '使用默认渐变';
             document.getElementById('removeCoverBtn').style.display = 'none';
+            app.saveData();
         },
         async set(file) {
             if (!file.type.startsWith('image/')) { toast('请选择图片文件', 'error'); return; }
             const compressed = await utils.compressImage(file, 1920, 0.85);
             const dataUrl = await utils.fileToBase64(compressed);
             storage.set(CONFIG.storageKeys.coverImage, dataUrl);
-            this.apply(dataUrl); toast('封面已设置 ♥', 'success');
+            this.apply(dataUrl); app.saveData(); toast('封面已设置 ♥', 'success');
         }
     };
 
@@ -249,7 +250,7 @@
             state.music = { name: file.name, dataUrl };
             storage.set(CONFIG.storageKeys.music, state.music);
             if (state.audio) { state.audio.pause(); state.audio = null; }
-            this.show(); this.updateUI(); toast('音乐已设置 ♪', 'success');
+            this.show(); this.updateUI(); app.saveData(); toast('音乐已设置 ♪', 'success');
         },
         toggle() {
             if (!state.music) return;
@@ -273,6 +274,7 @@
             storage.remove(CONFIG.storageKeys.music);
             this.hide(); document.getElementById('musicStatus').textContent = '未设置';
             document.getElementById('removeMusicBtn').style.display = 'none';
+            app.saveData();
         }
     };
 
@@ -408,7 +410,7 @@
             const cycle = parseInt(document.getElementById('periodCycle').value) || 28;
             if (!date) { toast('请选择日期', 'error'); return; }
             storage.set(CONFIG.storageKeys.period, { date, cycle });
-            this.calculate(date, cycle);
+            this.calculate(date, cycle); app.saveData();
             toast('生理期记录已保存', 'success');
         }
     };
@@ -434,7 +436,7 @@
             else if (item.type === 'message') state.messages.push(item.data);
             state.recycleBin.splice(idx, 1);
             storage.set(CONFIG.storageKeys.recycleBin, state.recycleBin);
-            app.saveData(false); app.renderAll();
+            app.saveData(); app.renderAll();
             toast('已恢复', 'success');
         },
         deleteForever(id) {
@@ -445,7 +447,7 @@
             }
             state.recycleBin = state.recycleBin.filter(r => r.id !== id);
             storage.set(CONFIG.storageKeys.recycleBin, state.recycleBin);
-            app.renderRecycle();
+            app.saveData(); app.renderRecycle();
         }
     };
 
@@ -587,6 +589,9 @@
                 messages: state.messages, anniversaries: state.anniversaries,
                 letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers,
                 albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}),
+                recycleBin: state.recycleBin, music: state.music,
+                coverImage: storage.get(CONFIG.storageKeys.coverImage, null),
+                period: storage.get(CONFIG.storageKeys.period, null),
                 anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
             };
             await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
@@ -761,12 +766,17 @@
                         state.albums = r.albums || [];
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
                         if (r.missYou) storage.set(CONFIG.storageKeys.missYou, r.missYou);
+                        if (r.recycleBin) state.recycleBin = r.recycleBin;
+                        if (r.music) { state.music = r.music; storage.set(CONFIG.storageKeys.music, r.music); }
+                        if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage);
+                        if (r.period) storage.set(CONFIG.storageKeys.period, r.period);
                         if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary);
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
-                }).catch(() => { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); });
+                    cover.init(); music.init(); period.init();
+                }).catch(() => { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); cover.init(); music.init(); period.init(); });
             } else { this.loadLocalData(); this.renderAll(); this.checkAnniversaryDay(); }
         },
         loadLocalData() {
@@ -914,6 +924,10 @@
                         if (data.qaAnswers) state.qaAnswers = data.qaAnswers;
                         if (data.albums) state.albums = data.albums;
                         if (data.missYou) storage.set(CONFIG.storageKeys.missYou, data.missYou);
+                        if (data.recycleBin) state.recycleBin = data.recycleBin;
+                        if (data.music) { state.music = data.music; storage.set(CONFIG.storageKeys.music, data.music); }
+                        if (data.coverImage) storage.set(CONFIG.storageKeys.coverImage, data.coverImage);
+                        if (data.period) storage.set(CONFIG.storageKeys.period, data.period);
                         if (data.anniversary) storage.set(CONFIG.storageKeys.anniversary, data.anniversary);
                         this.saveData(); this.renderAll();
                         toast('数据导入成功', 'success');
@@ -1791,10 +1805,11 @@
             document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
             document.getElementById('clearDataBtn').addEventListener('click', () => {
                 if (!confirm('确定要清空所有本地数据吗？此操作不可恢复！')) return;
-                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
+                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou', 'recycleBin', 'music', 'coverImage', 'period'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
                 state.photos = []; state.diaries = []; state.wishes = []; state.messages = [];
                 state.anniversaries = []; state.letters = []; state.trips = []; state.qaAnswers = {};
                 state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
+                state.recycleBin = []; state.music = null;
                 this.renderAll(); toast('本地数据已清空', 'info');
             });
             // 相册管理
@@ -1846,7 +1861,7 @@
             this.renderAnniversaries(); this.renderRecycle(); this.renderAlbumList();
         },
         exportData() {
-            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}), anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
+            const data = { photos: state.photos, diaries: state.diaries, wishes: state.wishes, messages: state.messages, anniversaries: state.anniversaries, letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers, albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}), recycleBin: state.recycleBin, music: state.music, coverImage: storage.get(CONFIG.storageKeys.coverImage, null), period: storage.get(CONFIG.storageKeys.period, null), anniversary: storage.get(CONFIG.storageKeys.anniversary), exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `hc-lsy-data-${utils.formatDateInput()}.json`; a.click();
