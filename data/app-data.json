@@ -116,7 +116,41 @@
     }
   ],
   "letters": [],
-  "trips": [],
+  "trips": [
+    {
+      "id": "mt7dusarze8kugbm5",
+      "name": "国庆甜蜜游",
+      "destination": "宁波",
+      "startDate": "2026-09-28",
+      "endDate": "2026-10-07",
+      "budget": "",
+      "items": [
+        {
+          "text": "订机票✅",
+          "done": false
+        },
+        {
+          "text": "酒店宁波两天✅",
+          "done": false
+        },
+        {
+          "text": "国庆期间酒店❌",
+          "done": false
+        },
+        {
+          "text": "目的地车票❌",
+          "done": false
+        },
+        {
+          "text": "返程机票❌",
+          "done": false
+        }
+      ],
+      "notes": "何超给罗斯宇买蛋糕吃",
+      "author": "lsy",
+      "createdAt": "2026-08-24T15:20:32.451Z"
+    }
+  ],
   "qaAnswers": {
     "0": {
       "lsy": "第一次线下见面是在煌歌广场上，然后一起去吃了乡村基"
@@ -152,5 +186,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787584689159
+  "version": 1787584834849
 }
