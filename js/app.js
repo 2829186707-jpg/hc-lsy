@@ -643,17 +643,25 @@
                 return { content: d.content, sha: d.sha };
             } catch (e) { console.error(e); return null; }
         },
-        async putFile(path, content, msg = 'Update') {
+        async putFile(path, content, msg = 'Update', knownSha = null) {
             if (!this.isConfigured()) return false;
             try {
-                const ex = await this.getFile(path);
                 const url = `${CONFIG.githubApiBase}/repos/${this.config.owner}/${this.config.repo}/contents/${path}`;
                 const body = { message: msg, content: btoa(unescape(encodeURIComponent(content))) };
-                if (ex && ex.sha) body.sha = ex.sha;
+                if (knownSha) {
+                    body.sha = knownSha;
+                } else {
+                    const ex = await this.getFile(path);
+                    if (ex && ex.sha) body.sha = ex.sha;
+                }
                 const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `token ${this.config.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (res.status === 409) throw new Error('CONFLICT');
                 if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || `GitHub: ${res.status}`); }
                 return true;
-            } catch (e) { console.error(e); toast('同步失败：' + e.message, 'error'); return false; }
+            } catch (e) {
+                if (e.message === 'CONFLICT') throw e;
+                console.error(e); toast('同步失败：' + e.message, 'error'); return false;
+            }
         },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
@@ -667,21 +675,25 @@
                 state.dirty = false; syncState.save();
                 return;
             }
-            // 版本冲突检测：推送前先拉取云端版本，如果云端比本地新，拒绝推送，先拉取合并
-            if (state.lastSyncVersion) {
-                try {
-                    const cloudCheck = await this.pullData();
-                    if (cloudCheck && cloudCheck.version && cloudCheck.version > state.lastSyncVersion) {
-                        console.warn(`[sync] 云端版本(${cloudCheck.version})比本地(${state.lastSyncVersion})新，拒绝推送，改为拉取合并`);
-                        state.dirty = false; syncState.save();
-                        toast('检测到其他设备有更新，正在同步最新数据...', 'info');
-                        setTimeout(() => app.loadData(false), 300);
-                        return;
-                    }
-                } catch (e) { console.warn('[sync] 版本检查失败，继续推送', e); }
-            }
+            // 版本冲突检测 + 乐观锁：用拉取时的sha推送，409则重试
             state.syncing = true;
-            try {
+            let pushOk = false;
+            for (let attempt = 0; attempt < 3 && !pushOk; attempt++) {
+                // 拉取云端最新数据和sha
+                const cloudFile = await this.getFile('data/app-data.json');
+                if (cloudFile && cloudFile.content) {
+                    try {
+                        const cloudData = JSON.parse(cloudFile.content);
+                        if (state.lastSyncVersion && cloudData.version && cloudData.version > state.lastSyncVersion) {
+                            console.warn(`[sync] 云端版本(${cloudData.version})比本地(${state.lastSyncVersion})新，拒绝推送，改为拉取合并`);
+                            state.dirty = false; syncState.save();
+                            toast('检测到其他设备有更新，正在同步最新数据...', 'info');
+                            setTimeout(() => app.loadData(false), 300);
+                            return;
+                        }
+                    } catch (e) { console.warn('[sync] 云端数据解析失败，继续推送', e); }
+                }
+                const cloudSha = cloudFile ? cloudFile.sha : null;
                 // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
                 const cover = storage.get(CONFIG.storageKeys.coverImage, null);
                 if (cover && cover.startsWith('data:')) {
@@ -726,11 +738,20 @@
                     pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0),
                     anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
                 };
-                const ok = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
-                if (ok) { state.dirty = false; state.lastSyncVersion = data.version; syncState.save(); }
-            } finally {
-                state.syncing = false;
+                try {
+                    pushOk = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data', cloudSha);
+                    if (pushOk) { state.dirty = false; state.lastSyncVersion = data.version; syncState.save(); }
+                } catch (e) {
+                    if (e.message === 'CONFLICT' && attempt < 2) {
+                        console.warn(`[sync] 冲突，第${attempt + 1}次重试`);
+                        await new Promise(r => setTimeout(r, 500));
+                        continue;
+                    }
+                    toast('同步失败：' + e.message, 'error');
+                    break;
+                }
             }
+            state.syncing = false;
         },
         async pullData() {
             if (!this.isConfigured()) return null;
