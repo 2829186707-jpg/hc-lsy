@@ -129,22 +129,7 @@
       "lsy": true
     }
   },
-  "recycleBin": [
-    {
-      "id": "mt7dbif6epr1flrip",
-      "type": "message",
-      "data": {
-        "id": "mt6s5gq17bn5bbe4k",
-        "content": "测试",
-        "color": "pink",
-        "author": "hc",
-        "createdAt": "2026-08-24T05:12:59.113Z",
-        "replies": []
-      },
-      "deletedAt": "2026-08-24T15:05:33.187Z",
-      "expiresAt": "2026-08-31T15:05:33.194Z"
-    }
-  ],
+  "recycleBin": [],
   "music": null,
   "coverImage": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/cover.jpg",
   "period": null,
@@ -158,5 +143,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787583933215
+  "version": 1787583937998
 }
