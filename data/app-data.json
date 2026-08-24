@@ -54,20 +54,6 @@
       },
       "deletedAt": "2026-08-24T09:05:59.418Z",
       "expiresAt": "2026-08-31T09:05:59.418Z"
-    },
-    {
-      "id": "mt6yrs5q2r069fvw7",
-      "type": "message",
-      "data": {
-        "id": "mt6vp8rwpbtq6c1xk",
-        "content": "罗斯宇最聪明",
-        "color": "pink",
-        "author": "admin",
-        "createdAt": "2026-08-24T06:52:20.780Z",
-        "replies": []
-      },
-      "deletedAt": "2026-08-24T08:18:18.062Z",
-      "expiresAt": "2026-08-31T08:18:18.062Z"
     }
   ],
   "music": null,
@@ -83,5 +69,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787566045724
+  "version": 1787566181554
 }
