@@ -92,7 +92,7 @@
         isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [],
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
         slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
-        syncTimer: null
+        syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0
     };
 
     // ========== 工具 ==========
@@ -633,21 +633,27 @@
             } catch (e) { console.error(e); toast('同步失败：' + e.message, 'error'); return false; }
         },
         async syncAll() {
-            if (!this.isConfigured()) return;
-            const data = {
-                photos: state.photos, diaries: state.diaries, wishes: state.wishes,
-                messages: state.messages, anniversaries: state.anniversaries,
-                letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers,
-                albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}),
-                recycleBin: state.recycleBin, music: state.music,
-                coverImage: storage.get(CONFIG.storageKeys.coverImage, null),
-                period: storage.get(CONFIG.storageKeys.period, null),
-                weather: storage.get(CONFIG.storageKeys.weather, null),
-                passwords: storage.get(CONFIG.storageKeys.passwords, {}),
-                pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0),
-                anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
-            };
-            await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
+            if (!this.isConfigured() || state.syncing) return;
+            state.syncing = true;
+            try {
+                const data = {
+                    photos: state.photos, diaries: state.diaries, wishes: state.wishes,
+                    messages: state.messages, anniversaries: state.anniversaries,
+                    letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers,
+                    albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}),
+                    recycleBin: state.recycleBin, music: state.music,
+                    coverImage: storage.get(CONFIG.storageKeys.coverImage, null),
+                    period: storage.get(CONFIG.storageKeys.period, null),
+                    weather: storage.get(CONFIG.storageKeys.weather, null),
+                    passwords: storage.get(CONFIG.storageKeys.passwords, {}),
+                    pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0),
+                    anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
+                };
+                const ok = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data');
+                if (ok) { state.dirty = false; state.lastSyncVersion = data.version; }
+            } finally {
+                state.syncing = false;
+            }
         },
         async pullData() {
             if (!this.isConfigured()) return null;
@@ -809,9 +815,13 @@
         },
 
         loadData(silent = false) {
+            // 自动拉取时，如果本地有未同步修改或正在同步，跳过（防止数据丢失）
+            if (silent && (state.dirty || state.syncing)) return;
             if (github.isConfigured()) {
                 github.pullData().then(r => {
                     if (r) {
+                        // 版本号检查：云端版本不新于本地最后同步版本，跳过
+                        if (silent && r.version && r.version <= state.lastSyncVersion) return;
                         state.photos = r.photos || []; state.diaries = r.diaries || [];
                         state.wishes = r.wishes || []; state.messages = r.messages || [];
                         state.anniversaries = r.anniversaries || []; state.letters = r.letters || [];
@@ -828,6 +838,7 @@
                         if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                         if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
+                        if (r.version) state.lastSyncVersion = r.version;
                         if (!silent) toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
@@ -847,7 +858,10 @@
             ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => {
                 storage.set(CONFIG.storageKeys[k], state[k]);
             });
-            if (sync && github.isConfigured()) github.syncAll();
+            if (sync && github.isConfigured()) {
+                state.dirty = true;
+                github.syncAll();
+            }
         },
         renderAll() {
             this.renderHome(); this.renderGallery(); this.renderDiary();
