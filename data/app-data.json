@@ -1,63 +1,85 @@
 {
-  "photos": [],
-  "diaries": [],
-  "wishes": [],
-  "messages": [
-    {
-      "id": "mt6s5gq17bn5bbe4k",
-      "content": "测试",
-      "color": "pink",
-      "author": "hc",
-      "createdAt": "2026-08-24T05:12:59.113Z",
-      "replies": []
-    },
-    {
-      "id": "mt6v412fa4c9a8jxy",
-      "content": "测试1",
-      "color": "pink",
-      "author": "hc",
-      "createdAt": "2026-08-24T06:35:51.015Z",
-      "replies": []
-    },
-    {
-      "id": "mt6vp8rwpbtq6c1xk",
-      "content": "罗斯宇最聪明",
-      "color": "pink",
-      "author": "admin",
-      "createdAt": "2026-08-24T06:52:20.780Z",
-      "replies": []
-    }
-  ],
-  "anniversaries": [],
-  "letters": [],
-  "trips": [],
-  "qaAnswers": {},
-  "albums": [
-    "未分类",
-    "旅行",
-    "日常",
-    "节日",
-    "合照"
-  ],
-  "missYou": {
-    "2026-08-24": {
-      "hc": true,
-      "lsy": true
-    }
-  },
-  "recycleBin": [],
-  "music": null,
-  "coverImage": null,
-  "period": null,
-  "weather": {
-    "city1": "宁波",
-    "city2": "成都"
-  },
-  "passwords": {
-    "hc": "sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92",
-    "lsy": "sha256_ddb75e13c6d8b0d809ce11ccd9fa1762d4b332782e06d76fad45209f878d7287"
-  },
-  "pwdVersion": 2,
-  "anniversary": null,
-  "version": 1787554454194
+    "photos":  [
+
+               ],
+    "diaries":  [
+
+                ],
+    "wishes":  [
+
+               ],
+    "messages":  [
+                     {
+                         "id":  "mt6s5gq17bn5bbe4k",
+                         "content":  "测试",
+                         "color":  "pink",
+                         "author":  "hc",
+                         "createdAt":  "2026-08-24T05:12:59.113Z",
+                         "replies":  [
+
+                                     ]
+                     },
+                     {
+                         "id":  "mt6v412fa4c9a8jxy",
+                         "content":  "测试1",
+                         "color":  "pink",
+                         "author":  "hc",
+                         "createdAt":  "2026-08-24T06:35:51.015Z",
+                         "replies":  [
+
+                                     ]
+                     },
+                     {
+                         "id":  "mt6vp8rwpbtq6c1xk",
+                         "content":  "罗斯宇最聪明",
+                         "color":  "pink",
+                         "author":  "admin",
+                         "createdAt":  "2026-08-24T06:52:20.780Z",
+                         "replies":  [
+
+                                     ]
+                     }
+                 ],
+    "anniversaries":  [
+
+                      ],
+    "letters":  [
+
+                ],
+    "trips":  [
+
+              ],
+    "qaAnswers":  {
+
+                  },
+    "albums":  [
+                   "未分类",
+                   "旅行",
+                   "日常",
+                   "节日",
+                   "合照"
+               ],
+    "missYou":  {
+                    "2026-08-24":  {
+                                       "hc":  true,
+                                       "lsy":  true
+                                   }
+                },
+    "recycleBin":  [
+
+                   ],
+    "music":  null,
+    "coverImage":  null,
+    "period":  null,
+    "weather":  {
+                    "city1":  "宁波",
+                    "city2":  "成都"
+                },
+    "passwords":  {
+                      "hc":  "sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92",
+                      "lsy":  "sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92"
+                  },
+    "pwdVersion":  2,
+    "anniversary":  null,
+    "version":  1787554454194
 }
