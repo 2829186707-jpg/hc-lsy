@@ -99,6 +99,16 @@
       "album": "未分类",
       "uploader": "hc",
       "createdAt": "2026-08-24T15:37:15.020Z"
+    },
+    {
+      "id": "mt7eo0m9x1e1y6qnj",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt7eo0m9x1e1y6qnj.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-24",
+      "album": "合照",
+      "uploader": "lsy",
+      "createdAt": "2026-08-24T15:43:20.508Z"
     }
   ],
   "diaries": [],
@@ -196,5 +206,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787585835046
+  "version": 1787586200519
 }
