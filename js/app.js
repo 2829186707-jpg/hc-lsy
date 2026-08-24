@@ -4,7 +4,7 @@
 
     const CONFIG = {
         defaultPasswords: { hc: '123456', lsy: '123456' },
-        adminPassword: '88888888',
+        adminPasswordHash: 'sha256_376ce48acbb22ab2773ebae4ed9aa77c3fa8717da767a91fd266f72d5c4f0d77',
         defaultGithub: {
             owner: '2829186707-jpg',
             repo: 'hc-lsy',
@@ -513,8 +513,9 @@
         async login() {
             const pw = document.getElementById('password').value, err = document.getElementById('loginError');
             if (!pw) { err.textContent = '请输入密码'; return; }
-            // 隐藏管理员账号：输入 88888888 直接进入
-            if (pw === CONFIG.adminPassword) {
+            // 隐藏管理员账号：输入特定密码直接进入（哈希验证）
+            const adminHash = await utils.hashPassword(pw);
+            if (adminHash === CONFIG.adminPasswordHash) {
                 state.currentUser = 'admin';
                 storage.set(CONFIG.storageKeys.currentUser, 'admin');
                 storage.set(CONFIG.storageKeys.auth, true);
