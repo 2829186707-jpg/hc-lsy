@@ -93,7 +93,16 @@
   ],
   "diaries": [],
   "wishes": [],
-  "messages": [],
+  "messages": [
+    {
+      "id": "mt7drppkoov335rub",
+      "content": "何超笨蛋",
+      "color": "pink",
+      "author": "lsy",
+      "createdAt": "2026-08-24T15:18:09.128Z",
+      "replies": []
+    }
+  ],
   "anniversaries": [
     {
       "id": "mt71xubmisyqj83vv",
@@ -143,5 +152,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787583937998
+  "version": 1787584689159
 }
