@@ -1,6 +1,28 @@
 {
   "photos": [],
   "diaries": [],
+  "wishes": [],
+  "messages": [
+    {
+      "id": "mt6s5gq17bn5bbe4k",
+      "content": "测试",
+      "color": "pink",
+      "author": "hc",
+      "createdAt": "2026-08-24T05:12:59.113Z",
+      "replies": []
+    }
+  ],
+  "anniversaries": [],
+  "letters": [],
+  "trips": [],
+  "qaAnswers": {},
+  "albums": [
+    "未分类",
+    "旅行",
+    "日常",
+    "节日",
+    "合照"
+  ],
   "anniversary": null,
-  "version": 0
+  "version": 1787548379117
 }
