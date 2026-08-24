@@ -1325,6 +1325,16 @@
                     albumSelect.style.display = 'none';
                 }
             }
+            // 日期选择器（仅画廊来源且有权限）
+            const dateInput = document.getElementById('lightboxDate');
+            if (dateInput) {
+                if (source === 'gallery' && canDelete) {
+                    dateInput.style.display = 'inline-block';
+                    dateInput.value = photo.date || '';
+                } else {
+                    dateInput.style.display = 'none';
+                }
+            }
             this.openModal('lightboxModal');
         },
         getLightboxPhotos() {
@@ -1342,7 +1352,7 @@
             } else {
                 media.innerHTML = `<img src="${p.url}" alt="">`;
             }
-            const albumInfo = (p.album && p.album !== '未分类') ? ` · 📁${utils.escapeHtml(p.album)}` : '';
+            const albumInfo = ` · 📁${utils.escapeHtml(p.album || '未分类')}`;
             document.getElementById('lightboxCaption').textContent = p.caption ? `${utils.escapeHtml(p.caption)} · ${utils.formatDate(p.date)}${albumInfo}` : `${utils.formatDate(p.date)}${albumInfo}`;
         },
         navigateLightbox(dir) {
