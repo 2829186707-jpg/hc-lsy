@@ -33,12 +33,15 @@
   "music": null,
   "coverImage": null,
   "period": null,
-  "weather": null,
+  "weather": {
+    "city1": "宁波",
+    "city2": "成都"
+  },
   "passwords": {
     "hc": "sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92",
     "lsy": "sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92"
   },
   "pwdVersion": 2,
   "anniversary": null,
-  "version": 1787551898811
+  "version": 1787552201031
 }
