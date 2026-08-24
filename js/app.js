@@ -491,9 +491,25 @@
                 toast('管理员模式已进入 ⚙', 'success');
                 return;
             }
-            const pws = storage.get(CONFIG.storageKeys.passwords, {}), sh = pws[this.selectedRole];
+            let pws = storage.get(CONFIG.storageKeys.passwords, {}), sh = pws[this.selectedRole];
+            // 本地验证
+            let hash = await utils.hashPassword(pw);
+            if (!sh || hash !== sh) {
+                // 本地验证失败，尝试从 GitHub 拉取最新密码再验证
+                if (github.isConfigured()) {
+                    try {
+                        const r = await github.getFile('data/app-data.json');
+                        if (r && r.passwords) {
+                            storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                            if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
+                            pws = r.passwords;
+                            sh = pws[this.selectedRole];
+                        }
+                    } catch (e) { console.error('Pull password failed', e); }
+                }
+            }
             if (!sh) { err.textContent = '账号不存在'; return; }
-            if (await utils.hashPassword(pw) !== sh) { err.textContent = '密码错误，请重试'; return; }
+            if (hash !== sh) { err.textContent = '密码错误，请重试'; return; }
             state.currentUser = this.selectedRole;
             storage.set(CONFIG.storageKeys.currentUser, this.selectedRole);
             storage.set(CONFIG.storageKeys.auth, true);
