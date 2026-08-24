@@ -1394,6 +1394,8 @@
             document.getElementById('lightboxDelete').style.display = 'none';
             const albumSel = document.getElementById('lightboxAlbum');
             if (albumSel) albumSel.style.display = 'none';
+            const dateInput = document.getElementById('lightboxDate');
+            if (dateInput) dateInput.style.display = 'none';
             // 显示幻灯片控制栏
             const bar = document.getElementById('lightboxSlideshowBar');
             if (bar) bar.style.display = 'flex';
