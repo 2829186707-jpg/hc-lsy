@@ -93,16 +93,7 @@
   ],
   "diaries": [],
   "wishes": [],
-  "messages": [
-    {
-      "id": "mt6s5gq17bn5bbe4k",
-      "content": "测试",
-      "color": "pink",
-      "author": "hc",
-      "createdAt": "2026-08-24T05:12:59.113Z",
-      "replies": []
-    }
-  ],
+  "messages": [],
   "anniversaries": [
     {
       "id": "mt71xubmisyqj83vv",
@@ -138,7 +129,22 @@
       "lsy": true
     }
   },
-  "recycleBin": [],
+  "recycleBin": [
+    {
+      "id": "mt76f2qscixtb49kj",
+      "type": "message",
+      "data": {
+        "id": "mt6s5gq17bn5bbe4k",
+        "content": "测试",
+        "color": "pink",
+        "author": "hc",
+        "createdAt": "2026-08-24T05:12:59.113Z",
+        "replies": []
+      },
+      "deletedAt": "2026-08-24T11:52:22.180Z",
+      "expiresAt": "2026-08-31T11:52:22.183Z"
+    }
+  ],
   "music": null,
   "coverImage": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/cover.jpg",
   "period": null,
@@ -152,5 +158,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787571696341
+  "version": 1787572342185
 }
