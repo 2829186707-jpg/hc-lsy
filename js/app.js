@@ -575,6 +575,7 @@
             app.stopAutoSync();
             storage.remove(CONFIG.storageKeys.auth); storage.remove(CONFIG.storageKeys.currentUser);
             state.currentUser = null;
+            state.dirty = false; state.syncing = false; state.lastSyncVersion = 0;
             if (state.audio) { state.audio.pause(); state.isPlaying = false; music.updateBtn(); }
             // 停止幻灯片播放
             if (state.slideshowTimer) { clearTimeout(state.slideshowTimer); state.slideshowTimer = null; }
