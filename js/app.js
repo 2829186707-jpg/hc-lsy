@@ -667,6 +667,19 @@
                 state.dirty = false; syncState.save();
                 return;
             }
+            // 版本冲突检测：推送前先拉取云端版本，如果云端比本地新，拒绝推送，先拉取合并
+            if (state.lastSyncVersion) {
+                try {
+                    const cloudCheck = await this.pullData();
+                    if (cloudCheck && cloudCheck.version && cloudCheck.version > state.lastSyncVersion) {
+                        console.warn(`[sync] 云端版本(${cloudCheck.version})比本地(${state.lastSyncVersion})新，拒绝推送，改为拉取合并`);
+                        state.dirty = false; syncState.save();
+                        toast('检测到其他设备有更新，正在同步最新数据...', 'info');
+                        setTimeout(() => app.loadData(false), 300);
+                        return;
+                    }
+                } catch (e) { console.warn('[sync] 版本检查失败，继续推送', e); }
+            }
             state.syncing = true;
             try {
                 // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
