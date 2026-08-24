@@ -61,20 +61,6 @@
       "expiresAt": "2026-08-31T08:18:18.062Z"
     },
     {
-      "id": "mt6wy013spgga8vso",
-      "type": "message",
-      "data": {
-        "id": "mt6s5gq17bn5bbe4k",
-        "content": "测试",
-        "color": "pink",
-        "author": "hc",
-        "createdAt": "2026-08-24T05:12:59.113Z",
-        "replies": []
-      },
-      "deletedAt": "2026-08-24T07:27:08.967Z",
-      "expiresAt": "2026-08-31T07:27:08.967Z"
-    },
-    {
       "id": "mt6wxu3a0c7mlfn3x",
       "type": "message",
       "data": {
@@ -102,5 +88,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787565537371
+  "version": 1787565578481
 }
