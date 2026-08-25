@@ -154,11 +154,11 @@
       "items": [
         {
           "text": "订机票✅",
-          "done": false
+          "done": true
         },
         {
           "text": "酒店宁波两天✅",
-          "done": false
+          "done": true
         },
         {
           "text": "国庆期间酒店❌",
@@ -237,5 +237,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787624277406
+  "version": 1787624288688
 }
