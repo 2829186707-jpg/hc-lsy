@@ -1049,7 +1049,7 @@
             const rp = document.getElementById('recentPhotos'), rpList = state.photos.slice(-6).reverse();
             if (rpList.length === 0) rp.innerHTML = '<div class="empty-state">还没有照片，去上传第一张吧 ♥</div>';
             else {
-                rp.innerHTML = rpList.map((p, i) => `<div class="recent-photo-item" data-index="${state.photos.length - 1 - i}">${p.type === 'video' ? '<video src="' + p.url + '" muted></video>' : '<img src="' + p.url + '" alt="">'}</div>`).join('');
+                rp.innerHTML = rpList.map((p, i) => `<div class="recent-photo-item" data-index="${state.photos.length - 1 - i}">${p.type === 'video' ? '<video src="' + p.url + '" muted></video>' : '<img src="' + p.url + '" alt="" loading="lazy">'}</div>`).join('');
                 rp.querySelectorAll('.recent-photo-item').forEach(it => it.addEventListener('click', () => this.openLightbox(parseInt(it.dataset.index), 'gallery')));
             }
 
@@ -1615,7 +1615,7 @@
             const sorted = [...state.diaries].sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
             t.innerHTML = sorted.map(d => {
                 const canEdit = d.author === state.currentUser;
-                return `<div class="diary-item" data-id="${d.id}"><div class="diary-header"><div class="diary-title">${utils.escapeHtml(d.title || '无标题')}</div><div class="diary-meta"><span class="diary-mood">${d.mood || ''}</span><span>${utils.formatDate(d.date)}</span><span class="diary-author ${d.author}">${d.author.toUpperCase()}</span></div></div><div class="diary-content">${utils.escapeHtml(d.content)}</div>${d.photos && d.photos.length > 0 ? `<div class="diary-photos">${d.photos.map((p, pi) => `<div class="diary-photo" data-diary="${d.id}" data-photo="${pi}"><img src="${p.url}" alt=""></div>`).join('')}</div>` : ''}<div class="diary-actions"><button class="diary-action-btn" data-action="share" data-id="${d.id}">分享</button>${canEdit ? `<button class="diary-action-btn" data-action="edit" data-id="${d.id}">编辑</button><button class="diary-action-btn delete" data-action="delete" data-id="${d.id}">删除</button>` : ''}</div></div>`;
+                return `<div class="diary-item" data-id="${d.id}"><div class="diary-header"><div class="diary-title">${utils.escapeHtml(d.title || '无标题')}</div><div class="diary-meta"><span class="diary-mood">${d.mood || ''}</span><span>${utils.formatDate(d.date)}</span><span class="diary-author ${d.author}">${d.author.toUpperCase()}</span></div></div><div class="diary-content">${utils.escapeHtml(d.content)}</div>${d.photos && d.photos.length > 0 ? `<div class="diary-photos">${d.photos.map((p, pi) => `<div class="diary-photo" data-diary="${d.id}" data-photo="${pi}"><img src="${p.url}" alt="" loading="lazy"></div>`).join('')}</div>` : ''}<div class="diary-actions"><button class="diary-action-btn" data-action="share" data-id="${d.id}">分享</button>${canEdit ? `<button class="diary-action-btn" data-action="edit" data-id="${d.id}">编辑</button><button class="diary-action-btn delete" data-action="delete" data-id="${d.id}">删除</button>` : ''}</div></div>`;
             }).join('');
             t.querySelectorAll('.diary-action-btn').forEach(b => b.addEventListener('click', e => {
                 e.stopPropagation(); const id = b.dataset.id;
@@ -1639,7 +1639,7 @@
                 let html = `<div class="timeline-item"><div class="timeline-date">${utils.formatDate(d)}</div>`;
                 day.diaries.forEach(diary => { html += `<div class="timeline-card diary"><div class="timeline-title">${utils.escapeHtml(diary.title || '无标题')}</div><div class="timeline-meta">${diary.mood || ''} ${diary.author.toUpperCase()}</div><div class="timeline-content">${utils.escapeHtml(diary.content)}</div></div>`; });
                 if (day.photos.length > 0) {
-                    html += `<div class="timeline-card photo"><div class="timeline-photos">${day.photos.map((p, pi) => `<div class="timeline-photo" data-date="${d}" data-photo="${pi}">${p.type === 'video' ? '<video src="' + p.url + '" muted></video>' : '<img src="' + p.url + '" alt="">'}</div>`).join('')}</div>${day.photos[0].caption ? `<div class="timeline-caption">${utils.escapeHtml(day.photos[0].caption)}</div>` : ''}</div>`;
+                    html += `<div class="timeline-card photo"><div class="timeline-photos">${day.photos.map((p, pi) => `<div class="timeline-photo" data-date="${d}" data-photo="${pi}">${p.type === 'video' ? '<video src="' + p.url + '" muted></video>' : '<img src="' + p.url + '" alt="" loading="lazy">'}</div>`).join('')}</div>${day.photos[0].caption ? `<div class="timeline-caption">${utils.escapeHtml(day.photos[0].caption)}</div>` : ''}</div>`;
                 }
                 html += '</div>'; return html;
             }).join('');
