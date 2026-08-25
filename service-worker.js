@@ -1,5 +1,5 @@
 /* HC & LSY 专属空间 - Service Worker (PWA 离线支持) */
-const CACHE_NAME = 'hc-lsy-cache-v5';
+const CACHE_NAME = 'hc-lsy-cache-v6';
 const ASSETS = [
     './',
     './index.html',
@@ -34,35 +34,25 @@ self.addEventListener('activate', function (e) {
     self.clients.claim();
 });
 
-// 拦截请求：缓存优先，网络回退
+// 拦截请求：网络优先，缓存回退
 self.addEventListener('fetch', function (e) {
     // 只处理 GET 请求
     if (e.request.method !== 'GET') return;
 
     e.respondWith(
-        caches.match(e.request).then(function (cached) {
-            // 有缓存直接返回，同时后台更新
-            if (cached) {
-                fetch(e.request).then(function (response) {
-                    if (response && response.ok) {
-                        var clone = response.clone();
-                        caches.open(CACHE_NAME).then(function (cache) {
-                            cache.put(e.request, clone);
-                        });
-                    }
-                }).catch(function () {});
-                return cached;
+        fetch(e.request).then(function (response) {
+            // 网络成功：更新缓存并返回
+            if (response && response.ok) {
+                var clone = response.clone();
+                caches.open(CACHE_NAME).then(function (cache) {
+                    cache.put(e.request, clone);
+                });
             }
-            // 无缓存，从网络获取并缓存
-            return fetch(e.request).then(function (response) {
-                if (response && response.ok) {
-                    var clone = response.clone();
-                    caches.open(CACHE_NAME).then(function (cache) {
-                        cache.put(e.request, clone);
-                    });
-                }
-                return response;
-            }).catch(function () {
+            return response;
+        }).catch(function () {
+            // 网络失败：尝试从缓存读取
+            return caches.match(e.request).then(function (cached) {
+                if (cached) return cached;
                 // 离线且无缓存时，返回首页（单页应用）
                 if (e.request.mode === 'navigate') {
                     return caches.match('./index.html');
