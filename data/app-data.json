@@ -109,6 +109,116 @@
       "album": "合照",
       "uploader": "lsy",
       "createdAt": "2026-08-24T15:43:20.508Z"
+    },
+    {
+      "id": "mt844otb1sduocxt0",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844otb1sduocxt0.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:07.646Z"
+    },
+    {
+      "id": "mt844r8k5uaz86wii",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844r8k5uaz86wii.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:10.061Z"
+    },
+    {
+      "id": "mt844rq1rxbzbwnbd",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844rq1rxbzbwnbd.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:10.735Z"
+    },
+    {
+      "id": "mt844t3he1f6bxfuz",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844t3he1f6bxfuz.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:11.805Z"
+    },
+    {
+      "id": "mt844tm7ljbvbog9a",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844tm7ljbvbog9a.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:13.208Z"
+    },
+    {
+      "id": "mt844ufxz5piva9yr",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844ufxz5piva9yr.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:14.096Z"
+    },
+    {
+      "id": "mt844viwpmbnwgtiz",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844viwpmbnwgtiz.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:15.458Z"
+    },
+    {
+      "id": "mt844w7kkmbj35csp",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844w7kkmbj35csp.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:16.595Z"
+    },
+    {
+      "id": "mt844x9e8zuyvfy6c",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844x9e8zuyvfy6c.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:17.925Z"
+    },
+    {
+      "id": "mt844y4zbc4o5av6n",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844y4zbc4o5av6n.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:18.963Z"
+    },
+    {
+      "id": "mt844yivlrb75kqw2",
+      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844yivlrb75kqw2.jpg",
+      "type": "image",
+      "caption": "",
+      "date": "2026-08-25",
+      "album": "未分类",
+      "uploader": "hc",
+      "createdAt": "2026-08-25T03:36:19.796Z"
     }
   ],
   "diaries": [],
@@ -166,7 +276,7 @@
         },
         {
           "text": "目的地车票❌",
-          "done": true
+          "done": false
         },
         {
           "text": "返程机票❌",
@@ -237,5 +347,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787628908499
+  "version": 1787628980423
 }
