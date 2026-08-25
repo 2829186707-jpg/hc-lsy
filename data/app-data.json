@@ -223,7 +223,10 @@
   ],
   "music": null,
   "coverImage": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/cover.jpg",
-  "period": null,
+  "period": {
+    "date": "2026-07-30",
+    "cycle": 28
+  },
   "weather": {
     "city1": "宁波",
     "city2": "成都"
@@ -234,5 +237,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787622085985
+  "version": 1787622161737
 }
