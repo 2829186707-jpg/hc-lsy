@@ -154,7 +154,7 @@
       "items": [
         {
           "text": "订机票✅",
-          "done": false
+          "done": true
         },
         {
           "text": "酒店宁波两天✅",
@@ -166,7 +166,7 @@
         },
         {
           "text": "目的地车票❌",
-          "done": false
+          "done": true
         },
         {
           "text": "返程机票❌",
@@ -237,5 +237,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787626135346
+  "version": 1787626144654
 }
