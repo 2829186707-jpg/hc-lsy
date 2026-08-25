@@ -166,7 +166,7 @@
         },
         {
           "text": "目的地车票❌",
-          "done": true
+          "done": false
         },
         {
           "text": "返程机票❌",
@@ -237,5 +237,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787626144654
+  "version": 1787626387423
 }
