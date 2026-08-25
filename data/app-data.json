@@ -199,7 +199,8 @@
       "lsy": true
     },
     "2026-08-25": {
-      "hc": true
+      "hc": true,
+      "lsy": true
     }
   },
   "recycleBin": [
@@ -233,5 +234,5 @@
   },
   "pwdVersion": 2,
   "anniversary": "2022-07-11",
-  "version": 1787616189567
+  "version": 1787620829045
 }
