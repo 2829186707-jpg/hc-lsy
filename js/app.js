@@ -754,6 +754,14 @@
                 if (cloudData) {
                     // 合并删除标记（tombstone）：本地和云端记录的删除都要传播
                     const mergedDeleted = { ...(cloudData.deletedItems || {}), ...state.deletedItems };
+                    // 清理 30 天前的 tombstone（防止无限增长；30天未同步的设备删除可能复活，可接受）
+                    const nowTs = Date.now();
+                    for (const k in mergedDeleted) {
+                        if (mergedDeleted[k] && mergedDeleted[k].at) {
+                            const t = new Date(mergedDeleted[k].at).getTime();
+                            if (!isNaN(t) && nowTs - t > 30 * 86400000) delete mergedDeleted[k];
+                        }
+                    }
                     state.deletedItems = mergedDeleted;
                     // 应用删除标记过滤：被任一方删除的项，从合并结果中排除
                     const filterDeleted = (arr, type) => (arr || []).filter(item => {
