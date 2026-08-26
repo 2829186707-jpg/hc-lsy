@@ -1599,8 +1599,9 @@
             } else if (index < 0 || index >= state.photos.length) return;
             state.lightboxIndex = index; this.updateLightbox();
             const photo = this.getLightboxPhotos()[index];
-            const canDelete = source === 'gallery' && photo && photo.type !== 'video' && photo.uploader === state.currentUser;
-            const canEditMeta = source === 'gallery' && photo && photo.type !== 'video';
+            // 视频与照片一致：上传者可删除，双方可改日期/相册
+            const canDelete = source === 'gallery' && photo && photo.uploader === state.currentUser;
+            const canEditMeta = source === 'gallery' && photo;
             document.getElementById('lightboxDelete').style.display = canDelete ? 'block' : 'none';
             // 填充相册选择（画廊来源即可编辑，不限制上传者）
             const albumSelect = document.getElementById('lightboxAlbum');
@@ -1650,8 +1651,8 @@
             if (ni >= photos.length) ni = 0;
             state.lightboxIndex = ni; this.updateLightbox();
             const photo = photos[ni];
-            const canDelete = state.lightboxSource === 'gallery' && photo && photo.type !== 'video' && photo.uploader === state.currentUser;
-            const canEditMeta = state.lightboxSource === 'gallery' && photo && photo.type !== 'video';
+            const canDelete = state.lightboxSource === 'gallery' && photo && photo.uploader === state.currentUser;
+            const canEditMeta = state.lightboxSource === 'gallery' && photo;
             document.getElementById('lightboxDelete').style.display = canDelete ? 'block' : 'none';
             const albumSel = document.getElementById('lightboxAlbum');
             if (albumSel) {
