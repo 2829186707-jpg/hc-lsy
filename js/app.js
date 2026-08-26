@@ -507,8 +507,8 @@
             }
             const savedUser = storage.get(CONFIG.storageKeys.currentUser);
             if (savedUser && storage.get(CONFIG.storageKeys.auth)) { state.currentUser = savedUser; this.enterApp(); return; }
-            const sv = storage.get(CONFIG.storageKeys.pwdVersion, 0);
-            if (sv !== CONFIG.passwordVersion || !storage.get(CONFIG.storageKeys.passwords)) {
+            // 仅当本地从未设置过密码时才初始化默认密码；用户改过的密码（pwdVersion 可能高于 CONFIG.passwordVersion）永不被重置
+            if (!storage.get(CONFIG.storageKeys.passwords)) {
                 this.initDefaultPasswords(); storage.set(CONFIG.storageKeys.pwdVersion, CONFIG.passwordVersion);
             }
             this.bindEvents();
@@ -817,7 +817,18 @@
                     const allQaKeys = new Set([...Object.keys(localQa), ...Object.keys(cloudQa)]);
                     allQaKeys.forEach(k => {
                         const lv = localQa[k] || {}, cv = cloudQa[k] || {};
-                        mergedQa[k] = { ...cv, ...lv }; // 同题同用户：本地保留（本地可能是刚答的），云端补充
+                        // 同题同用户：比较时间戳（新数据是 {answer,ts}，旧字符串视为 ts=0），新的胜出
+                        const mergedAns = {};
+                        const allUsers = new Set([...Object.keys(lv), ...Object.keys(cv)]);
+                        allUsers.forEach(u => {
+                            const la = lv[u], ca = cv[u];
+                            if (!la) { mergedAns[u] = ca; return; }
+                            if (!ca) { mergedAns[u] = la; return; }
+                            const lts = (la && typeof la === 'object') ? (la.ts || 0) : 0;
+                            const cts = (ca && typeof ca === 'object') ? (ca.ts || 0) : 0;
+                            mergedAns[u] = (lts >= cts) ? la : ca;
+                        });
+                        mergedQa[k] = mergedAns;
                     });
                     state.qaAnswers = mergedQa;
                     // 共享字段（封面/音乐/天气/生理期/纪念日/想你了）：用时间戳判断谁更新，更新的优先
@@ -1118,7 +1129,20 @@
                             const localQa = state.qaAnswers || {}, cloudQa = r.qaAnswers || {};
                             const mQa = {};
                             const allKeys = new Set([...Object.keys(localQa), ...Object.keys(cloudQa)]);
-                            allKeys.forEach(k => { const lv = localQa[k] || {}, cv = cloudQa[k] || {}; mQa[k] = { ...cv, ...lv }; });
+                            allKeys.forEach(k => {
+                                const lv = localQa[k] || {}, cv = cloudQa[k] || {};
+                                const mergedAns = {};
+                                const allUsers = new Set([...Object.keys(lv), ...Object.keys(cv)]);
+                                allUsers.forEach(u => {
+                                    const la = lv[u], ca = cv[u];
+                                    if (!la) { mergedAns[u] = ca; return; }
+                                    if (!ca) { mergedAns[u] = la; return; }
+                                    const lts = (la && typeof la === 'object') ? (la.ts || 0) : 0;
+                                    const cts = (ca && typeof ca === 'object') ? (ca.ts || 0) : 0;
+                                    mergedAns[u] = (lts >= cts) ? la : ca;
+                                });
+                                mQa[k] = mergedAns;
+                            });
                             state.qaAnswers = mQa;
                         }
                         if (r.deletedItems) state.deletedItems = { ...(r.deletedItems || {}), ...state.deletedItems };
@@ -2061,26 +2085,31 @@
         bindQaEvents() {
             document.getElementById('saveQaBtn').addEventListener('click', () => this.saveQaAnswer());
         },
+        // 问答答案兼容工具：旧数据是纯字符串，新数据是 {answer, ts} 对象
+        qaText(v) { return v && typeof v === 'object' ? (v.answer || '') : (v || ''); },
+        qaHas(v) { const t = this.qaText(v); return t && t.trim().length > 0; },
         openQaModal(index) {
             state.currentQaIndex = index;
             const q = QA_QUESTIONS[index];
             document.getElementById('qaQuestionText').textContent = q;
             const existing = state.qaAnswers[index];
-            document.getElementById('qaAnswer').value = existing ? (existing[state.currentUser] || '') : '';
+            const myAns = existing ? existing[state.currentUser] : null;
+            document.getElementById('qaAnswer').value = myAns ? this.qaText(myAns) : '';
             this.openModal('qaModal');
         },
         saveQaAnswer() {
             const answer = document.getElementById('qaAnswer').value.trim();
             if (!answer) { toast('请填写答案', 'error'); return; }
             if (!state.qaAnswers[state.currentQaIndex]) state.qaAnswers[state.currentQaIndex] = {};
-            state.qaAnswers[state.currentQaIndex][state.currentUser] = answer;
+            // 存为 {answer, ts} 带时间戳，确保多设备合并时以最新答案为准（旧数据为纯字符串，视为 ts=0）
+            state.qaAnswers[state.currentQaIndex][state.currentUser] = { answer, ts: Date.now() };
             this.saveData(); this.closeModal('qaModal'); this.renderQa();
             toast('回答已保存', 'success');
         },
         renderQa() {
             const list = document.getElementById('qaList');
             if (!list) return;
-            const answered = Object.keys(state.qaAnswers).filter(k => state.qaAnswers[k] && (state.qaAnswers[k].hc || state.qaAnswers[k].lsy)).length;
+            const answered = Object.keys(state.qaAnswers).filter(k => { const a = state.qaAnswers[k]; return a && (this.qaHas(a.hc) || this.qaHas(a.lsy)); }).length;
             document.getElementById('qaProgressFill').style.width = (answered / QA_QUESTIONS.length * 100) + '%';
             document.getElementById('qaProgressText').textContent = `${answered} / ${QA_QUESTIONS.length} 已回答`;
 
@@ -2092,7 +2121,7 @@
                     cats.forEach(cat => {
                         const catAnswered = cat.indices.filter(i => {
                             const a = state.qaAnswers[i];
-                            return a && (a.hc || a.lsy);
+                            return a && (this.qaHas(a.hc) || this.qaHas(a.lsy));
                         }).length;
                         html += '<div class="qa-category"><div class="qa-category-header"><span class="qa-category-icon">' + cat.icon + '</span><span class="qa-category-name">' + cat.name + '</span><span class="qa-category-count">' + catAnswered + '/' + cat.indices.length + '</span></div><div class="qa-category-items">';
                         cat.indices.forEach(i => {
@@ -2117,8 +2146,8 @@
         qaItemHTML(i) {
             const q = QA_QUESTIONS[i];
             const ans = state.qaAnswers[i];
-            const hcAns = ans && ans.hc;
-            const lsyAns = ans && ans.lsy;
+            const hcAns = ans && this.qaText(ans.hc);
+            const lsyAns = ans && this.qaText(ans.lsy);
             let status = 'pending', statusText = '未回答';
             if (hcAns && lsyAns) { status = 'done'; statusText = '都回答了'; }
             else if (hcAns || lsyAns) { status = 'partial'; statusText = '部分回答'; }
