@@ -89,7 +89,7 @@
         editingDiaryId: null, editingTripId: null, currentQaIndex: -1,
         lightboxIndex: -1, lightboxSource: 'gallery', lightboxDiaryId: null,
         pendingFiles: [], diaryPendingPhotos: [], music: null, audio: null,
-        isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [],
+        isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [], deletedItems: {},
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
         slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
         syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0, lastFingerprint: null, syncRetry: 0
@@ -97,8 +97,8 @@
 
     // 同步状态持久化（防止刷新后丢失未同步标记，导致旧数据覆盖新数据）
     const syncState = {
-        save() { storage.set(CONFIG.storageKeys.syncState, { dirty: state.dirty, lastSyncVersion: state.lastSyncVersion, lastFingerprint: state.lastFingerprint }); },
-        load() { const s = storage.get(CONFIG.storageKeys.syncState, {}); if (s.dirty !== undefined) state.dirty = s.dirty; if (s.lastSyncVersion !== undefined) state.lastSyncVersion = s.lastSyncVersion; if (s.lastFingerprint !== undefined) state.lastFingerprint = s.lastFingerprint; }
+        save() { storage.set(CONFIG.storageKeys.syncState, { dirty: state.dirty, lastSyncVersion: state.lastSyncVersion, lastFingerprint: state.lastFingerprint, deletedItems: state.deletedItems }); },
+        load() { const s = storage.get(CONFIG.storageKeys.syncState, {}); if (s.dirty !== undefined) state.dirty = s.dirty; if (s.lastSyncVersion !== undefined) state.lastSyncVersion = s.lastSyncVersion; if (s.lastFingerprint !== undefined) state.lastFingerprint = s.lastFingerprint; if (s.deletedItems) state.deletedItems = s.deletedItems; }
     };
 
     // ========== 工具 ==========
@@ -440,10 +440,17 @@
     // ========== 回收站 ==========
     const recycle = {
         init() { state.recycleBin = storage.get(CONFIG.storageKeys.recycleBin, []); },
+        // 类型单数转复数（用于tombstone key）
+        toArrKey(type) { return { photo: 'photos', diary: 'diaries', wish: 'wishes', message: 'messages' }[type] || type + 's'; },
         add(type, data) {
             state.recycleBin.unshift({ id: utils.generateId(), type, data, deletedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 7 * 86400000).toISOString() });
             state.recycleBin = state.recycleBin.filter(r => new Date(r.expiresAt) > new Date());
             storage.set(CONFIG.storageKeys.recycleBin, state.recycleBin);
+            // 记录删除标记（tombstone），确保其他设备同步后也不复活
+            if (data && data.id) {
+                const key = this.toArrKey(type) + ':' + data.id;
+                state.deletedItems[key] = { at: new Date().toISOString() };
+            }
         },
         restore(id) {
             const idx = state.recycleBin.findIndex(r => r.id === id);
@@ -456,6 +463,11 @@
             else if (item.type === 'diary') state.diaries.push(item.data);
             else if (item.type === 'wish') state.wishes.push(item.data);
             else if (item.type === 'message') state.messages.push(item.data);
+            // 恢复时清除删除标记，让其他设备重新显示
+            if (item.data && item.data.id) {
+                const key = this.toArrKey(item.type) + ':' + item.data.id;
+                delete state.deletedItems[key];
+            }
             state.recycleBin.splice(idx, 1);
             storage.set(CONFIG.storageKeys.recycleBin, state.recycleBin);
             app.saveData(); app.renderAll();
@@ -466,6 +478,8 @@
             if (item) {
                 const owner = item.data.uploader || item.data.author;
                 if (owner && owner !== state.currentUser) { toast('只能删除自己的内容', 'error'); return; }
+                // 永久删除：记录回收站项的tombstone，确保其他设备不复活
+                state.deletedItems['recycleBin:' + id] = { at: new Date().toISOString() };
             }
             state.recycleBin = state.recycleBin.filter(r => r.id !== id);
             storage.set(CONFIG.storageKeys.recycleBin, state.recycleBin);
@@ -672,16 +686,16 @@
                     letters: obj.letters || [], trips: obj.trips || [], qaAnswers: obj.qaAnswers || {},
                     albums: obj.albums || [], music: obj.music, coverImage: obj.coverImage,
                     period: obj.period, weather: obj.weather, anniversary: obj.anniversary,
-                    recycleBin: obj.recycleBin || [], missYou: obj.missYou || {}
+                    recycleBin: obj.recycleBin || [], missYou: obj.missYou || {}, deletedItems: obj.deletedItems || {}
                 };
                 return JSON.stringify(core);
             } catch (e) { return null; }
         },
-        // 合并两个数组（按id去重，先本地后云端，云端补充本地没有的）
+        // 合并两个数组：本地优先（同id时本地覆盖云端），云端补充本地没有的新项
         mergeById(localArr, cloudArr) {
             const map = new Map();
-            (localArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
             (cloudArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
+            (localArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
             return Array.from(map.values());
         },
         async syncAll() {
@@ -738,15 +752,27 @@
                 }
                 // 合并式同步：本地 + 云端按id去重合并，任何一方的数据都不丢
                 if (cloudData) {
+                    // 合并删除标记（tombstone）：本地和云端记录的删除都要传播
+                    const mergedDeleted = { ...(cloudData.deletedItems || {}), ...state.deletedItems };
+                    state.deletedItems = mergedDeleted;
+                    // 应用删除标记过滤：被任一方删除的项，从合并结果中排除
+                    const filterDeleted = (arr, type) => (arr || []).filter(item => {
+                        const tomb = mergedDeleted[type + ':' + item.id];
+                        if (!tomb) return true;
+                        // 若本地有该 id 的新数据（例如从回收站恢复），且本地项更新时间晚于删除标记，则保留
+                        const localItem = (state[type] || []).find(i => i.id === item.id);
+                        if (localItem && localItem.updatedAt && tomb.at && localItem.updatedAt > tomb.at) return true;
+                        return false;
+                    });
                     // 数组字段：按id合并
-                    state.photos = this.mergeById(state.photos, cloudData.photos);
-                    state.diaries = this.mergeById(state.diaries, cloudData.diaries);
-                    state.wishes = this.mergeById(state.wishes, cloudData.wishes);
-                    state.messages = this.mergeById(state.messages, cloudData.messages);
-                    state.anniversaries = this.mergeById(state.anniversaries, cloudData.anniversaries);
-                    state.letters = this.mergeById(state.letters, cloudData.letters);
-                    state.trips = this.mergeById(state.trips, cloudData.trips);
-                    state.recycleBin = this.mergeById(state.recycleBin, cloudData.recycleBin);
+                    state.photos = filterDeleted(this.mergeById(state.photos, cloudData.photos), 'photos');
+                    state.diaries = filterDeleted(this.mergeById(state.diaries, cloudData.diaries), 'diaries');
+                    state.wishes = filterDeleted(this.mergeById(state.wishes, cloudData.wishes), 'wishes');
+                    state.messages = filterDeleted(this.mergeById(state.messages, cloudData.messages), 'messages');
+                    state.anniversaries = filterDeleted(this.mergeById(state.anniversaries, cloudData.anniversaries), 'anniversaries');
+                    state.letters = filterDeleted(this.mergeById(state.letters, cloudData.letters), 'letters');
+                    state.trips = filterDeleted(this.mergeById(state.trips, cloudData.trips), 'trips');
+                    state.recycleBin = filterDeleted(this.mergeById(state.recycleBin, cloudData.recycleBin), 'recycleBin');
                     state.albums = this.mergeById(state.albums, cloudData.albums);
                     // 对象字段：本地有则用本地（本地可能有新改动），否则用云端
                     if (!state.music && cloudData.music) state.music = cloudData.music;
@@ -765,7 +791,7 @@
                     messages: state.messages, anniversaries: state.anniversaries,
                     letters: state.letters, trips: state.trips, qaAnswers: state.qaAnswers,
                     albums: state.albums, missYou: storage.get(CONFIG.storageKeys.missYou, {}),
-                    recycleBin: state.recycleBin, music: state.music,
+                    recycleBin: state.recycleBin, deletedItems: state.deletedItems, music: state.music,
                     coverImage: storage.get(CONFIG.storageKeys.coverImage, null),
                     period: storage.get(CONFIG.storageKeys.period, null),
                     weather: storage.get(CONFIG.storageKeys.weather, null),
@@ -987,21 +1013,35 @@
         },
 
         loadData(silent = false) {
-            // 自动拉取时，如果本地有未同步修改或正在同步，跳过（防止数据丢失）
-            if (silent && (state.dirty || state.syncing)) return;
+            // 自动拉取时，如果正在同步则跳过；本地有未推送数据时仍允许合并式拉取（不会覆盖本地）
+            if (silent && state.syncing) return;
             if (github.isConfigured()) {
                 github.pullData().then(r => {
                     if (r) {
-                        // 版本号检查：云端版本不新于本地最后同步版本，跳过
-                        if (silent && r.version && r.version <= state.lastSyncVersion) return;
-                        state.photos = r.photos || []; state.diaries = r.diaries || [];
-                        state.wishes = r.wishes || []; state.messages = r.messages || [];
-                        state.anniversaries = r.anniversaries || []; state.letters = r.letters || [];
-                        state.trips = r.trips || []; state.qaAnswers = r.qaAnswers || {};
-                        state.albums = r.albums || [];
+                        // 指纹判断：云端与本地上次同步基准一致，说明无新内容，跳过（静默拉取）
+                        const cloudFp = github.contentFingerprint(r);
+                        if (silent && state.lastFingerprint && cloudFp && cloudFp === state.lastFingerprint) return;
+                        // 合并式拉取：本地优先合并 + 应用删除标记，避免覆盖本地未推送数据
+                        const applyDeleted = (arr, type) => (arr || []).filter(item => {
+                            const tomb = (r.deletedItems || {})[type + ':' + item.id];
+                            if (!tomb) return true;
+                            const localItem = (state[type] || []).find(i => i.id === item.id);
+                            if (localItem && localItem.updatedAt && tomb.at && localItem.updatedAt > tomb.at) return true;
+                            return false;
+                        });
+                        state.photos = applyDeleted(github.mergeById(state.photos, r.photos), 'photos');
+                        state.diaries = applyDeleted(github.mergeById(state.diaries, r.diaries), 'diaries');
+                        state.wishes = applyDeleted(github.mergeById(state.wishes, r.wishes), 'wishes');
+                        state.messages = applyDeleted(github.mergeById(state.messages, r.messages), 'messages');
+                        state.anniversaries = applyDeleted(github.mergeById(state.anniversaries, r.anniversaries), 'anniversaries');
+                        state.letters = applyDeleted(github.mergeById(state.letters, r.letters), 'letters');
+                        state.trips = applyDeleted(github.mergeById(state.trips, r.trips), 'trips');
+                        state.albums = github.mergeById(state.albums, r.albums || []);
+                        state.qaAnswers = { ...(r.qaAnswers || {}), ...state.qaAnswers };
+                        if (r.deletedItems) state.deletedItems = { ...(r.deletedItems || {}), ...state.deletedItems };
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
-                        if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, r.missYou);
-                        if (r.recycleBin !== undefined) state.recycleBin = r.recycleBin;
+                        if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, { ...(r.missYou || {}), ...storage.get(CONFIG.storageKeys.missYou, {}) });
+                        if (r.recycleBin !== undefined) state.recycleBin = github.mergeById(state.recycleBin, r.recycleBin);
                         if (r.music !== undefined) { state.music = r.music; if (r.music) storage.set(CONFIG.storageKeys.music, r.music); else storage.remove(CONFIG.storageKeys.music); }
                         if (r.coverImage !== undefined) { if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage); else storage.remove(CONFIG.storageKeys.coverImage); }
                         if (r.period !== undefined) { if (r.period) storage.set(CONFIG.storageKeys.period, r.period); else storage.remove(CONFIG.storageKeys.period); }
@@ -1009,11 +1049,10 @@
                         if (r.passwords !== undefined) storage.set(CONFIG.storageKeys.passwords, r.passwords);
                         if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                         if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
-                        ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
+                        ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'recycleBin'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         if (r.version) { state.lastSyncVersion = r.version; syncState.save(); }
                         // 记录拉取到的云端内容指纹，作为本设备"已同步到"的基准
-                        const fp = github.contentFingerprint(r);
-                        if (fp) { state.lastFingerprint = fp; syncState.save(); }
+                        if (cloudFp) { state.lastFingerprint = cloudFp; syncState.save(); }
                         if (!silent) toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
@@ -1250,7 +1289,8 @@
         movePhotoToAlbum(photoIndex, album) {
             if (photoIndex < 0 || photoIndex >= state.photos.length) return;
             state.photos[photoIndex].album = album;
-            this.saveData(false);
+            state.photos[photoIndex].updatedAt = new Date().toISOString();
+            this.saveData();
             this.renderGallery();
             toast(`已移至"${album}"`, 'success');
         },
@@ -1382,6 +1422,7 @@
                     const photo = state.photos[state.lightboxIndex];
                     if (photo) {
                         photo.date = dateInput.value || utils.formatDateInput();
+                        photo.updatedAt = new Date().toISOString();
                         this.saveData();
                         this.renderGallery(); this.renderTimeline(); this.renderHome();
                         this.updateLightbox();
@@ -1839,6 +1880,7 @@
             const l = state.letters.find(x => x.id === id);
             if (l && l.author !== state.currentUser) { toast('只能删除自己写的信', 'error'); return; }
             if (!confirm('确定删除这封信吗？')) return;
+            state.deletedItems['letters:' + id] = { at: new Date().toISOString() };
             state.letters = state.letters.filter(l => l.id !== id);
             this.saveData(); this.renderLetters();
         },
@@ -1888,6 +1930,7 @@
             const t = state.trips.find(x => x.id === id);
             if (t && t.author !== state.currentUser) { toast('只能删除自己创建的旅行计划', 'error'); return; }
             if (!confirm('确定删除这个旅行计划吗？')) return;
+            state.deletedItems['trips:' + id] = { at: new Date().toISOString() };
             state.trips = state.trips.filter(t => t.id !== id);
             this.saveData(); this.renderTrips();
         },
@@ -2139,6 +2182,7 @@
             if (state.anniversaries.length === 0) { list.innerHTML = '<div class="empty-state" style="padding:12px;">暂无纪念日</div>'; return; }
             list.innerHTML = state.anniversaries.map(a => `<div class="anniversary-item" data-id="${a.id}"><span class="anniversary-item-name">${utils.escapeHtml(a.name)}</span><span class="anniversary-item-date">${utils.formatDate(a.date)}</span><button class="anniversary-delete" data-id="${a.id}">删除</button></div>`).join('');
             list.querySelectorAll('.anniversary-delete').forEach(b => b.addEventListener('click', () => {
+                state.deletedItems['anniversaries:' + b.dataset.id] = { at: new Date().toISOString() };
                 state.anniversaries = state.anniversaries.filter(a => a.id !== b.dataset.id);
                 this.saveData(); this.renderAnniversaries(); this.renderHome();
             }));
