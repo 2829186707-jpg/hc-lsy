@@ -171,16 +171,6 @@
       "createdAt": "2026-08-25T03:36:18.963Z"
     },
     {
-      "id": "mt844z5xbdnizvh06",
-      "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844z5xbdnizvh06.jpg",
-      "type": "image",
-      "caption": "",
-      "date": "2026-08-25",
-      "album": "未分类",
-      "uploader": "hc",
-      "createdAt": "2026-08-25T03:36:20.452Z"
-    },
-    {
       "id": "mt8450lwaazt6ltw2",
       "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt8450lwaazt6ltw2.jpg",
       "type": "image",
@@ -469,6 +459,22 @@
       },
       "deletedAt": "2026-08-26T06:16:30.806Z",
       "expiresAt": "2026-09-02T06:16:30.806Z"
+    },
+    {
+      "id": "mt9pb6mecsn4gxsxm",
+      "type": "photo",
+      "data": {
+        "id": "mt844z5xbdnizvh06",
+        "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt844z5xbdnizvh06.jpg",
+        "type": "image",
+        "caption": "",
+        "date": "2026-08-25",
+        "album": "未分类",
+        "uploader": "hc",
+        "createdAt": "2026-08-25T03:36:20.452Z"
+      },
+      "deletedAt": "2026-08-26T06:16:45.638Z",
+      "expiresAt": "2026-09-02T06:16:45.638Z"
     }
   ],
   "deletedItems": {
@@ -498,6 +504,9 @@
     },
     "photos:mt844ufxz5piva9yr": {
       "at": "2026-08-26T06:16:37.680Z"
+    },
+    "photos:mt844z5xbdnizvh06": {
+      "at": "2026-08-26T06:16:45.644Z"
     }
   },
   "music": null,
@@ -524,5 +533,5 @@
     "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1787724998296
+  "version": 1787725007311
 }
