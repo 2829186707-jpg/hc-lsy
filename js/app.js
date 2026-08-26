@@ -839,27 +839,30 @@
                         const lt = localTs[field] || 0, ct = cloudTs[field] || 0;
                         const hasLocal = getLocal() != null && getLocal() !== undefined && getLocal() !== '';
                         if (lt > ct && hasLocal) return; // 本地更新且有值，保留本地
-                        // 两边都无时间戳且本地有值 → 保留本地（本地是用户当前状态）；否则云端更新用云端
-                        if (ct >= lt && cloudVal != null && cloudVal !== undefined) {
+                        // 云端时间戳更新：云端有值用云端；云端为 null（用户删除了该共享字段）则清除本地
+                        if (ct > lt) {
+                            if (cloudVal !== undefined) setLocal(cloudVal);
+                            else if (!hasLocal) setLocal(null);
+                        } else if (ct >= lt && cloudVal != null && cloudVal !== undefined) {
                             if (lt === 0 && ct === 0 && hasLocal) return;
                             setLocal(cloudVal);
                         }
                     };
                     // 音乐
                     pickNewer('music', state.music, cloudData.music,
-                        () => state.music, (v) => { state.music = v; storage.set(CONFIG.storageKeys.music, v); });
+                        () => state.music, (v) => { if (v) { state.music = v; storage.set(CONFIG.storageKeys.music, v); } else { state.music = null; storage.remove(CONFIG.storageKeys.music); } });
                     // 封面
                     pickNewer('coverImage', storage.get(CONFIG.storageKeys.coverImage), cloudData.coverImage,
-                        () => storage.get(CONFIG.storageKeys.coverImage), (v) => storage.set(CONFIG.storageKeys.coverImage, v));
+                        () => storage.get(CONFIG.storageKeys.coverImage), (v) => { if (v) storage.set(CONFIG.storageKeys.coverImage, v); else storage.remove(CONFIG.storageKeys.coverImage); });
                     // 天气
                     pickNewer('weather', storage.get(CONFIG.storageKeys.weather), cloudData.weather,
-                        () => storage.get(CONFIG.storageKeys.weather), (v) => storage.set(CONFIG.storageKeys.weather, v));
+                        () => storage.get(CONFIG.storageKeys.weather), (v) => { if (v) storage.set(CONFIG.storageKeys.weather, v); else storage.remove(CONFIG.storageKeys.weather); });
                     // 生理期
                     pickNewer('period', storage.get(CONFIG.storageKeys.period), cloudData.period,
-                        () => storage.get(CONFIG.storageKeys.period), (v) => storage.set(CONFIG.storageKeys.period, v));
+                        () => storage.get(CONFIG.storageKeys.period), (v) => { if (v) storage.set(CONFIG.storageKeys.period, v); else storage.remove(CONFIG.storageKeys.period); });
                     // 纪念日（在一起的日子）
                     pickNewer('anniversary', storage.get(CONFIG.storageKeys.anniversary), cloudData.anniversary,
-                        () => storage.get(CONFIG.storageKeys.anniversary), (v) => storage.set(CONFIG.storageKeys.anniversary, v));
+                        () => storage.get(CONFIG.storageKeys.anniversary), (v) => { if (v) storage.set(CONFIG.storageKeys.anniversary, v); else storage.remove(CONFIG.storageKeys.anniversary); });
                     // 想你了：对象字段，按天合并（本地+云端取并集，各自打卡互不影响）
                     const cloudMiss = cloudData.missYou || {}; const localMiss = storage.get(CONFIG.storageKeys.missYou, {});
                     const mergedMiss = { ...cloudMiss, ...localMiss };
@@ -1155,7 +1158,11 @@
                         const pickNewer2 = (field, cloudVal, getLocal, setLocal) => {
                             const lt = localTs2[field] || 0, ct = cloudTs2[field] || 0;
                             const hasLocal = getLocal() != null && getLocal() !== undefined && getLocal() !== '';
-                            if (ct > lt) { if (cloudVal != null && cloudVal !== undefined) setLocal(cloudVal); else if (!hasLocal) setLocal(cloudVal); }
+                            // 云端时间戳更新：云端有值用云端；云端为 null（用户删除了该共享字段）则清除本地
+                            if (ct > lt) {
+                                if (cloudVal !== undefined) setLocal(cloudVal);
+                                else if (!hasLocal) setLocal(null);
+                            }
                             // ct <= lt 且本地有值 → 保留本地；本地无值且云端有 → 用云端
                             else if (ct >= lt && !hasLocal && cloudVal != null) setLocal(cloudVal);
                         };
