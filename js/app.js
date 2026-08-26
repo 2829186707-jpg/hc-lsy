@@ -92,7 +92,7 @@
         isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [],
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
         slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
-        syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0, lastFingerprint: null
+        syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0, lastFingerprint: null, syncRetry: 0
     };
 
     // 同步状态持久化（防止刷新后丢失未同步标记，导致旧数据覆盖新数据）
@@ -677,9 +677,16 @@
                 return JSON.stringify(core);
             } catch (e) { return null; }
         },
+        // 合并两个数组（按id去重，先本地后云端，云端补充本地没有的）
+        mergeById(localArr, cloudArr) {
+            const map = new Map();
+            (localArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
+            (cloudArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
+            return Array.from(map.values());
+        },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
-            // 安全保护：如果本地数据基本为空（0照片+0日记+默认密码），拒绝推送，防止覆盖云端
+            // 安全保护：如果本地数据基本为空（0照片+0日记+0留言+默认密码），拒绝推送，防止覆盖云端
             const pws = storage.get(CONFIG.storageKeys.passwords, {});
             const defaultHash = 'sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92';
             const isEmptyLocal = state.photos.length === 0 && state.diaries.length === 0 && state.messages.length === 0
@@ -689,35 +696,13 @@
                 state.dirty = false; syncState.save();
                 return;
             }
-            // 内容指纹冲突检测 + 乐观锁：推送前比较云端内容指纹，冲突则拉取
             state.syncing = true;
             try {
                 // 拉取云端最新数据和sha
                 const cloudFile = await this.getFile('data/app-data.json');
+                let cloudData = null;
                 if (cloudFile && cloudFile.content) {
-                    try {
-                        const cloudData = JSON.parse(cloudFile.content);
-                        const cloudFp = this.contentFingerprint(cloudData);
-                        // 情况1：本地上次成功同步的指纹存在，且云端指纹不同于上次 → 云端有别人更新过，拒绝推送
-                        if (state.lastFingerprint && cloudFp && cloudFp !== state.lastFingerprint) {
-                            console.warn('[sync] 云端内容与本地上次同步不一致，拒绝推送，改为拉取合并');
-                            state.dirty = false; syncState.save();
-                            toast('检测到其他设备有更新，正在同步最新数据...', 'info');
-                            setTimeout(() => app.loadData(false), 300);
-                            return;
-                        }
-                        // 情况2：本设备是新的/指纹丢失，但云端数据明显比本地多 → 说明本地是旧数据或空数据，拒绝推送改为拉取
-                        const cloudPhotos = (cloudData.photos || []).length;
-                        const cloudDiaries = (cloudData.diaries || []).length;
-                        const cloudMsgs = (cloudData.messages || []).length;
-                        if (!state.lastFingerprint && (cloudPhotos > state.photos.length + 2 || cloudDiaries > state.diaries.length + 2 || cloudMsgs > state.messages.length + 2)) {
-                            console.warn(`[sync] 本地数据(${state.photos.length}张)疑似旧数据，云端有(${cloudPhotos}张)，拒绝推送改为拉取`);
-                            state.dirty = false; syncState.save();
-                            toast('正在同步云端最新数据...', 'info');
-                            setTimeout(() => app.loadData(false), 300);
-                            return;
-                        }
-                    } catch (e) { console.warn('[sync] 云端数据解析失败，继续推送', e); }
+                    try { cloudData = JSON.parse(cloudFile.content); } catch (e) { cloudData = null; }
                 }
                 const cloudSha = cloudFile ? cloudFile.sha : null;
                 // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
@@ -751,6 +736,30 @@
                         }
                     }
                 }
+                // 合并式同步：本地 + 云端按id去重合并，任何一方的数据都不丢
+                if (cloudData) {
+                    // 数组字段：按id合并
+                    state.photos = this.mergeById(state.photos, cloudData.photos);
+                    state.diaries = this.mergeById(state.diaries, cloudData.diaries);
+                    state.wishes = this.mergeById(state.wishes, cloudData.wishes);
+                    state.messages = this.mergeById(state.messages, cloudData.messages);
+                    state.anniversaries = this.mergeById(state.anniversaries, cloudData.anniversaries);
+                    state.letters = this.mergeById(state.letters, cloudData.letters);
+                    state.trips = this.mergeById(state.trips, cloudData.trips);
+                    state.recycleBin = this.mergeById(state.recycleBin, cloudData.recycleBin);
+                    state.albums = this.mergeById(state.albums, cloudData.albums);
+                    // 对象字段：本地有则用本地（本地可能有新改动），否则用云端
+                    if (!state.music && cloudData.music) state.music = cloudData.music;
+                    if (!storage.get(CONFIG.storageKeys.coverImage) && cloudData.coverImage) storage.set(CONFIG.storageKeys.coverImage, cloudData.coverImage);
+                    if (!state.qaAnswers || Object.keys(state.qaAnswers).length === 0) state.qaAnswers = cloudData.qaAnswers || {};
+                    const cloudMiss = cloudData.missYou || {}; const localMiss = storage.get(CONFIG.storageKeys.missYou, {});
+                    const mergedMiss = { ...cloudMiss, ...localMiss };
+                    storage.set(CONFIG.storageKeys.missYou, mergedMiss);
+                    // 密码以云端为准（如果云端有）
+                    if (cloudData.passwords && Object.keys(cloudData.passwords).length > 0) storage.set(CONFIG.storageKeys.passwords, cloudData.passwords);
+                    // 同步后的数组写回本地存储
+                    ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'recycleBin', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
+                }
                 const data = {
                     photos: state.photos, diaries: state.diaries, wishes: state.wishes,
                     messages: state.messages, anniversaries: state.anniversaries,
@@ -773,14 +782,16 @@
                     }
                 } catch (e) {
                     if (e.message === 'CONFLICT') {
-                        // 冲突：别人已经更新了，放弃本次推送，改为拉取
-                        console.warn('[sync] 推送冲突，放弃覆盖，改为拉取合并');
-                        state.dirty = false; syncState.save();
-                        toast('检测到其他设备同时更新，正在同步...', 'info');
-                        setTimeout(() => app.loadData(false), 300);
-                    } else {
-                        toast('同步失败：' + e.message, 'error');
+                        // 冲突：推送时被并发修改，重新拉取再合并推送（最多重试3次）
+                        console.warn('[sync] 推送冲突，重试合并');
+                        state.syncing = false;
+                        if (state.syncRetry < 3) {
+                            state.syncRetry = (state.syncRetry || 0) + 1;
+                            setTimeout(() => this.syncAll(), 1000);
+                        } else { state.syncRetry = 0; toast('同步冲突，请稍后重试', 'error'); }
+                        return;
                     }
+                    toast('同步失败：' + e.message, 'error');
                 }
             } finally {
                 state.syncing = false;
