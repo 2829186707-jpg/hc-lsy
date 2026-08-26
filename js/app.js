@@ -92,13 +92,13 @@
         isPlaying: false, currentQuoteIndex: 0, missYouToday: {}, recycleBin: [],
         collageSelected: [], blindboxDrawn: null, annualYear: null, galleryView: 'time',
         slideshowPlaying: false, slideshowTimer: null, slideshowSpeed: 3000,
-        syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0
+        syncTimer: null, dirty: false, syncing: false, lastSyncVersion: 0, lastFingerprint: null
     };
 
     // 同步状态持久化（防止刷新后丢失未同步标记，导致旧数据覆盖新数据）
     const syncState = {
-        save() { storage.set(CONFIG.storageKeys.syncState, { dirty: state.dirty, lastSyncVersion: state.lastSyncVersion }); },
-        load() { const s = storage.get(CONFIG.storageKeys.syncState, {}); if (s.dirty !== undefined) state.dirty = s.dirty; if (s.lastSyncVersion !== undefined) state.lastSyncVersion = s.lastSyncVersion; }
+        save() { storage.set(CONFIG.storageKeys.syncState, { dirty: state.dirty, lastSyncVersion: state.lastSyncVersion, lastFingerprint: state.lastFingerprint }); },
+        load() { const s = storage.get(CONFIG.storageKeys.syncState, {}); if (s.dirty !== undefined) state.dirty = s.dirty; if (s.lastSyncVersion !== undefined) state.lastSyncVersion = s.lastSyncVersion; if (s.lastFingerprint !== undefined) state.lastFingerprint = s.lastFingerprint; }
     };
 
     // ========== 工具 ==========
@@ -663,6 +663,20 @@
                 console.error(e); toast('同步失败：' + e.message, 'error'); return false;
             }
         },
+        // 计算数据核心内容指纹（用于冲突检测，不依赖时间戳）
+        contentFingerprint(obj) {
+            try {
+                const core = {
+                    photos: obj.photos || [], diaries: obj.diaries || [], wishes: obj.wishes || [],
+                    messages: obj.messages || [], anniversaries: obj.anniversaries || [],
+                    letters: obj.letters || [], trips: obj.trips || [], qaAnswers: obj.qaAnswers || {},
+                    albums: obj.albums || [], music: obj.music, coverImage: obj.coverImage,
+                    period: obj.period, weather: obj.weather, anniversary: obj.anniversary,
+                    recycleBin: obj.recycleBin || [], missYou: obj.missYou || {}
+                };
+                return JSON.stringify(core);
+            } catch (e) { return null; }
+        },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
             // 安全保护：如果本地数据基本为空（0照片+0日记+默认密码），拒绝推送，防止覆盖云端
@@ -675,19 +689,31 @@
                 state.dirty = false; syncState.save();
                 return;
             }
-            // 版本冲突检测 + 乐观锁：用拉取时的sha推送，409则重试
+            // 内容指纹冲突检测 + 乐观锁：推送前比较云端内容指纹，冲突则拉取
             state.syncing = true;
-            let pushOk = false;
-            for (let attempt = 0; attempt < 3 && !pushOk; attempt++) {
+            try {
                 // 拉取云端最新数据和sha
                 const cloudFile = await this.getFile('data/app-data.json');
                 if (cloudFile && cloudFile.content) {
                     try {
                         const cloudData = JSON.parse(cloudFile.content);
-                        if (state.lastSyncVersion && cloudData.version && cloudData.version > state.lastSyncVersion) {
-                            console.warn(`[sync] 云端版本(${cloudData.version})比本地(${state.lastSyncVersion})新，拒绝推送，改为拉取合并`);
+                        const cloudFp = this.contentFingerprint(cloudData);
+                        // 情况1：本地上次成功同步的指纹存在，且云端指纹不同于上次 → 云端有别人更新过，拒绝推送
+                        if (state.lastFingerprint && cloudFp && cloudFp !== state.lastFingerprint) {
+                            console.warn('[sync] 云端内容与本地上次同步不一致，拒绝推送，改为拉取合并');
                             state.dirty = false; syncState.save();
                             toast('检测到其他设备有更新，正在同步最新数据...', 'info');
+                            setTimeout(() => app.loadData(false), 300);
+                            return;
+                        }
+                        // 情况2：本设备是新的/指纹丢失，但云端数据明显比本地多 → 说明本地是旧数据或空数据，拒绝推送改为拉取
+                        const cloudPhotos = (cloudData.photos || []).length;
+                        const cloudDiaries = (cloudData.diaries || []).length;
+                        const cloudMsgs = (cloudData.messages || []).length;
+                        if (!state.lastFingerprint && (cloudPhotos > state.photos.length + 2 || cloudDiaries > state.diaries.length + 2 || cloudMsgs > state.messages.length + 2)) {
+                            console.warn(`[sync] 本地数据(${state.photos.length}张)疑似旧数据，云端有(${cloudPhotos}张)，拒绝推送改为拉取`);
+                            state.dirty = false; syncState.save();
+                            toast('正在同步云端最新数据...', 'info');
                             setTimeout(() => app.loadData(false), 300);
                             return;
                         }
@@ -739,19 +765,26 @@
                     anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
                 };
                 try {
-                    pushOk = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data', cloudSha);
-                    if (pushOk) { state.dirty = false; state.lastSyncVersion = data.version; syncState.save(); }
-                } catch (e) {
-                    if (e.message === 'CONFLICT' && attempt < 2) {
-                        console.warn(`[sync] 冲突，第${attempt + 1}次重试`);
-                        await new Promise(r => setTimeout(r, 500));
-                        continue;
+                    const ok = await this.putFile('data/app-data.json', JSON.stringify(data, null, 2), 'Sync data', cloudSha);
+                    if (ok) {
+                        state.dirty = false; state.lastSyncVersion = data.version;
+                        state.lastFingerprint = this.contentFingerprint(data);
+                        syncState.save();
                     }
-                    toast('同步失败：' + e.message, 'error');
-                    break;
+                } catch (e) {
+                    if (e.message === 'CONFLICT') {
+                        // 冲突：别人已经更新了，放弃本次推送，改为拉取
+                        console.warn('[sync] 推送冲突，放弃覆盖，改为拉取合并');
+                        state.dirty = false; syncState.save();
+                        toast('检测到其他设备同时更新，正在同步...', 'info');
+                        setTimeout(() => app.loadData(false), 300);
+                    } else {
+                        toast('同步失败：' + e.message, 'error');
+                    }
                 }
+            } finally {
+                state.syncing = false;
             }
-            state.syncing = false;
         },
         async pullData() {
             if (!this.isConfigured()) return null;
@@ -967,6 +1000,9 @@
                         if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         if (r.version) { state.lastSyncVersion = r.version; syncState.save(); }
+                        // 记录拉取到的云端内容指纹，作为本设备"已同步到"的基准
+                        const fp = github.contentFingerprint(r);
+                        if (fp) { state.lastFingerprint = fp; syncState.save(); }
                         if (!silent) toast('已从云端同步数据', 'success');
                     } else this.loadLocalData();
                     this.renderAll(); this.checkAnniversaryDay();
