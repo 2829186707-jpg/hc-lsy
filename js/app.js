@@ -496,7 +496,11 @@
             if (github.isConfigured()) {
                 github.pullData().then(r => {
                     if (r && r.passwords) {
-                        storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                        // 本地刚改过密码（时间戳更新）则不被云端旧密码覆盖
+                        const localTs = storage.get(CONFIG.storageKeys.sharedTs, {});
+                        const cloudTs = r.sharedTs || {};
+                        const pwdLocalTs = localTs['password'] || 0, pwdCloudTs = cloudTs['password'] || 0;
+                        if (!(pwdLocalTs > pwdCloudTs)) storage.set(CONFIG.storageKeys.passwords, r.passwords);
                         if (r.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                     }
                 }).catch(() => {});
@@ -629,6 +633,11 @@
             const pws = storage.get(CONFIG.storageKeys.passwords, {});
             pws[target] = await utils.hashPassword(np);
             storage.set(CONFIG.storageKeys.passwords, pws);
+            // 记录密码修改时间戳，确保跨设备以最新修改为准（不被云端旧密码覆盖）
+            const ts = storage.get(CONFIG.storageKeys.sharedTs, {});
+            ts['password'] = Date.now();
+            storage.set(CONFIG.storageKeys.sharedTs, ts);
+            storage.set(CONFIG.storageKeys.pwdVersion, (storage.get(CONFIG.storageKeys.pwdVersion, 0) || 0) + 1);
             app.saveData();
             toast(`${target.toUpperCase()} 的密码已修改`, 'success'); return true;
         }
@@ -651,7 +660,7 @@
             try {
                 const url = `${CONFIG.githubApiBase}/repos/${this.config.owner}/${this.config.repo}/contents/${path}`;
                 const res = await fetch(url, { headers: { 'Authorization': `token ${this.config.token}`, 'Accept': 'application/vnd.github.v3+json' } });
-                if (res.status === 404) return null;
+                if (res.status === 404) return { notFound: true, content: null, sha: null };
                 if (!res.ok) throw new Error(`GitHub: ${res.status}`);
                 const d = await res.json();
                 if (d.encoding === 'base64') return { content: decodeURIComponent(escape(atob(d.content))), sha: d.sha };
@@ -704,7 +713,10 @@
                 if (!exist) { map.set(item.id, item); return; }
                 const lt = item.updatedAt ? new Date(item.updatedAt).getTime() : 0;
                 const ct = exist.updatedAt ? new Date(exist.updatedAt).getTime() : 0;
-                if (lt > ct) map.set(item.id, item); // 本地更新则覆盖云端
+                const ltOk = !isNaN(lt), ctOk = !isNaN(ct);
+                if (ltOk && ctOk && lt > ct) map.set(item.id, item); // 本地更新则覆盖云端
+                else if (ltOk && !ctOk) map.set(item.id, item); // 本地有时间戳而云端没有 → 本地更新
+                // 云端有时间戳而本地没有 → 保留云端；都无 → 保留云端
             });
             return Array.from(map.values());
         },
@@ -727,6 +739,13 @@
                 let cloudData = null;
                 if (cloudFile && cloudFile.content) {
                     try { cloudData = JSON.parse(cloudFile.content); } catch (e) { cloudData = null; }
+                }
+                // 关键安全保护：云端文件存在但读取失败（网络错误/解析失败）时禁止推送，防止用未合并旧数据覆盖云端
+                if (cloudFile && !cloudData && !cloudFile.notFound) {
+                    console.warn('[sync] 云端数据读取失败，取消推送，改为拉取（防止覆盖云端）');
+                    state.dirty = false; syncState.save();
+                    setTimeout(() => app.loadData(false), 300);
+                    return;
                 }
                 const cloudSha = cloudFile ? cloudFile.sha : null;
                 // 自动迁移：如果本地还有 base64 格式的封面/音乐/照片，先上传到 GitHub 转成 URL
@@ -792,6 +811,15 @@
                     state.trips = filterDeleted(this.mergeById(state.trips, cloudData.trips), 'trips');
                     state.recycleBin = filterDeleted(this.mergeById(state.recycleBin, cloudData.recycleBin), 'recycleBin');
                     state.albums = this.mergeById(state.albums, cloudData.albums);
+                    // 问答书：按题号+用户深度合并（两人各自作答，云端和本地并集，不互覆盖）
+                    const localQa = state.qaAnswers || {}, cloudQa = cloudData.qaAnswers || {};
+                    const mergedQa = {};
+                    const allQaKeys = new Set([...Object.keys(localQa), ...Object.keys(cloudQa)]);
+                    allQaKeys.forEach(k => {
+                        const lv = localQa[k] || {}, cv = cloudQa[k] || {};
+                        mergedQa[k] = { ...cv, ...lv }; // 同题同用户：本地保留（本地可能是刚答的），云端补充
+                    });
+                    state.qaAnswers = mergedQa;
                     // 共享字段（封面/音乐/天气/生理期/纪念日/想你了）：用时间戳判断谁更新，更新的优先
                     // 本地时间戳 > 云端 → 本地胜出（本地刚改，保留）；否则用云端
                     const localTs = storage.get(CONFIG.storageKeys.sharedTs, {});
@@ -827,8 +855,9 @@
                     storage.set(CONFIG.storageKeys.missYou, mergedMiss);
                     // 合并 sharedTs（保留较新的时间戳）
                     storage.set(CONFIG.storageKeys.sharedTs, { ...cloudTs, ...localTs, ...storage.get(CONFIG.storageKeys.sharedTs, {}) });
-                    // 密码以云端为准（如果云端有）
-                    if (cloudData.passwords && Object.keys(cloudData.passwords).length > 0) storage.set(CONFIG.storageKeys.passwords, cloudData.passwords);
+                    // 密码：用时间戳判断谁更新（本地刚改则保留本地，否则用云端）
+                    pickNewer('password', storage.get(CONFIG.storageKeys.passwords), cloudData.passwords,
+                        () => storage.get(CONFIG.storageKeys.passwords), (v) => { if (v && Object.keys(v).length > 0) storage.set(CONFIG.storageKeys.passwords, v); });
                     // 同步后的数组写回本地存储
                     ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'recycleBin', 'albums'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                 }
@@ -1084,7 +1113,14 @@
                         state.letters = applyDeleted(github.mergeById(state.letters, r.letters), 'letters');
                         state.trips = applyDeleted(github.mergeById(state.trips, r.trips), 'trips');
                         state.albums = github.mergeById(state.albums, r.albums || []);
-                        state.qaAnswers = { ...(r.qaAnswers || {}), ...state.qaAnswers };
+                        // 问答书深度合并（按题号+用户，云端+本地并集）
+                        {
+                            const localQa = state.qaAnswers || {}, cloudQa = r.qaAnswers || {};
+                            const mQa = {};
+                            const allKeys = new Set([...Object.keys(localQa), ...Object.keys(cloudQa)]);
+                            allKeys.forEach(k => { const lv = localQa[k] || {}, cv = cloudQa[k] || {}; mQa[k] = { ...cv, ...lv }; });
+                            state.qaAnswers = mQa;
+                        }
                         if (r.deletedItems) state.deletedItems = { ...(r.deletedItems || {}), ...state.deletedItems };
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
                         if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, { ...(r.missYou || {}), ...storage.get(CONFIG.storageKeys.missYou, {}) });
@@ -1104,7 +1140,9 @@
                         pickNewer2('period', r.period, () => storage.get(CONFIG.storageKeys.period), (v) => { if (v) storage.set(CONFIG.storageKeys.period, v); else storage.remove(CONFIG.storageKeys.period); });
                         pickNewer2('weather', r.weather, () => storage.get(CONFIG.storageKeys.weather), (v) => { if (v) storage.set(CONFIG.storageKeys.weather, v); else storage.remove(CONFIG.storageKeys.weather); });
                         pickNewer2('anniversary', r.anniversary, () => storage.get(CONFIG.storageKeys.anniversary), (v) => { if (v) storage.set(CONFIG.storageKeys.anniversary, v); else storage.remove(CONFIG.storageKeys.anniversary); });
-                        if (r.passwords !== undefined) storage.set(CONFIG.storageKeys.passwords, r.passwords);
+                        // 密码：用时间戳判断，本地刚改（时间戳更新）则不被云端覆盖
+                        const pwdLocalTs = localTs2['password'] || 0, pwdCloudTs = cloudTs2['password'] || 0;
+                        if (r.passwords !== undefined && !(pwdLocalTs > pwdCloudTs)) storage.set(CONFIG.storageKeys.passwords, r.passwords);
                         if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
                         // 合并 sharedTs 时间戳
                         storage.set(CONFIG.storageKeys.sharedTs, { ...cloudTs2, ...localTs2, ...storage.get(CONFIG.storageKeys.sharedTs, {}) });
