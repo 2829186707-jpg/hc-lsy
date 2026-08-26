@@ -1479,6 +1479,8 @@
                 if (!f.type.startsWith('image/') && !f.type.startsWith('video/')) continue;
                 try {
                     if (utils.isVideo(f)) {
+                        // 视频不做压缩：限制大小（GitHub API 单文件上限约 100MB base64，实际超 25MB 极易失败）
+                        if (f.size > 25 * 1024 * 1024) { toast(`视频过大（${(f.size / 1024 / 1024).toFixed(1)}MB），请压缩到 25MB 以内`, 'error'); continue; }
                         const dataUrl = await utils.fileToBase64(f);
                         state.pendingFiles.push({ name: f.name, url: dataUrl, type: 'video' });
                     } else {
