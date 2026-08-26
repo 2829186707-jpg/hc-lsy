@@ -812,7 +812,8 @@
                     state.letters = filterDeleted(this.mergeById(state.letters, cloudData.letters), 'letters');
                     state.trips = filterDeleted(this.mergeById(state.trips, cloudData.trips), 'trips');
                     state.recycleBin = filterDeleted(this.mergeById(state.recycleBin, cloudData.recycleBin), 'recycleBin');
-                    state.albums = this.mergeById(state.albums, cloudData.albums);
+                    // 相册是字符串列表：取并集合并（不是对象数组，不能用 mergeById）
+                    state.albums = Array.from(new Set([...(state.albums || []), ...(cloudData.albums || [])]));
                     // 问答书：按题号+用户深度合并（两人各自作答，云端和本地并集，不互覆盖）
                     const localQa = state.qaAnswers || {}, cloudQa = cloudData.qaAnswers || {};
                     const mergedQa = {};
@@ -1128,7 +1129,8 @@
                         state.anniversaries = applyDeleted(github.mergeById(state.anniversaries, r.anniversaries), 'anniversaries');
                         state.letters = applyDeleted(github.mergeById(state.letters, r.letters), 'letters');
                         state.trips = applyDeleted(github.mergeById(state.trips, r.trips), 'trips');
-                        state.albums = github.mergeById(state.albums, r.albums || []);
+                        // 相册是字符串列表：取并集合并（不是对象数组，不能用 mergeById）
+                        state.albums = Array.from(new Set([...(state.albums || []), ...(r.albums || [])]));
                         // 问答书深度合并（按题号+用户，云端+本地并集）
                         {
                             const localQa = state.qaAnswers || {}, cloudQa = r.qaAnswers || {};
@@ -1413,16 +1415,17 @@
             if (state.albums.includes(name)) { toast('相册已存在', 'error'); return; }
             state.albums.push(name);
             this.saveAlbums();
+            this.saveData(); // 相册为共享数据，同步到云端
             this.renderAlbumList();
             toast('相册已添加', 'success');
         },
         deleteAlbum(name) {
             if (name === '未分类') { toast('默认相册不能删除', 'error'); return; }
             if (!confirm(`删除相册"${name}"？其中的照片将移至"未分类"`)) return;
-            state.photos.forEach(p => { if ((p.album || '未分类') === name) p.album = '未分类'; });
+            state.photos.forEach(p => { if ((p.album || '未分类') === name) { p.album = '未分类'; p.updatedAt = new Date().toISOString(); } });
             state.albums = state.albums.filter(a => a !== name);
             this.saveAlbums();
-            this.saveData(false);
+            this.saveData(); // 相册删除+照片移动需同步到云端（含 updatedAt，保证其他设备合并时生效）
             this.renderAlbumList();
             this.renderGallery();
             toast('相册已删除', 'success');
