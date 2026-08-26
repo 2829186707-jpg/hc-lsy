@@ -1,5 +1,5 @@
 /* HC & LSY 专属空间 - Service Worker (PWA 离线支持) */
-const CACHE_NAME = 'hc-lsy-cache-v6';
+const CACHE_NAME = 'hc-lsy-cache-v7';
 const ASSETS = [
     './',
     './index.html',
