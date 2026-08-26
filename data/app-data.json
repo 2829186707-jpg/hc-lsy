@@ -299,7 +299,8 @@
       "lsy": true
     },
     "2026-08-26": {
-      "hc": true
+      "hc": true,
+      "lsy": true
     }
   },
   "recycleBin": [
@@ -318,6 +319,22 @@
       },
       "deletedAt": "2026-08-24T15:43:33.130Z",
       "expiresAt": "2026-08-31T15:43:33.130Z"
+    },
+    {
+      "id": "mt803d2wtoclpj7a9",
+      "type": "photo",
+      "data": {
+        "id": "mt7eo1br1aqngsf0y",
+        "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/photos/mt7eo1br1aqngsf0y.jpg",
+        "type": "image",
+        "caption": "",
+        "date": "2026-08-24",
+        "album": "合照",
+        "uploader": "lsy",
+        "createdAt": "2026-08-24T15:43:20.643Z"
+      },
+      "deletedAt": "2026-08-25T01:43:04.184Z",
+      "expiresAt": "2026-09-01T01:43:04.184Z"
     }
   ],
   "deletedItems": {
@@ -402,9 +419,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1787735493863,
+    "missYou": 1787740511435,
     "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1787735493893
+  "version": 1787740511453
 }
