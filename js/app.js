@@ -18,7 +18,8 @@
             trips: 'hc_lsy_trips', music: 'hc_lsy_music', coverImage: 'hc_lsy_cover',
             darkMode: 'hc_lsy_dark', missYou: 'hc_lsy_missyou', recycleBin: 'hc_lsy_recycle',
             qaAnswers: 'hc_lsy_qa', weather: 'hc_lsy_weather', period: 'hc_lsy_period',
-            albums: 'hc_lsy_albums', dataVersion: 'hc_lsy_data_version', syncState: 'hc_lsy_sync_state'
+            albums: 'hc_lsy_albums', dataVersion: 'hc_lsy_data_version', syncState: 'hc_lsy_sync_state',
+            sharedTs: 'hc_lsy_shared_ts'
         },
         githubApiBase: 'https://api.github.com',
         passwordVersion: 2
@@ -231,7 +232,7 @@
             storage.remove(CONFIG.storageKeys.coverImage);
             document.getElementById('coverStatus').textContent = '使用默认渐变';
             document.getElementById('removeCoverBtn').style.display = 'none';
-            app.saveData();
+            app.saveData(true, 'coverImage');
         },
         async set(file) {
             if (!file.type.startsWith('image/')) { toast('请选择图片文件', 'error'); return; }
@@ -242,7 +243,7 @@
             const cdnUrl = await github.uploadFile('data/cover.jpg', b64);
             const finalUrl = cdnUrl || dataUrl;
             storage.set(CONFIG.storageKeys.coverImage, finalUrl);
-            this.apply(finalUrl); app.saveData(); toast('封面已设置 ♥', 'success');
+            this.apply(finalUrl); app.saveData(true, 'coverImage'); toast('封面已设置 ♥', 'success');
         }
     };
 
@@ -269,7 +270,7 @@
             state.music = { name: file.name, url: cdnUrl || dataUrl };
             storage.set(CONFIG.storageKeys.music, state.music);
             if (state.audio) { state.audio.pause(); state.audio = null; }
-            this.show(); this.updateUI(); app.saveData(); toast('音乐已设置 ♪', 'success');
+            this.show(); this.updateUI(); app.saveData(true, 'music'); toast('音乐已设置 ♪', 'success');
         },
         toggle() {
             if (!state.music) return;
@@ -296,7 +297,7 @@
             storage.remove(CONFIG.storageKeys.music);
             this.hide(); document.getElementById('musicStatus').textContent = '未设置';
             document.getElementById('removeMusicBtn').style.display = 'none';
-            app.saveData();
+            app.saveData(true, 'music');
         }
     };
 
@@ -317,7 +318,7 @@
             storage.set(CONFIG.storageKeys.missYou, data);
             state.missYouToday = data[today];
             this.updateUI();
-            app.saveData();
+            app.saveData(true, 'missYou');
             if (state.missYouToday.hc && state.missYouToday.lsy) { launchConfetti(); toast('今天双向奔赴 ♥', 'success'); }
             else toast(`${user.toUpperCase()} 想你了 ♥`, 'success');
         },
@@ -399,7 +400,7 @@
             const city2 = document.getElementById('weatherCity2Input').value.trim();
             if (!city1 || !city2) { toast('请填写两个城市', 'error'); return; }
             storage.set(CONFIG.storageKeys.weather, { city1, city2 });
-            this.loadWeather(city1, city2); app.saveData();
+            this.loadWeather(city1, city2); app.saveData(true, 'weather');
             toast('天气配置已保存', 'success');
         }
     };
@@ -432,7 +433,7 @@
             const cycle = parseInt(document.getElementById('periodCycle').value) || 28;
             if (!date) { toast('请选择日期', 'error'); return; }
             storage.set(CONFIG.storageKeys.period, { date, cycle });
-            this.calculate(date, cycle); app.saveData();
+            this.calculate(date, cycle); app.saveData(true, 'period');
             toast('生理期记录已保存', 'success');
         }
     };
@@ -459,10 +460,10 @@
             // 权限检查：只能恢复自己的内容
             const owner = item.data.uploader || item.data.author;
             if (owner && owner !== state.currentUser) { toast('只能恢复自己的内容', 'error'); return; }
-            if (item.type === 'photo') state.photos.push(item.data);
-            else if (item.type === 'diary') state.diaries.push(item.data);
-            else if (item.type === 'wish') state.wishes.push(item.data);
-            else if (item.type === 'message') state.messages.push(item.data);
+            if (item.type === 'photo') state.photos.push({ ...item.data, updatedAt: new Date().toISOString() });
+            else if (item.type === 'diary') state.diaries.push({ ...item.data, updatedAt: new Date().toISOString() });
+            else if (item.type === 'wish') state.wishes.push({ ...item.data, updatedAt: new Date().toISOString() });
+            else if (item.type === 'message') state.messages.push({ ...item.data, updatedAt: new Date().toISOString() });
             // 恢复时清除删除标记，让其他设备重新显示
             if (item.data && item.data.id) {
                 const key = this.toArrKey(item.type) + ':' + item.data.id;
@@ -686,16 +687,25 @@
                     letters: obj.letters || [], trips: obj.trips || [], qaAnswers: obj.qaAnswers || {},
                     albums: obj.albums || [], music: obj.music, coverImage: obj.coverImage,
                     period: obj.period, weather: obj.weather, anniversary: obj.anniversary,
-                    recycleBin: obj.recycleBin || [], missYou: obj.missYou || {}, deletedItems: obj.deletedItems || {}
+                    recycleBin: obj.recycleBin || [], missYou: obj.missYou || {}, deletedItems: obj.deletedItems || {},
+                    sharedTs: obj.sharedTs || {}
                 };
                 return JSON.stringify(core);
             } catch (e) { return null; }
         },
         // 合并两个数组：本地优先（同id时本地覆盖云端），云端补充本地没有的新项
+        // 合并两个数组：同id时比较updatedAt，更新者胜出；都无updatedAt则云端优先（云端是最后写入权威）
         mergeById(localArr, cloudArr) {
             const map = new Map();
             (cloudArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
-            (localArr || []).forEach(item => { if (item && item.id) map.set(item.id, item); });
+            (localArr || []).forEach(item => {
+                if (!item || !item.id) return;
+                const exist = map.get(item.id);
+                if (!exist) { map.set(item.id, item); return; }
+                const lt = item.updatedAt ? new Date(item.updatedAt).getTime() : 0;
+                const ct = exist.updatedAt ? new Date(exist.updatedAt).getTime() : 0;
+                if (lt > ct) map.set(item.id, item); // 本地更新则覆盖云端
+            });
             return Array.from(map.values());
         },
         async syncAll() {
@@ -754,12 +764,12 @@
                 if (cloudData) {
                     // 合并删除标记（tombstone）：本地和云端记录的删除都要传播
                     const mergedDeleted = { ...(cloudData.deletedItems || {}), ...state.deletedItems };
-                    // 清理 30 天前的 tombstone（防止无限增长；30天未同步的设备删除可能复活，可接受）
+                    // 清理 7 天前的 tombstone（防止无限增长；7天未同步的设备删除可能复活，可接受）
                     const nowTs = Date.now();
                     for (const k in mergedDeleted) {
                         if (mergedDeleted[k] && mergedDeleted[k].at) {
                             const t = new Date(mergedDeleted[k].at).getTime();
-                            if (!isNaN(t) && nowTs - t > 30 * 86400000) delete mergedDeleted[k];
+                            if (!isNaN(t) && nowTs - t > 7 * 86400000) delete mergedDeleted[k];
                         }
                     }
                     state.deletedItems = mergedDeleted;
@@ -782,13 +792,41 @@
                     state.trips = filterDeleted(this.mergeById(state.trips, cloudData.trips), 'trips');
                     state.recycleBin = filterDeleted(this.mergeById(state.recycleBin, cloudData.recycleBin), 'recycleBin');
                     state.albums = this.mergeById(state.albums, cloudData.albums);
-                    // 对象字段：本地有则用本地（本地可能有新改动），否则用云端
-                    if (!state.music && cloudData.music) state.music = cloudData.music;
-                    if (!storage.get(CONFIG.storageKeys.coverImage) && cloudData.coverImage) storage.set(CONFIG.storageKeys.coverImage, cloudData.coverImage);
-                    if (!state.qaAnswers || Object.keys(state.qaAnswers).length === 0) state.qaAnswers = cloudData.qaAnswers || {};
+                    // 共享字段（封面/音乐/天气/生理期/纪念日/想你了）：用时间戳判断谁更新，更新的优先
+                    // 本地时间戳 > 云端 → 本地胜出（本地刚改，保留）；否则用云端
+                    const localTs = storage.get(CONFIG.storageKeys.sharedTs, {});
+                    const cloudTs = cloudData.sharedTs || {};
+                    const pickNewer = (field, localVal, cloudVal, getLocal, setLocal) => {
+                        const lt = localTs[field] || 0, ct = cloudTs[field] || 0;
+                        const hasLocal = getLocal() != null && getLocal() !== undefined && getLocal() !== '';
+                        if (lt > ct && hasLocal) return; // 本地更新且有值，保留本地
+                        // 两边都无时间戳且本地有值 → 保留本地（本地是用户当前状态）；否则云端更新用云端
+                        if (ct >= lt && cloudVal != null && cloudVal !== undefined) {
+                            if (lt === 0 && ct === 0 && hasLocal) return;
+                            setLocal(cloudVal);
+                        }
+                    };
+                    // 音乐
+                    pickNewer('music', state.music, cloudData.music,
+                        () => state.music, (v) => { state.music = v; storage.set(CONFIG.storageKeys.music, v); });
+                    // 封面
+                    pickNewer('coverImage', storage.get(CONFIG.storageKeys.coverImage), cloudData.coverImage,
+                        () => storage.get(CONFIG.storageKeys.coverImage), (v) => storage.set(CONFIG.storageKeys.coverImage, v));
+                    // 天气
+                    pickNewer('weather', storage.get(CONFIG.storageKeys.weather), cloudData.weather,
+                        () => storage.get(CONFIG.storageKeys.weather), (v) => storage.set(CONFIG.storageKeys.weather, v));
+                    // 生理期
+                    pickNewer('period', storage.get(CONFIG.storageKeys.period), cloudData.period,
+                        () => storage.get(CONFIG.storageKeys.period), (v) => storage.set(CONFIG.storageKeys.period, v));
+                    // 纪念日（在一起的日子）
+                    pickNewer('anniversary', storage.get(CONFIG.storageKeys.anniversary), cloudData.anniversary,
+                        () => storage.get(CONFIG.storageKeys.anniversary), (v) => storage.set(CONFIG.storageKeys.anniversary, v));
+                    // 想你了：对象字段，按天合并（本地+云端取并集，各自打卡互不影响）
                     const cloudMiss = cloudData.missYou || {}; const localMiss = storage.get(CONFIG.storageKeys.missYou, {});
                     const mergedMiss = { ...cloudMiss, ...localMiss };
                     storage.set(CONFIG.storageKeys.missYou, mergedMiss);
+                    // 合并 sharedTs（保留较新的时间戳）
+                    storage.set(CONFIG.storageKeys.sharedTs, { ...cloudTs, ...localTs, ...storage.get(CONFIG.storageKeys.sharedTs, {}) });
                     // 密码以云端为准（如果云端有）
                     if (cloudData.passwords && Object.keys(cloudData.passwords).length > 0) storage.set(CONFIG.storageKeys.passwords, cloudData.passwords);
                     // 同步后的数组写回本地存储
@@ -805,6 +843,7 @@
                     weather: storage.get(CONFIG.storageKeys.weather, null),
                     passwords: storage.get(CONFIG.storageKeys.passwords, {}),
                     pwdVersion: storage.get(CONFIG.storageKeys.pwdVersion, 0),
+                    sharedTs: storage.get(CONFIG.storageKeys.sharedTs, {}),
                     anniversary: storage.get(CONFIG.storageKeys.anniversary), version: Date.now()
                 };
                 try {
@@ -1050,13 +1089,25 @@
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
                         if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, { ...(r.missYou || {}), ...storage.get(CONFIG.storageKeys.missYou, {}) });
                         if (r.recycleBin !== undefined) state.recycleBin = github.mergeById(state.recycleBin, r.recycleBin);
-                        if (r.music !== undefined) { state.music = r.music; if (r.music) storage.set(CONFIG.storageKeys.music, r.music); else storage.remove(CONFIG.storageKeys.music); }
-                        if (r.coverImage !== undefined) { if (r.coverImage) storage.set(CONFIG.storageKeys.coverImage, r.coverImage); else storage.remove(CONFIG.storageKeys.coverImage); }
-                        if (r.period !== undefined) { if (r.period) storage.set(CONFIG.storageKeys.period, r.period); else storage.remove(CONFIG.storageKeys.period); }
-                        if (r.weather !== undefined) { if (r.weather) storage.set(CONFIG.storageKeys.weather, r.weather); else storage.remove(CONFIG.storageKeys.weather); }
+                        // 共享字段拉取：用时间戳判断谁更新（云端更新才覆盖，本地刚改则保留）
+                        const localTs2 = storage.get(CONFIG.storageKeys.sharedTs, {});
+                        const cloudTs2 = r.sharedTs || {};
+                        const pickNewer2 = (field, cloudVal, getLocal, setLocal) => {
+                            const lt = localTs2[field] || 0, ct = cloudTs2[field] || 0;
+                            const hasLocal = getLocal() != null && getLocal() !== undefined && getLocal() !== '';
+                            if (ct > lt) { if (cloudVal != null && cloudVal !== undefined) setLocal(cloudVal); else if (!hasLocal) setLocal(cloudVal); }
+                            // ct <= lt 且本地有值 → 保留本地；本地无值且云端有 → 用云端
+                            else if (ct >= lt && !hasLocal && cloudVal != null) setLocal(cloudVal);
+                        };
+                        pickNewer2('music', r.music, () => state.music, (v) => { state.music = v; if (v) storage.set(CONFIG.storageKeys.music, v); else storage.remove(CONFIG.storageKeys.music); });
+                        pickNewer2('coverImage', r.coverImage, () => storage.get(CONFIG.storageKeys.coverImage), (v) => { if (v) storage.set(CONFIG.storageKeys.coverImage, v); else storage.remove(CONFIG.storageKeys.coverImage); });
+                        pickNewer2('period', r.period, () => storage.get(CONFIG.storageKeys.period), (v) => { if (v) storage.set(CONFIG.storageKeys.period, v); else storage.remove(CONFIG.storageKeys.period); });
+                        pickNewer2('weather', r.weather, () => storage.get(CONFIG.storageKeys.weather), (v) => { if (v) storage.set(CONFIG.storageKeys.weather, v); else storage.remove(CONFIG.storageKeys.weather); });
+                        pickNewer2('anniversary', r.anniversary, () => storage.get(CONFIG.storageKeys.anniversary), (v) => { if (v) storage.set(CONFIG.storageKeys.anniversary, v); else storage.remove(CONFIG.storageKeys.anniversary); });
                         if (r.passwords !== undefined) storage.set(CONFIG.storageKeys.passwords, r.passwords);
                         if (r.pwdVersion !== undefined) storage.set(CONFIG.storageKeys.pwdVersion, r.pwdVersion);
-                        if (r.anniversary !== undefined) { if (r.anniversary) storage.set(CONFIG.storageKeys.anniversary, r.anniversary); else storage.remove(CONFIG.storageKeys.anniversary); }
+                        // 合并 sharedTs 时间戳
+                        storage.set(CONFIG.storageKeys.sharedTs, { ...cloudTs2, ...localTs2, ...storage.get(CONFIG.storageKeys.sharedTs, {}) });
                         ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'recycleBin'].forEach(k => storage.set(CONFIG.storageKeys[k], state[k]));
                         if (r.version) { state.lastSyncVersion = r.version; syncState.save(); }
                         // 记录拉取到的云端内容指纹，作为本设备"已同步到"的基准
@@ -1076,10 +1127,16 @@
             state.recycleBin = storage.get(CONFIG.storageKeys.recycleBin, []);
             this.loadAlbums();
         },
-        saveData(sync = true) {
+        saveData(sync = true, sharedField = null) {
             ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums'].forEach(k => {
                 storage.set(CONFIG.storageKeys[k], state[k]);
             });
+            // 记录共享字段的修改时间戳（用于跨设备合并时判断谁更新）
+            if (sharedField) {
+                const ts = storage.get(CONFIG.storageKeys.sharedTs, {});
+                ts[sharedField] = Date.now();
+                storage.set(CONFIG.storageKeys.sharedTs, ts);
+            }
             if (sync && github.isConfigured()) {
                 state.dirty = true;
                 syncState.save();
@@ -1225,6 +1282,11 @@
                         if (data.passwords) storage.set(CONFIG.storageKeys.passwords, data.passwords);
                         if (data.pwdVersion) storage.set(CONFIG.storageKeys.pwdVersion, data.pwdVersion);
                         if (data.anniversary) storage.set(CONFIG.storageKeys.anniversary, data.anniversary);
+                        // 导入后把共享字段标记为最新，避免被云端旧数据覆盖
+                        const ts = storage.get(CONFIG.storageKeys.sharedTs, {});
+                        const now = Date.now();
+                        ['music', 'coverImage', 'period', 'weather', 'anniversary', 'missYou'].forEach(f => ts[f] = now);
+                        storage.set(CONFIG.storageKeys.sharedTs, ts);
                         this.saveData(); this.renderAll();
                         toast('数据导入成功', 'success');
                     } catch { toast('导入失败，文件格式错误', 'error'); }
@@ -1768,6 +1830,7 @@
         toggleWish(id) {
             const w = state.wishes.find(x => x.id === id); if (!w) return;
             w.completed = !w.completed;
+            w.updatedAt = new Date().toISOString();
             if (w.completed) { w.completedAt = new Date().toISOString(); launchConfetti(2000); toast('心愿达成！🎉', 'success'); }
             this.saveData(); this.renderWishes(); this.renderHome();
         },
@@ -1855,6 +1918,7 @@
             if (!msg) return;
             if (!msg.replies) msg.replies = [];
             msg.replies.push({ id: utils.generateId(), content, author: state.currentUser, createdAt: new Date().toISOString() });
+            msg.updatedAt = new Date().toISOString();
             this.saveData(); this.renderMessages();
             toast('回复成功 ♥', 'success');
         },
@@ -1932,6 +1996,7 @@
         toggleTripItem(tripId, itemIdx) {
             const t = state.trips.find(x => x.id === tripId); if (!t || !t.items[itemIdx]) return;
             t.items[itemIdx].done = !t.items[itemIdx].done;
+            t.updatedAt = new Date().toISOString();
             this.saveData(); this.renderTrips();
         },
         deleteTrip(id) {
@@ -2146,7 +2211,7 @@
         bindSettingsEvents() {
             document.getElementById('saveAnniversaryBtn').addEventListener('click', () => {
                 const d = document.getElementById('anniversaryDate').value;
-                if (d) { storage.set(CONFIG.storageKeys.anniversary, d); this.saveData(); this.renderHome(); this.checkAnniversaryDay(); toast('纪念日已保存', 'success'); }
+                if (d) { storage.set(CONFIG.storageKeys.anniversary, d); this.saveData(true, 'anniversary'); this.renderHome(); this.checkAnniversaryDay(); toast('纪念日已保存', 'success'); }
             });
             document.getElementById('addAnnivBtn').addEventListener('click', () => {
                 const name = document.getElementById('newAnnivName').value.trim(), date = document.getElementById('newAnnivDate').value;
@@ -2170,11 +2235,11 @@
             document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
             document.getElementById('clearDataBtn').addEventListener('click', () => {
                 if (!confirm('确定要清空所有本地数据吗？此操作不可恢复！')) return;
-                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou', 'recycleBin', 'music', 'coverImage', 'period', 'weather', 'passwords', 'pwdVersion'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
+                ['photos', 'diaries', 'wishes', 'messages', 'anniversaries', 'letters', 'trips', 'qaAnswers', 'albums', 'anniversary', 'missYou', 'recycleBin', 'music', 'coverImage', 'period', 'weather', 'passwords', 'pwdVersion', 'syncState', 'sharedTs'].forEach(k => storage.remove(CONFIG.storageKeys[k]));
                 state.photos = []; state.diaries = []; state.wishes = []; state.messages = [];
                 state.anniversaries = []; state.letters = []; state.trips = []; state.qaAnswers = {};
                 state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
-                state.recycleBin = []; state.music = null;
+                state.recycleBin = []; state.music = null; state.deletedItems = {}; state.dirty = false;
                 this.renderAll(); toast('本地数据已清空', 'info');
             });
             // 相册管理
