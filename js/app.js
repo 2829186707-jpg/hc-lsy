@@ -594,18 +594,20 @@
         startAutoSync() {
             // 停止旧的定时器
             if (state.syncTimer) clearInterval(state.syncTimer);
-            // 每60秒自动拉取最新数据（静默模式，不弹提示）
+            // 每60秒自动拉取最新数据（静默模式，不弹提示）；若有未推送的本地修改，同时触发推送重试
             state.syncTimer = setInterval(() => {
                 if (github.isConfigured() && document.visibilityState === 'visible') {
                     app.loadData(true);
+                    if (state.dirty && !state.syncing) github.syncAll();
                 }
             }, 60000);
-            // 页面从后台切回前台时立即拉取（静默模式）
+            // 页面从后台切回前台时立即拉取（静默模式）；若有未推送修改也同步
             document.addEventListener('visibilitychange', app._onVisibilityChange);
         },
         _onVisibilityChange() {
             if (document.visibilityState === 'visible' && github.isConfigured()) {
                 app.loadData(true);
+                if (state.dirty && !state.syncing) github.syncAll();
             }
         },
         stopAutoSync() {
@@ -1427,8 +1429,7 @@
         },
         movePhotoToAlbum(photoIndex, album) {
             if (photoIndex < 0 || photoIndex >= state.photos.length) return;
-            const p = state.photos[photoIndex];
-            if (p.uploader && p.uploader !== state.currentUser) { toast('只能修改自己上传的照片', 'error'); return; }
+            // 照片日期/相册为共享编辑：双方都可修改
             state.photos[photoIndex].album = album;
             state.photos[photoIndex].updatedAt = new Date().toISOString();
             this.saveData();
@@ -1497,6 +1498,7 @@
             const cap = document.getElementById('photoCaption').value.trim(), date = document.getElementById('photoDate').value;
             const album = document.getElementById('photoAlbum').value || '未分类';
             const n = state.pendingFiles.length;
+            const failed = [];
             toast('正在上传文件...', 'info');
             for (const f of state.pendingFiles) {
                 let photoUrl = f.url;
@@ -1506,14 +1508,21 @@
                     const ext = f.type === 'video' ? 'mp4' : 'jpg';
                     const b64 = f.url.replace(/^data:[^;]+;base64,/, '');
                     const cdnUrl = await github.uploadFile(`data/photos/${id}.${ext}`, b64);
-                    if (cdnUrl) photoUrl = cdnUrl;
+                    if (!cdnUrl) { failed.push(f); continue; } // 上传失败：不降级存 base64（会撑爆 localStorage），保留待重试
+                    photoUrl = cdnUrl;
                     state.photos.push({ id, url: photoUrl, type: f.type || 'image', caption: cap, date: date || utils.formatDateInput(), album: album, uploader: state.currentUser, createdAt: new Date().toISOString() });
                 } else {
                     state.photos.push({ id: utils.generateId(), url: f.url, type: f.type || 'image', caption: cap, date: date || utils.formatDateInput(), album: album, uploader: state.currentUser, createdAt: new Date().toISOString() });
                 }
             }
-            this.saveData(); this.closeModal('uploadModal'); this.renderGallery(); this.renderTimeline(); this.renderHome();
-            toast(`成功上传 ${n} 个文件 ♥`, 'success'); state.pendingFiles = [];
+            this.saveData();
+            const okCount = n - failed.length;
+            if (okCount > 0) {
+                this.closeModal('uploadModal'); this.renderGallery(); this.renderTimeline(); this.renderHome();
+                toast(`成功上传 ${okCount} 个文件 ♥`, 'success');
+            }
+            state.pendingFiles = failed; // 保留失败项，用户可重新上传
+            if (failed.length > 0) toast(`${failed.length} 个文件上传失败，已保留等待重试`, 'error');
         },
         renderGallery() {
             const c = document.getElementById('galleryContainer');
@@ -1562,7 +1571,7 @@
                 if (state.lightboxSource === 'gallery' && state.lightboxIndex >= 0) {
                     const photo = state.photos[state.lightboxIndex];
                     if (photo) {
-                        if (photo.uploader && photo.uploader !== state.currentUser) { toast('只能修改自己上传的照片', 'error'); return; }
+                        // 照片日期为共享编辑：双方都可修改
                         photo.date = dateInput.value || utils.formatDateInput();
                         photo.updatedAt = new Date().toISOString();
                         this.saveData();
