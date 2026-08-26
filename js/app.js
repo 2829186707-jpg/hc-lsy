@@ -1427,6 +1427,8 @@
         },
         movePhotoToAlbum(photoIndex, album) {
             if (photoIndex < 0 || photoIndex >= state.photos.length) return;
+            const p = state.photos[photoIndex];
+            if (p.uploader && p.uploader !== state.currentUser) { toast('只能修改自己上传的照片', 'error'); return; }
             state.photos[photoIndex].album = album;
             state.photos[photoIndex].updatedAt = new Date().toISOString();
             this.saveData();
@@ -1560,6 +1562,7 @@
                 if (state.lightboxSource === 'gallery' && state.lightboxIndex >= 0) {
                     const photo = state.photos[state.lightboxIndex];
                     if (photo) {
+                        if (photo.uploader && photo.uploader !== state.currentUser) { toast('只能修改自己上传的照片', 'error'); return; }
                         photo.date = dateInput.value || utils.formatDateInput();
                         photo.updatedAt = new Date().toISOString();
                         this.saveData();
