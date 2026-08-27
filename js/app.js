@@ -722,6 +722,16 @@
             });
             return Array.from(map.values());
         },
+        // 想你了（missYou）深度合并：按天+按用户取并集，两人同一天分别打卡互不覆盖
+        // （浅合并 {...cloud, ...local} 会用本地整天的对象覆盖云端，丢失对方当天的打卡）
+        mergeMissYou(cloud, local) {
+            const result = { ...(cloud || {}) };
+            for (const day in (local || {})) {
+                if (!result[day] || typeof result[day] !== 'object') result[day] = {};
+                result[day] = { ...(result[day] || {}), ...(local[day] || {}) };
+            }
+            return result;
+        },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
             // 安全保护：如果本地数据基本为空（0照片+0日记+0留言+默认密码），拒绝推送，防止覆盖云端
@@ -866,9 +876,9 @@
                     // 纪念日（在一起的日子）
                     pickNewer('anniversary', storage.get(CONFIG.storageKeys.anniversary), cloudData.anniversary,
                         () => storage.get(CONFIG.storageKeys.anniversary), (v) => { if (v) storage.set(CONFIG.storageKeys.anniversary, v); else storage.remove(CONFIG.storageKeys.anniversary); });
-                    // 想你了：对象字段，按天合并（本地+云端取并集，各自打卡互不影响）
+                    // 想你了：对象字段，按天深度合并（两人同一天分别打卡互不覆盖）
                     const cloudMiss = cloudData.missYou || {}; const localMiss = storage.get(CONFIG.storageKeys.missYou, {});
-                    const mergedMiss = { ...cloudMiss, ...localMiss };
+                    const mergedMiss = this.mergeMissYou(cloudMiss, localMiss);
                     storage.set(CONFIG.storageKeys.missYou, mergedMiss);
                     // 合并 sharedTs（保留较新的时间戳）
                     storage.set(CONFIG.storageKeys.sharedTs, { ...cloudTs, ...localTs, ...storage.get(CONFIG.storageKeys.sharedTs, {}) });
@@ -1154,7 +1164,7 @@
                         }
                         if (r.deletedItems) state.deletedItems = { ...(r.deletedItems || {}), ...state.deletedItems };
                         if (state.albums.length === 0) state.albums = ['未分类', '旅行', '日常', '节日', '合照'];
-                        if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, { ...(r.missYou || {}), ...storage.get(CONFIG.storageKeys.missYou, {}) });
+                        if (r.missYou !== undefined) storage.set(CONFIG.storageKeys.missYou, github.mergeMissYou(r.missYou || {}, storage.get(CONFIG.storageKeys.missYou, {})));
                         if (r.recycleBin !== undefined) state.recycleBin = github.mergeById(state.recycleBin, r.recycleBin);
                         // 共享字段拉取：用时间戳判断谁更新（云端更新才覆盖，本地刚改则保留）
                         const localTs2 = storage.get(CONFIG.storageKeys.sharedTs, {});
