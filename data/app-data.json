@@ -416,7 +416,7 @@
   "music": null,
   "coverImage": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/cover.jpg",
   "period": {
-    "date": "2026-07-30",
+    "date": "2026-08-27",
     "cycle": 28
   },
   "weather": {
@@ -434,8 +434,8 @@
     "coverImage": 1787721228261,
     "music": 1787721228261,
     "missYou": 1787789025888,
-    "period": 1787721228261
+    "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1787789025930
+  "version": 1787790838996
 }
