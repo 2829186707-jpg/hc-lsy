@@ -337,7 +337,8 @@
       "lsy": true
     },
     "2026-08-28": {
-      "hc": true
+      "hc": true,
+      "lsy": true
     }
   },
   "recycleBin": [
@@ -372,6 +373,20 @@
       },
       "deletedAt": "2026-08-25T01:43:04.184Z",
       "expiresAt": "2026-09-01T01:43:04.184Z"
+    },
+    {
+      "id": "mt6yrs5q2r069fvw7",
+      "type": "message",
+      "data": {
+        "id": "mt6vp8rwpbtq6c1xk",
+        "content": "罗斯宇最聪明",
+        "color": "pink",
+        "author": "admin",
+        "createdAt": "2026-08-24T06:52:20.780Z",
+        "replies": []
+      },
+      "deletedAt": "2026-08-24T08:18:18.062Z",
+      "expiresAt": "2026-08-31T08:18:18.062Z"
     }
   ],
   "deletedItems": {
@@ -456,9 +471,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1787881936907,
+    "missYou": 1787894208775,
     "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1787882003012
+  "version": 1787894208846
 }
