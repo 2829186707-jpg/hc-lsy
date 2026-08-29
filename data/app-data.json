@@ -264,6 +264,14 @@
       "author": "lsy",
       "createdAt": "2026-08-27T00:49:20.576Z",
       "replies": []
+    },
+    {
+      "id": "mtegzn725lxfq25w1",
+      "content": "超超大鸡蛋",
+      "color": "mint",
+      "author": "lsy",
+      "createdAt": "2026-08-29T14:22:41.200Z",
+      "replies": []
     }
   ],
   "anniversaries": [
@@ -351,7 +359,8 @@
       "lsy": true
     },
     "2026-08-29": {
-      "hc": true
+      "hc": true,
+      "lsy": true
     }
   },
   "recycleBin": [
@@ -484,9 +493,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1787985430446,
-    "period": 1787790838307
+    "missYou": 1788013299151,
+    "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1787985430497
+  "version": 1788013361229
 }
