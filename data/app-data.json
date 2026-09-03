@@ -402,6 +402,9 @@
     },
     "2026-09-02": {
       "hc": true
+    },
+    "2026-09-03": {
+      "hc": true
     }
   },
   "recycleBin": [
@@ -452,68 +455,7 @@
       "expiresAt": "2026-08-31T08:18:18.062Z"
     }
   ],
-  "deletedItems": {
-    "photos:mt844otb1sduocxt0": {
-      "at": "2026-08-26T06:15:58.847Z"
-    },
-    "photos:mt844yivlrb75kqw2": {
-      "at": "2026-08-26T06:16:02.882Z"
-    },
-    "photos:mt8457pwzczsg0rfl": {
-      "at": "2026-08-26T06:16:06.151Z"
-    },
-    "photos:mt84544e1efnlzqm8": {
-      "at": "2026-08-26T06:16:09.627Z"
-    },
-    "photos:mt8455wpng7ipz1x7": {
-      "at": "2026-08-26T06:16:16.374Z"
-    },
-    "photos:mt8452dnr4w636e1r": {
-      "at": "2026-08-26T06:16:19.397Z"
-    },
-    "photos:mt844t3he1f6bxfuz": {
-      "at": "2026-08-26T06:16:26.087Z"
-    },
-    "photos:mt844r8k5uaz86wii": {
-      "at": "2026-08-26T06:16:30.812Z"
-    },
-    "photos:mt844ufxz5piva9yr": {
-      "at": "2026-08-26T06:16:37.680Z"
-    },
-    "photos:mt844z5xbdnizvh06": {
-      "at": "2026-08-26T06:16:45.644Z"
-    },
-    "recycleBin:mt9pa6ie62qpap4f0": {
-      "at": "2026-08-26T06:16:55.808Z"
-    },
-    "recycleBin:mt9pa9mj78j1vezqh": {
-      "at": "2026-08-26T06:16:56.517Z"
-    },
-    "recycleBin:mt9paetwgq6p1w8q4": {
-      "at": "2026-08-26T06:16:57.058Z"
-    },
-    "recycleBin:mt9pac5fkv5vct1xl": {
-      "at": "2026-08-26T06:16:57.217Z"
-    },
-    "recycleBin:mt9pak199tjr4nf8d": {
-      "at": "2026-08-26T06:16:57.377Z"
-    },
-    "recycleBin:mt9parj79j4owuqaj": {
-      "at": "2026-08-26T06:16:57.523Z"
-    },
-    "recycleBin:mt9pamdbs5ll88fsj": {
-      "at": "2026-08-26T06:16:58.098Z"
-    },
-    "recycleBin:mt9pb0h7nm5t1q6o2": {
-      "at": "2026-08-26T06:16:58.728Z"
-    },
-    "recycleBin:mt9pav6e4badk20nb": {
-      "at": "2026-08-26T06:16:59.283Z"
-    },
-    "recycleBin:mt9pb6mecsn4gxsxm": {
-      "at": "2026-08-26T06:16:59.803Z"
-    }
-  },
+  "deletedItems": {},
   "music": null,
   "coverImage": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/cover.jpg",
   "period": {
@@ -534,9 +476,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1788309699773,
+    "missYou": 1788417648173,
     "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1788309760656
+  "version": 1788417648207
 }
