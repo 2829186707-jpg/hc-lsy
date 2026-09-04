@@ -242,6 +242,21 @@
       "author": "hc",
       "photos": [],
       "createdAt": "2026-09-02T00:42:39.759Z"
+    },
+    {
+      "id": "mtmgjitb1mf1sp6ey",
+      "title": "h c冲发一怒为lsy",
+      "date": "2026-09-04",
+      "content": "lsy把自己辛辛苦苦买的pocket4卖了，她很伤心，于是hc说以后给她买个新的，于是lsy很开心记录了下来",
+      "mood": "🥰",
+      "author": "lsy",
+      "photos": [
+        {
+          "url": "https://cdn.jsdelivr.net/gh/2829186707-jpg/hc-lsy@main/data/diary/mtmgj963hs1bivbjr.jpg",
+          "date": "2026-09-04"
+        }
+      ],
+      "createdAt": "2026-09-04T04:32:18.431Z"
     }
   ],
   "wishes": [],
@@ -484,5 +499,5 @@
     "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1788496178797
+  "version": 1788496340196
 }
