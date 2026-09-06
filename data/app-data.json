@@ -267,6 +267,16 @@
       "author": "hc",
       "photos": [],
       "createdAt": "2026-09-04T16:28:49.020Z"
+    },
+    {
+      "id": "mtptkhpadtl0jljbp",
+      "title": "超超是聪明蛋",
+      "date": "2026-09-06",
+      "content": "超超打游戏厉害呢",
+      "mood": "🥰",
+      "author": "lsy",
+      "photos": [],
+      "createdAt": "2026-09-06T13:00:17.182Z"
     }
   ],
   "wishes": [],
@@ -512,9 +522,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1788699590233,
-    "period": 1787790838307
+    "missYou": 1788699546222,
+    "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1788699590285
+  "version": 1788699619192
 }
