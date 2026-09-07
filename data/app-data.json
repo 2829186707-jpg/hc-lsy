@@ -463,7 +463,8 @@
       "hc": true
     },
     "2026-09-07": {
-      "lsy": true
+      "lsy": true,
+      "hc": true
     }
   },
   "recycleBin": [
@@ -535,9 +536,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1788749624906,
-    "period": 1787721228261
+    "missYou": 1788760291777,
+    "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1788749709765
+  "version": 1788760291820
 }
