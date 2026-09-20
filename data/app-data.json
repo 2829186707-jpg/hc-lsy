@@ -389,11 +389,11 @@
         },
         {
           "text": "国庆期间酒店❌",
-          "done": true
+          "done": false
         },
         {
           "text": "目的地车票❌",
-          "done": false
+          "done": true
         },
         {
           "text": "返程机票❌",
@@ -403,7 +403,7 @@
       "notes": "何超给罗斯宇买蛋糕吃",
       "author": "lsy",
       "createdAt": "2026-08-24T15:20:32.451Z",
-      "updatedAt": "2026-09-20T07:25:10.629Z"
+      "updatedAt": "2026-09-20T07:25:14.347Z"
     }
   ],
   "qaAnswers": {
@@ -587,5 +587,5 @@
     "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1789889112004
+  "version": 1789889115718
 }
