@@ -297,6 +297,16 @@
       "author": "hc",
       "photos": [],
       "createdAt": "2026-09-17T16:31:27.169Z"
+    },
+    {
+      "id": "muayd5rjj4f4p3lx7",
+      "title": "去上海面试",
+      "date": "2026-09-20",
+      "content": "超超今天去上海面试很累，但是拿到了offer",
+      "mood": "",
+      "author": "hc",
+      "photos": [],
+      "createdAt": "2026-09-21T07:57:42.895Z"
     }
   ],
   "wishes": [],
@@ -590,5 +600,5 @@
     "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1789977413646
+  "version": 1789977462951
 }
