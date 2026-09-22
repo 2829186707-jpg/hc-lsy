@@ -317,6 +317,16 @@
       "author": "lsy",
       "photos": [],
       "createdAt": "2026-09-22T01:41:20.114Z"
+    },
+    {
+      "id": "muc6n6n6nr9rpoe58",
+      "title": "哎哟我去lsy你咋这么美",
+      "date": "2026-09-22",
+      "content": "美惨了",
+      "mood": "",
+      "author": "lsy",
+      "photos": [],
+      "createdAt": "2026-09-22T04:37:13.698Z"
     }
   ],
   "wishes": [],
@@ -610,9 +620,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1790041207582,
+    "missYou": 1790051800925,
     "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1790041282396
+  "version": 1790051833741
 }
