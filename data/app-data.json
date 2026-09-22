@@ -307,6 +307,16 @@
       "author": "hc",
       "photos": [],
       "createdAt": "2026-09-21T07:57:42.895Z"
+    },
+    {
+      "id": "muc0czg2przclw86z",
+      "title": "好困啊",
+      "date": "2026-09-22",
+      "content": "今天的天气：\n今天做了什么：早八\n想对TA说：\n今日小确幸：无",
+      "mood": "",
+      "author": "lsy",
+      "photos": [],
+      "createdAt": "2026-09-22T01:41:20.114Z"
     }
   ],
   "wishes": [],
@@ -604,5 +614,5 @@
     "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1790041207597
+  "version": 1790041282396
 }
