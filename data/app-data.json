@@ -7,7 +7,13 @@
   "letters": [],
   "trips": [],
   "qaAnswers": {},
-  "albums": [],
+  "albums": [
+    "未分类",
+    "旅行",
+    "日常",
+    "节日",
+    "合照"
+  ],
   "missYou": {
     "2026-08-24": {
       "hc": true,
@@ -105,10 +111,27 @@
       "hc": true
     },
     "2026-09-22": {
-      "lsy": true
+      "lsy": true,
+      "hc": true
     },
     "2026-09-30": {
-      "lsy": true
+      "lsy": true,
+      "hc": true
+    },
+    "2026-09-23": {
+      "hc": true
+    },
+    "2026-09-24": {
+      "hc": true
+    },
+    "2026-09-25": {
+      "hc": true
+    },
+    "2026-09-26": {
+      "hc": true
+    },
+    "2026-09-28": {
+      "hc": true
     }
   },
   "recycleBin": [
@@ -180,9 +203,9 @@
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1790757858826,
-    "period": 1787721228261
+    "missYou": 1790758936418,
+    "period": 1787790838307
   },
   "anniversary": "2022-07-11",
-  "version": 1790758172796
+  "version": 1790758936490
 }
