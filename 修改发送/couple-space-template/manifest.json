@@ -1,0 +1,20 @@
+{
+  "name": "我们的专属空间",
+  "short_name": "情侣空间",
+  "description": "专属于两个人的私密情侣空间",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6f2",
+  "theme_color": "#b89a97",
+  "orientation": "portrait-primary",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

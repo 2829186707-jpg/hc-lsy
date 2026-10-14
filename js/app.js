@@ -734,13 +734,13 @@
         },
         async syncAll() {
             if (!this.isConfigured() || state.syncing) return;
-            // 安全保护：如果本地数据基本为空（0照片+0日记+0留言+默认密码），拒绝推送，防止覆盖云端
-            const pws = storage.get(CONFIG.storageKeys.passwords, {});
-            const defaultHash = 'sha256_5e24f31f802ade0a869a1d1434e9aa5d30f9d729e3f8c5388191f3ab086ffa92';
-            const isEmptyLocal = state.photos.length === 0 && state.diaries.length === 0 && state.messages.length === 0
-                && (!pws.hc || pws.hc === defaultHash) && (!pws.lsy || pws.lsy === defaultHash);
-            if (isEmptyLocal) {
-                console.warn('[sync] 本地数据为空，拒绝推送以防止覆盖云端，改为拉取');
+            // 安全保护1：本地所有内容数据全空时，一律拒绝推送（不再要求密码是默认值）
+            // 防止新设备/清缓存后，空 localStorage 通过同步覆盖云端真实数据
+            const contentEmpty = state.photos.length === 0 && state.diaries.length === 0
+                && state.messages.length === 0 && state.anniversaries.length === 0
+                && state.letters.length === 0 && state.trips.length === 0 && state.wishes.length === 0;
+            if (contentEmpty) {
+                console.warn('[sync] 本地内容数据为空，拒绝推送以防止覆盖云端，改为拉取');
                 state.dirty = false; syncState.save();
                 return;
             }
@@ -752,9 +752,11 @@
                 if (cloudFile && cloudFile.content) {
                     try { cloudData = JSON.parse(cloudFile.content); } catch (e) { cloudData = null; }
                 }
-                // 关键安全保护：云端文件存在但读取失败（网络错误/解析失败）时禁止推送，防止用未合并旧数据覆盖云端
-                if (cloudFile && !cloudData && !cloudFile.notFound) {
-                    console.warn('[sync] 云端数据读取失败，取消推送，改为拉取（防止覆盖云端）');
+                // 安全保护2：云端文件拉取失败（网络错误/cloudFile为null）或解析失败时禁止推送
+                // 只有云端明确不存在(notFound=true)才允许首次推送（创建新文件）
+                if (!cloudFile || (cloudFile && !cloudData && !cloudFile.notFound)) {
+                    console.warn('[sync] 云端数据拉取失败，取消推送，改为拉取（防止覆盖云端）');
+                    state.syncing = false;
                     state.dirty = false; syncState.save();
                     setTimeout(() => app.loadData(false), 300);
                     return;
