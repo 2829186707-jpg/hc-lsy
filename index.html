@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HC & LSY 路 鎴戜滑鐨勪笓灞炵┖闂?/title>
+    <title>HC & LSY · 我们的专属空间</title>
     <meta name="theme-color" content="#b89a97">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="icon.svg">
     <link rel="apple-touch-icon" href="icon.svg">
-    <link rel="stylesheet" href="css/style.css?v=47">
+    <link rel="stylesheet" href="css/style.css?v=48">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -20,377 +20,377 @@
     <div class="confetti-layer" id="confettiLayer"></div>
 
     <div class="music-control" id="musicControl" style="display:none;">
-        <button class="music-btn" id="musicToggle"><span class="music-icon" id="musicIcon">鈾?/span></button>
-        <div class="music-info"><span class="music-name" id="musicName">鏈缃煶涔?/span></div>
+        <button class="music-btn" id="musicToggle"><span class="music-icon" id="musicIcon">♪</span></button>
+        <div class="music-info"><span class="music-name" id="musicName">未设置音乐</span></div>
     </div>
-    <button class="theme-toggle" id="themeToggle" title="鍒囨崲涓婚">馃寵</button>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">🌙</button>
 
-    <!-- 鐧诲綍椤?-->
+    <!-- 登录页 -->
     <div class="login-page" id="loginPage">
         <div class="login-card">
             <div class="login-header">
-                <div class="couple-avatar"><span class="avatar-hc">H</span><span class="heart-icon">鈾?/span><span class="avatar-lsy">L</span></div>
-                <h1 class="login-title">鎴戜滑鐨勪笓灞炵┖闂?/h1>
-                <p class="login-subtitle">HC &nbsp;&amp;&nbsp; LSY &nbsp;路&nbsp; 璁板綍姣忎竴涓績鍔ㄧ灛闂?/p>
+                <div class="couple-avatar"><span class="avatar-hc">H</span><span class="heart-icon">♥</span><span class="avatar-lsy">L</span></div>
+                <h1 class="login-title">我们的专属空间</h1>
+                <p class="login-subtitle">HC &nbsp;&amp;&nbsp; LSY &nbsp;·&nbsp; 记录每一个心动瞬间</p>
             </div>
             <form class="login-form" id="loginForm">
-                <div class="form-group"><label>閫夋嫨韬唤</label>
+                <div class="form-group"><label>选择身份</label>
                     <div class="role-selector">
                         <button type="button" class="role-btn active" data-role="hc"><span class="role-initial">H</span><span class="role-name">HC</span></button>
                         <button type="button" class="role-btn" data-role="lsy"><span class="role-initial">L</span><span class="role-name">LSY</span></button>
                     </div>
                 </div>
-                <div class="form-group"><label for="password">瀵嗙爜</label><input type="password" id="password" placeholder="璇疯緭鍏ュ瘑鐮? autocomplete="off"></div>
+                <div class="form-group"><label for="password">密码</label><input type="password" id="password" placeholder="请输入密码" autocomplete="off"></div>
                 <div class="login-error" id="loginError"></div>
-                <button type="submit" class="login-btn">杩涘叆鎴戜滑鐨勭┖闂?鈾?/button>
+                <button type="submit" class="login-btn">进入我们的空间 ♥</button>
             </form>
-            <div class="login-footer"><p>浠呴檺 HC 鍜?LSY 鐧诲綍 路 绉佹湁绌洪棿</p></div>
+            <div class="login-footer"><p>仅限 HC 和 LSY 登录 · 私有空间</p></div>
         </div>
     </div>
 
-    <!-- 涓诲簲鐢?-->
+    <!-- 主应用 -->
     <div class="app-container" id="appContainer" style="display:none;">
         <nav class="app-nav">
-            <div class="nav-brand" data-view="home"><span class="nav-heart">鈾?/span><span class="nav-title">HC &amp; LSY</span></div>
+            <div class="nav-brand" data-view="home"><span class="nav-heart">♥</span><span class="nav-title">HC &amp; LSY</span></div>
             <div class="nav-menu">
-                <button class="nav-item active" data-view="home">棣栭〉</button>
-                <button class="nav-item" data-view="timeline">鏃跺厜杞?/button>
-                <button class="nav-item" data-view="gallery">鐓х墖澧?/button>
-                <button class="nav-item" data-view="diary">鐢熸椿鏃ヨ</button>
-                <button class="nav-item" data-view="wishes">蹇冩効娓呭崟</button>
-                <button class="nav-item" data-view="messages">鐣欒█鏉?/button>
-                <button class="nav-item" data-view="letters">瀹氭椂淇′欢</button>
-                <button class="nav-item" data-view="trips">鏃呰璁″垝</button>
-                <button class="nav-item" data-view="qa">闂瓟涔?/button>
-                <button class="nav-item" data-view="settings">璁剧疆</button>
+                <button class="nav-item active" data-view="home">首页</button>
+                <button class="nav-item" data-view="timeline">时光轴</button>
+                <button class="nav-item" data-view="gallery">照片墙</button>
+                <button class="nav-item" data-view="diary">生活日记</button>
+                <button class="nav-item" data-view="wishes">心愿清单</button>
+                <button class="nav-item" data-view="messages">留言板</button>
+                <button class="nav-item" data-view="letters">定时信件</button>
+                <button class="nav-item" data-view="trips">旅行计划</button>
+                <button class="nav-item" data-view="qa">问答书</button>
+                <button class="nav-item" data-view="settings">设置</button>
             </div>
             <div class="nav-user">
                 <span class="user-avatar" id="userAvatar">H</span>
                 <span class="user-name" id="userName">HC</span>
-                <button class="logout-btn" id="logoutBtn" title="閫€鍑?>鉁?/button>
+                <button class="logout-btn" id="logoutBtn" title="退出">✕</button>
             </div>
         </nav>
 
-        <!-- 鎵嬫満搴曢儴瀵艰埅 -->
+        <!-- 手机底部导航 -->
         <nav class="mobile-nav">
-            <button class="mobile-nav-item active" data-view="home"><span class="mobile-nav-icon">馃彔</span><span class="mobile-nav-label">棣栭〉</span></button>
-            <button class="mobile-nav-item" data-view="timeline"><span class="mobile-nav-icon">馃摉</span><span class="mobile-nav-label">鏃跺厜杞?/span></button>
-            <button class="mobile-nav-item" data-view="gallery"><span class="mobile-nav-icon">馃摲</span><span class="mobile-nav-label">鐓х墖</span></button>
-            <button class="mobile-nav-item" data-view="diary"><span class="mobile-nav-icon">馃摑</span><span class="mobile-nav-label">鏃ヨ</span></button>
-            <button class="mobile-nav-item" data-view="wishes"><span class="mobile-nav-icon">猸?/span><span class="mobile-nav-label">蹇冩効</span></button>
-            <button class="mobile-nav-item" data-view="settings"><span class="mobile-nav-icon">鈿欙笍</span><span class="mobile-nav-label">璁剧疆</span></button>
+            <button class="mobile-nav-item active" data-view="home"><span class="mobile-nav-icon">🏠</span><span class="mobile-nav-label">首页</span></button>
+            <button class="mobile-nav-item" data-view="timeline"><span class="mobile-nav-icon">📖</span><span class="mobile-nav-label">时光轴</span></button>
+            <button class="mobile-nav-item" data-view="gallery"><span class="mobile-nav-icon">📷</span><span class="mobile-nav-label">照片</span></button>
+            <button class="mobile-nav-item" data-view="diary"><span class="mobile-nav-icon">📝</span><span class="mobile-nav-label">日记</span></button>
+            <button class="mobile-nav-item" data-view="wishes"><span class="mobile-nav-icon">⭐</span><span class="mobile-nav-label">心愿</span></button>
+            <button class="mobile-nav-item" data-view="settings"><span class="mobile-nav-icon">⚙️</span><span class="mobile-nav-label">设置</span></button>
         </nav>
 
         <main class="app-main">
-            <!-- 棣栭〉 -->
+            <!-- 首页 -->
             <section class="view view-home active" id="viewHome">
                 <div class="hero-cover" id="heroCover">
                     <div class="hero-cover-bg" id="heroCoverBg"></div>
                     <div class="hero-cover-content">
                         <div class="hero-names"><span class="hero-name hc">HC</span><span class="hero-and">&amp;</span><span class="hero-name lsy">LSY</span></div>
-                        <div class="hero-days"><span class="hero-days-number" id="heroDaysNumber">0</span><span class="hero-days-text">澶?/span></div>
-                        <p class="hero-days-label">鎴戜滑宸茬粡鍦ㄤ竴璧?/p>
-                        <div class="hero-quote"><span class="quote-text" id="quoteText">鎰挎湁宀佹湀鍙洖棣栵紝涓斾互娣辨儏鍏辩櫧澶?/span></div>
-                        <button class="hero-quote-btn" id="heroQuoteBtn">鎹竴鍙?/button>
+                        <div class="hero-days"><span class="hero-days-number" id="heroDaysNumber">0</span><span class="hero-days-text">天</span></div>
+                        <p class="hero-days-label">我们已经在一起</p>
+                        <div class="hero-quote"><span class="quote-text" id="quoteText">愿有岁月可回首，且以深情共白头</span></div>
+                        <button class="hero-quote-btn" id="heroQuoteBtn">换一句</button>
                     </div>
-                    <a href="#homeContent" class="hero-scroll-hint" id="heroScrollHint"><span>鍚戜笅婊戝姩</span><span class="scroll-arrow">鈫?/span></a>
+                    <a href="#homeContent" class="hero-scroll-hint" id="heroScrollHint"><span>向下滑动</span><span class="scroll-arrow">↓</span></a>
                 </div>
                 <div id="homeContent"></div>
 
-                <!-- 澶╂皵鍗＄墖 -->
+                <!-- 天气卡片 -->
                 <div class="weather-section" id="weatherSection" style="display:none;">
                     <div class="weather-card" id="weatherCard1">
-                        <div class="weather-city" id="weatherCity1">鈥?/div>
-                        <div class="weather-main"><span class="weather-icon" id="weatherIcon1">鈽€锔?/span><span class="weather-temp" id="weatherTemp1">鈥斅?/span></div>
-                        <div class="weather-desc" id="weatherDesc1">鈥?/div>
+                        <div class="weather-city" id="weatherCity1">—</div>
+                        <div class="weather-main"><span class="weather-icon" id="weatherIcon1">☀️</span><span class="weather-temp" id="weatherTemp1">—°</span></div>
+                        <div class="weather-desc" id="weatherDesc1">—</div>
                     </div>
                     <div class="weather-card" id="weatherCard2">
-                        <div class="weather-city" id="weatherCity2">鈥?/div>
-                        <div class="weather-main"><span class="weather-icon" id="weatherIcon2">鈽€锔?/span><span class="weather-temp" id="weatherTemp2">鈥斅?/span></div>
-                        <div class="weather-desc" id="weatherDesc2">鈥?/div>
+                        <div class="weather-city" id="weatherCity2">—</div>
+                        <div class="weather-main"><span class="weather-icon" id="weatherIcon2">☀️</span><span class="weather-temp" id="weatherTemp2">—°</span></div>
+                        <div class="weather-desc" id="weatherDesc2">—</div>
                     </div>
                 </div>
 
-                <!-- 鎯充綘浜?-->
+                <!-- 想你了 -->
                 <div class="miss-you-section">
                     <div class="miss-you-card">
-                        <div class="miss-you-header"><h3>浠婂ぉ鎯充綘浜嗗悧</h3><span class="miss-you-date" id="missYouDate"></span></div>
+                        <div class="miss-you-header"><h3>今天想你了吗</h3><span class="miss-you-date" id="missYouDate"></span></div>
                         <div class="miss-you-buttons">
-                            <button class="miss-you-btn hc" id="missYouHc"><span class="miss-you-initial">H</span><span class="miss-you-label">HC 鎯充綘浜?/span><span class="miss-you-status" id="missHcStatus">鏈墦鍗?/span></button>
-                            <div class="miss-you-heart" id="missYouHeart">鈾?/div>
-                            <button class="miss-you-btn lsy" id="missYouLsy"><span class="miss-you-initial">L</span><span class="miss-you-label">LSY 鎯充綘浜?/span><span class="miss-you-status" id="missLsyStatus">鏈墦鍗?/span></button>
+                            <button class="miss-you-btn hc" id="missYouHc"><span class="miss-you-initial">H</span><span class="miss-you-label">HC 想你了</span><span class="miss-you-status" id="missHcStatus">未打卡</span></button>
+                            <div class="miss-you-heart" id="missYouHeart">♡</div>
+                            <button class="miss-you-btn lsy" id="missYouLsy"><span class="miss-you-initial">L</span><span class="miss-you-label">LSY 想你了</span><span class="miss-you-status" id="missLsyStatus">未打卡</span></button>
                         </div>
                         <div class="miss-you-result" id="missYouResult"></div>
                     </div>
                 </div>
 
-                <!-- 蹇嵎鍏ュ彛 -->
+                <!-- 快捷入口 -->
                 <div class="quick-access">
-                    <button class="quick-card" data-view="messages"><span class="quick-icon">馃拰</span><span class="quick-text">鐣欒█鏉?/span></button>
-                    <button class="quick-card" data-view="letters"><span class="quick-icon">鉁夛笍</span><span class="quick-text">瀹氭椂淇′欢</span></button>
-                    <button class="quick-card" data-view="trips"><span class="quick-icon">鉁堬笍</span><span class="quick-text">鏃呰璁″垝</span></button>
-                    <button class="quick-card" data-view="qa"><span class="quick-icon">馃拺</span><span class="quick-text">闂瓟涔?/span></button>
-                    <button class="quick-card" id="quickBlindbox"><span class="quick-icon">馃巵</span><span class="quick-text">绾︿細鐩茬洅</span></button>
-                    <button class="quick-card" id="quickAnnual"><span class="quick-icon">馃搳</span><span class="quick-text">骞村害鍥為【</span></button>
-                    <button class="quick-card" id="quickCollage"><span class="quick-icon">馃柤锔?/span><span class="quick-text">鐓х墖鎷艰创</span></button>
-                    <button class="quick-card" data-view="timeline"><span class="quick-icon">馃摉</span><span class="quick-text">鏃跺厜杞?/span></button>
+                    <button class="quick-card" data-view="messages"><span class="quick-icon">💌</span><span class="quick-text">留言板</span></button>
+                    <button class="quick-card" data-view="letters"><span class="quick-icon">✉️</span><span class="quick-text">定时信件</span></button>
+                    <button class="quick-card" data-view="trips"><span class="quick-icon">✈️</span><span class="quick-text">旅行计划</span></button>
+                    <button class="quick-card" data-view="qa"><span class="quick-icon">💑</span><span class="quick-text">问答书</span></button>
+                    <button class="quick-card" id="quickBlindbox"><span class="quick-icon">🎁</span><span class="quick-text">约会盲盒</span></button>
+                    <button class="quick-card" id="quickAnnual"><span class="quick-icon">📊</span><span class="quick-text">年度回顾</span></button>
+                    <button class="quick-card" id="quickCollage"><span class="quick-icon">🖼️</span><span class="quick-text">照片拼贴</span></button>
+                    <button class="quick-card" data-view="timeline"><span class="quick-icon">📖</span><span class="quick-text">时光轴</span></button>
                 </div>
 
-                <!-- 鍊掕鏃?-->
+                <!-- 倒计时 -->
                 <div class="home-section countdown-section">
-                    <div class="section-header"><h3>閲嶈鏃ュ瓙</h3><button class="link-btn" data-view="settings">绠＄悊 鈫?/button></div>
-                    <div class="countdown-grid" id="countdownGrid"><div class="empty-state">杩樻病鏈夋坊鍔犵邯蹇垫棩锛屽幓璁剧疆椤垫坊鍔犲惂 鈾?/div></div>
+                    <div class="section-header"><h3>重要日子</h3><button class="link-btn" data-view="settings">管理 →</button></div>
+                    <div class="countdown-grid" id="countdownGrid"><div class="empty-state">还没有添加纪念日，去设置页添加吧 ♥</div></div>
                 </div>
 
-                <!-- 缁熻 -->
+                <!-- 统计 -->
                 <div class="home-stats">
-                    <div class="stat-card"><div class="stat-icon">馃摲</div><div class="stat-number" id="photoCount">0</div><div class="stat-label">寮犵収鐗?/div></div>
-                    <div class="stat-card"><div class="stat-icon">馃摑</div><div class="stat-number" id="diaryCount">0</div><div class="stat-label">绡囨棩璁?/div></div>
-                    <div class="stat-card"><div class="stat-icon">猸?/div><div class="stat-number" id="wishCount">0</div><div class="stat-label">涓績鎰?/div></div>
-                    <div class="stat-card"><div class="stat-icon">馃拰</div><div class="stat-number" id="messageCount">0</div><div class="stat-label">鏉＄暀瑷€</div></div>
+                    <div class="stat-card"><div class="stat-icon">📷</div><div class="stat-number" id="photoCount">0</div><div class="stat-label">张照片</div></div>
+                    <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-number" id="diaryCount">0</div><div class="stat-label">篇日记</div></div>
+                    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-number" id="wishCount">0</div><div class="stat-label">个心愿</div></div>
+                    <div class="stat-card"><div class="stat-icon">💌</div><div class="stat-number" id="messageCount">0</div><div class="stat-label">条留言</div></div>
                 </div>
 
                 <div class="home-sections">
                     <div class="home-section">
-                        <div class="section-header"><h3>鏈€杩戠収鐗?/h3><button class="link-btn" data-view="gallery">鏌ョ湅鍏ㄩ儴 鈫?/button></div>
-                        <div class="recent-photos" id="recentPhotos"><div class="empty-state">杩樻病鏈夌収鐗囷紝鍘讳笂浼犵涓€寮犲惂 鈾?/div></div>
+                        <div class="section-header"><h3>最近照片</h3><button class="link-btn" data-view="gallery">查看全部 →</button></div>
+                        <div class="recent-photos" id="recentPhotos"><div class="empty-state">还没有照片，去上传第一张吧 ♥</div></div>
                     </div>
                     <div class="home-section">
-                        <div class="section-header"><h3>鏈€鏂版棩璁?/h3><button class="link-btn" data-view="diary">鏌ョ湅鍏ㄩ儴 鈫?/button></div>
-                        <div class="recent-diaries" id="recentDiaries"><div class="empty-state">杩樻病鏈夋棩璁帮紝璁板綍浠婂ぉ鐨勫績鎯呭惂 鈾?/div></div>
+                        <div class="section-header"><h3>最新日记</h3><button class="link-btn" data-view="diary">查看全部 →</button></div>
+                        <div class="recent-diaries" id="recentDiaries"><div class="empty-state">还没有日记，记录今天的心情吧 ♥</div></div>
                     </div>
                 </div>
             </section>
 
-            <!-- 鏃跺厜杞?-->
+            <!-- 时光轴 -->
             <section class="view view-timeline" id="viewTimeline">
-                <div class="view-header"><div><h2>鏃跺厜杞?/h2><p class="view-desc">鎴戜滑鐨勬晠浜嬶紝鎸夋椂闂存祦娣?/p></div></div>
-                <div class="timeline-container" id="timelineContainer"><div class="empty-state large"><div class="empty-icon">馃摉</div><p>鏃跺厜杞磋繕鏄┖鐨?/p><p class="empty-hint">涓婁紶鐓х墖鎴栧啓鏃ヨ锛岃繖閲屼細璁板綍鎴戜滑鐨勬瘡涓€鍒?/p></div></div>
+                <div class="view-header"><div><h2>时光轴</h2><p class="view-desc">我们的故事，按时间流淌</p></div></div>
+                <div class="timeline-container" id="timelineContainer"><div class="empty-state large"><div class="empty-icon">📖</div><p>时光轴还是空的</p><p class="empty-hint">上传照片或写日记，这里会记录我们的每一刻</p></div></div>
             </section>
 
-            <!-- 鐓х墖澧?-->
+            <!-- 照片墙 -->
             <section class="view view-gallery" id="viewGallery">
                 <div class="view-header">
-                    <div><h2>鐓х墖澧?/h2><p class="view-desc">璁板綍鎴戜滑鐨勬瘡涓€涓編濂界灛闂?/p></div>
+                    <div><h2>照片墙</h2><p class="view-desc">记录我们的每一个美好瞬间</p></div>
                     <div style="display:flex;gap:8px;">
-                        <button class="secondary-btn" id="slideshowBtn" style="padding:8px 14px;font-size:13px;">鈻?骞荤伅鐗?/button>
-                        <button class="primary-btn" id="uploadPhotoBtn">+ 涓婁紶</button>
+                        <button class="secondary-btn" id="slideshowBtn" style="padding:8px 14px;font-size:13px;">▶ 幻灯片</button>
+                        <button class="primary-btn" id="uploadPhotoBtn">+ 上传</button>
                     </div>
                 </div>
                 <div class="gallery-view-toggle" style="display:flex;gap:6px;margin-bottom:14px;">
-                    <button class="gallery-toggle-btn active" data-view="time" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">馃搮 鎸夋椂闂?/button>
-                    <button class="gallery-toggle-btn" data-view="album" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">馃搧 鎸夌浉鍐?/button>
+                    <button class="gallery-toggle-btn active" data-view="time" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">📅 按时间</button>
+                    <button class="gallery-toggle-btn" data-view="album" style="flex:1;padding:8px;border:1px solid var(--card-border);border-radius:10px;background:var(--card-bg);font-size:12px;color:var(--text-secondary);transition:all 0.3s;">📁 按相册</button>
                 </div>
-                <div class="gallery-container" id="galleryContainer"><div class="empty-state large"><div class="empty-icon">馃摲</div><p>杩樻病鏈夌収鐗?/p><p class="empty-hint">鐐瑰嚮涓婃柟鎸夐挳涓婁紶鎴戜滑鐨勭涓€寮犵収鐗?/p></div></div>
+                <div class="gallery-container" id="galleryContainer"><div class="empty-state large"><div class="empty-icon">📷</div><p>还没有照片</p><p class="empty-hint">点击上方按钮上传我们的第一张照片</p></div></div>
             </section>
 
-            <!-- 鐢熸椿鏃ヨ -->
+            <!-- 生活日记 -->
             <section class="view view-diary" id="viewDiary">
                 <div class="view-header">
-                    <div><h2>鐢熸椿鏃ヨ</h2><p class="view-desc">璁板綍姣忎竴澶╃殑蹇冩儏涓庢晠浜?/p></div>
-                    <button class="primary-btn" id="newDiaryBtn">+ 鍐欐棩璁?/button>
+                    <div><h2>生活日记</h2><p class="view-desc">记录每一天的心情与故事</p></div>
+                    <button class="primary-btn" id="newDiaryBtn">+ 写日记</button>
                 </div>
-                <div class="diary-timeline" id="diaryTimeline"><div class="empty-state large"><div class="empty-icon">馃摑</div><p>杩樻病鏈夋棩璁?/p><p class="empty-hint">鍐欎笅浠婂ぉ鍙戠敓鐨勫皬鏁呬簨鍚?/p></div></div>
+                <div class="diary-timeline" id="diaryTimeline"><div class="empty-state large"><div class="empty-icon">📝</div><p>还没有日记</p><p class="empty-hint">写下今天发生的小故事吧</p></div></div>
             </section>
 
-            <!-- 蹇冩効娓呭崟 -->
+            <!-- 心愿清单 -->
             <section class="view view-wishes" id="viewWishes">
                 <div class="view-header">
-                    <div><h2>蹇冩効娓呭崟</h2><p class="view-desc">涓€璧锋兂鍋氱殑浜嬶紝涓€涓釜鍘诲疄鐜?/p></div>
-                    <button class="primary-btn" id="addWishBtn">+ 娣诲姞蹇冩効</button>
+                    <div><h2>心愿清单</h2><p class="view-desc">一起想做的事，一个个去实现</p></div>
+                    <button class="primary-btn" id="addWishBtn">+ 添加心愿</button>
                 </div>
-                <div class="wishes-progress"><div class="progress-bar"><div class="progress-fill" id="wishProgressFill"></div></div><span class="progress-text" id="wishProgressText">0 / 0 宸插畬鎴?/span></div>
-                <div class="wishes-list" id="wishesList"><div class="empty-state large"><div class="empty-icon">猸?/div><p>杩樻病鏈夊績鎰?/p><p class="empty-hint">娣诲姞绗竴涓兂涓€璧峰畬鎴愮殑蹇冩効鍚?/p></div></div>
+                <div class="wishes-progress"><div class="progress-bar"><div class="progress-fill" id="wishProgressFill"></div></div><span class="progress-text" id="wishProgressText">0 / 0 已完成</span></div>
+                <div class="wishes-list" id="wishesList"><div class="empty-state large"><div class="empty-icon">⭐</div><p>还没有心愿</p><p class="empty-hint">添加第一个想一起完成的心愿吧</p></div></div>
             </section>
 
-            <!-- 鐣欒█鏉?-->
+            <!-- 留言板 -->
             <section class="view view-messages" id="viewMessages">
                 <div class="view-header">
-                    <div><h2>鐣欒█鏉?/h2><p class="view-desc">鎯冲TA璇寸殑璇濓紝鐣欏湪杩欓噷</p></div>
-                    <button class="primary-btn" id="addMessageBtn">+ 鍐欑暀瑷€</button>
+                    <div><h2>留言板</h2><p class="view-desc">想对TA说的话，留在这里</p></div>
+                    <button class="primary-btn" id="addMessageBtn">+ 写留言</button>
                 </div>
-                <div class="messages-list" id="messagesList"><div class="empty-state large"><div class="empty-icon">馃拰</div><p>杩樻病鏈夌暀瑷€</p><p class="empty-hint">缁橳A鐣欑涓€鏉℃倓鎮勮瘽鍚?/p></div></div>
+                <div class="messages-list" id="messagesList"><div class="empty-state large"><div class="empty-icon">💌</div><p>还没有留言</p><p class="empty-hint">给TA留第一条悄悄话吧</p></div></div>
             </section>
 
-            <!-- 瀹氭椂淇′欢 -->
+            <!-- 定时信件 -->
             <section class="view view-letters" id="viewLetters">
                 <div class="view-header">
-                    <div><h2>瀹氭椂淇′欢</h2><p class="view-desc">鍐欑粰鏈潵鐨勪俊锛屽埌浜嗛偅澶╂墠鑳芥墦寮€</p></div>
-                    <button class="primary-btn" id="addLetterBtn">+ 鍐欎竴灏佷俊</button>
+                    <div><h2>定时信件</h2><p class="view-desc">写给未来的信，到了那天才能打开</p></div>
+                    <button class="primary-btn" id="addLetterBtn">+ 写一封信</button>
                 </div>
-                <div class="letters-list" id="lettersList"><div class="empty-state large"><div class="empty-icon">鉁夛笍</div><p>杩樻病鏈夊畾鏃朵俊浠?/p><p class="empty-hint">鍐欎竴灏佺粰鏈潵鐨勪俊鍚?/p></div></div>
+                <div class="letters-list" id="lettersList"><div class="empty-state large"><div class="empty-icon">✉️</div><p>还没有定时信件</p><p class="empty-hint">写一封给未来的信吧</p></div></div>
             </section>
 
-            <!-- 鏃呰璁″垝 -->
+            <!-- 旅行计划 -->
             <section class="view view-trips" id="viewTrips">
                 <div class="view-header">
-                    <div><h2>鏃呰璁″垝</h2><p class="view-desc">瑙勫垝鎴戜滑鐨勪笅涓€娆″嚭鍙?/p></div>
-                    <button class="primary-btn" id="addTripBtn">+ 鏂板缓璁″垝</button>
+                    <div><h2>旅行计划</h2><p class="view-desc">规划我们的下一次出发</p></div>
+                    <button class="primary-btn" id="addTripBtn">+ 新建计划</button>
                 </div>
-                <div class="trips-list" id="tripsList"><div class="empty-state large"><div class="empty-icon">鉁堬笍</div><p>杩樻病鏈夋梾琛岃鍒?/p><p class="empty-hint">瑙勫垝鎴戜滑鐨勭涓€娆℃梾琛屽惂</p></div></div>
+                <div class="trips-list" id="tripsList"><div class="empty-state large"><div class="empty-icon">✈️</div><p>还没有旅行计划</p><p class="empty-hint">规划我们的第一次旅行吧</p></div></div>
             </section>
 
-            <!-- 闂瓟涔?-->
+            <!-- 问答书 -->
             <section class="view view-qa" id="viewQa">
                 <div class="view-header">
-                    <div><h2>鎯呬荆闂瓟涔?/h2><p class="view-desc">涓€涓釜闂锛岀Н绱垚鎴戜滑鐨勪笓灞為棶绛斾功</p></div>
+                    <div><h2>情侣问答书</h2><p class="view-desc">一个个问题，积累成我们的专属问答书</p></div>
                 </div>
-                <div class="qa-progress"><div class="progress-bar"><div class="progress-fill" id="qaProgressFill"></div></div><span class="progress-text" id="qaProgressText">0 / 0 宸插洖绛?/span></div>
-                <div class="qa-list" id="qaList"><div class="empty-state large"><div class="empty-icon">馃拺</div><p>鍔犺浇闂涓?..</p></div></div>
+                <div class="qa-progress"><div class="progress-bar"><div class="progress-fill" id="qaProgressFill"></div></div><span class="progress-text" id="qaProgressText">0 / 0 已回答</span></div>
+                <div class="qa-list" id="qaList"><div class="empty-state large"><div class="empty-icon">💑</div><p>加载问题中...</p></div></div>
             </section>
 
-            <!-- 璁剧疆 -->
+            <!-- 设置 -->
             <section class="view view-settings" id="viewSettings">
-                <div class="view-header"><div><h2>璁剧疆</h2><p class="view-desc">閰嶇疆绌洪棿鍙傛暟涓庝釜浜哄亸濂?/p></div></div>
+                <div class="view-header"><div><h2>设置</h2><p class="view-desc">配置空间参数与个人偏好</p></div></div>
                 <div class="settings-container">
                     <div class="settings-card" style="border:2px solid var(--primary-light);background:linear-gradient(135deg,rgba(184,154,151,0.08),rgba(201,168,124,0.06));">
-                        <h3 style="display:flex;align-items:center;gap:8px;">馃懁 褰撳墠璐﹀彿</h3>
-                        <p class="settings-desc">褰撳墠鐧诲綍韬唤锛屽彲閫€鍑哄悗鍒囨崲鍏朵粬璐﹀彿</p>
+                        <h3 style="display:flex;align-items:center;gap:8px;">👤 当前账号</h3>
+                        <p class="settings-desc">当前登录身份，可退出后切换其他账号</p>
                         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
                             <div style="display:flex;align-items:center;gap:10px;">
                                 <span class="user-avatar" id="settingsUserAvatar" style="width:36px;height:36px;font-size:15px;">H</span>
                                 <div>
                                     <div style="font-size:15px;font-weight:600;color:var(--text-primary);" id="settingsUserName">HC</div>
-                                    <div style="font-size:11px;color:var(--text-light);" id="settingsUserHint">鎯呬荆璐﹀彿</div>
+                                    <div style="font-size:11px;color:var(--text-light);" id="settingsUserHint">情侣账号</div>
                                 </div>
                             </div>
-                            <button class="danger-btn" id="settingsLogoutBtn" style="padding:10px 20px;font-size:13px;">閫€鍑虹櫥褰?/ 鍒囨崲璐﹀彿</button>
+                            <button class="danger-btn" id="settingsLogoutBtn" style="padding:10px 20px;font-size:13px;">退出登录 / 切换账号</button>
                         </div>
                     </div>
-                    <div class="settings-card"><h3>棣栭〉灏侀潰</h3><p class="settings-desc">涓婁紶涓€寮犲悎鐓т綔涓洪椤靛皝闈㈣儗鏅?/p>
-                        <div class="settings-row"><button class="secondary-btn" id="uploadCoverBtn">閫夋嫨灏侀潰鍥?/button><button class="danger-btn" id="removeCoverBtn" style="display:none;">绉婚櫎</button><span class="cover-status" id="coverStatus">浣跨敤榛樿娓愬彉</span></div>
+                    <div class="settings-card"><h3>首页封面</h3><p class="settings-desc">上传一张合照作为首页封面背景</p>
+                        <div class="settings-row"><button class="secondary-btn" id="uploadCoverBtn">选择封面图</button><button class="danger-btn" id="removeCoverBtn" style="display:none;">移除</button><span class="cover-status" id="coverStatus">使用默认渐变</span></div>
                         <input type="file" id="coverInput" accept="image/*" hidden>
                     </div>
-                    <div class="settings-card"><h3>鍦ㄤ竴璧风殑鏃ユ湡</h3><p class="settings-desc">璁剧疆鎴戜滑鍦ㄤ竴璧风殑绾康鏃?/p>
-                        <div class="settings-row"><input type="date" id="anniversaryDate" class="settings-input"><button class="secondary-btn" id="saveAnniversaryBtn">淇濆瓨</button></div>
+                    <div class="settings-card"><h3>在一起的日期</h3><p class="settings-desc">设置我们在一起的纪念日</p>
+                        <div class="settings-row"><input type="date" id="anniversaryDate" class="settings-input"><button class="secondary-btn" id="saveAnniversaryBtn">保存</button></div>
                     </div>
-                    <div class="settings-card"><h3>绾康鏃ョ鐞?/h3><p class="settings-desc">娣诲姞鐢熸棩銆佹梾琛屾棩绛夛紝棣栭〉鏄剧ず鍊掕鏃?/p>
+                    <div class="settings-card"><h3>纪念日管理</h3><p class="settings-desc">添加生日、旅行日等，首页显示倒计时</p>
                         <div class="anniversary-list" id="anniversaryList"></div>
-                        <div class="settings-row mt-16"><input type="text" id="newAnnivName" class="settings-input" placeholder="鍚嶇О"><input type="date" id="newAnnivDate" class="settings-input"><button class="secondary-btn" id="addAnnivBtn">娣诲姞</button></div>
+                        <div class="settings-row mt-16"><input type="text" id="newAnnivName" class="settings-input" placeholder="名称"><input type="date" id="newAnnivDate" class="settings-input"><button class="secondary-btn" id="addAnnivBtn">添加</button></div>
                     </div>
-                    <div class="settings-card"><h3>寮傚湴澶╂皵</h3><p class="settings-desc">璁剧疆涓や汉鎵€鍦ㄥ煄甯傦紝棣栭〉鏄剧ず涓ゅ湴澶╂皵</p>
-                        <div class="settings-row"><input type="text" id="weatherCity1Input" class="settings-input" placeholder="HC 鎵€鍦ㄥ煄甯?><input type="text" id="weatherCity2Input" class="settings-input" placeholder="LSY 鎵€鍦ㄥ煄甯?><button class="secondary-btn" id="saveWeatherBtn">淇濆瓨</button></div>
+                    <div class="settings-card"><h3>异地天气</h3><p class="settings-desc">设置两人所在城市，首页显示两地天气</p>
+                        <div class="settings-row"><input type="text" id="weatherCity1Input" class="settings-input" placeholder="HC 所在城市"><input type="text" id="weatherCity2Input" class="settings-input" placeholder="LSY 所在城市"><button class="secondary-btn" id="saveWeatherBtn">保存</button></div>
                     </div>
-                    <div class="settings-card"><h3>鐢熺悊鏈熸彁閱?/h3><p class="settings-desc">璁板綍涓婃鐢熺悊鏈熸棩鏈燂紝棰勮涓嬫鏃堕棿</p>
-                        <div class="settings-row"><input type="date" id="periodDate" class="settings-input"><input type="number" id="periodCycle" class="settings-input" placeholder="鍛ㄦ湡(澶?锛岄粯璁?8" min="20" max="40"><button class="secondary-btn" id="savePeriodBtn">淇濆瓨</button></div>
+                    <div class="settings-card"><h3>生理期提醒</h3><p class="settings-desc">记录上次生理期日期，预计下次时间</p>
+                        <div class="settings-row"><input type="date" id="periodDate" class="settings-input"><input type="number" id="periodCycle" class="settings-input" placeholder="周期(天)，默认28" min="20" max="40"><button class="secondary-btn" id="savePeriodBtn">保存</button></div>
                         <div class="period-info" id="periodInfo" style="display:none;margin-top:10px;font-size:13px;color:var(--text-secondary);"></div>
                     </div>
-                    <div class="settings-card"><h3>鑳屾櫙闊充箰</h3><p class="settings-desc">涓婁紶涓€棣栧睘浜庢垜浠殑姝?/p>
-                        <div class="settings-row"><button class="secondary-btn" id="uploadMusicBtn">閫夋嫨闊充箰鏂囦欢</button><span class="music-status" id="musicStatus">鏈缃?/span><button class="danger-btn" id="removeMusicBtn" style="display:none;">绉婚櫎</button></div>
+                    <div class="settings-card"><h3>背景音乐</h3><p class="settings-desc">上传一首属于我们的歌</p>
+                        <div class="settings-row"><button class="secondary-btn" id="uploadMusicBtn">选择音乐文件</button><span class="music-status" id="musicStatus">未设置</span><button class="danger-btn" id="removeMusicBtn" style="display:none;">移除</button></div>
                         <input type="file" id="musicFileInput" accept="audio/*" hidden>
                     </div>
-                    <div class="settings-card"><h3>澶栬</h3><p class="settings-desc">娣辫壊妯″紡 / 娴呰壊妯″紡鍒囨崲</p>
-                        <div class="settings-row"><button class="secondary-btn" id="darkModeBtn">馃寵 鍒囨崲娣辫壊妯″紡</button></div>
+                    <div class="settings-card"><h3>外观</h3><p class="settings-desc">深色模式 / 浅色模式切换</p>
+                        <div class="settings-row"><button class="secondary-btn" id="darkModeBtn">🌙 切换深色模式</button></div>
                     </div>
                     <div id="githubConfigSection" style="display:none;">
-                    <div class="settings-card"><h3>GitHub 鏁版嵁鍚屾</h3><p class="settings-desc">閰嶇疆鍚庢暟鎹嚜鍔ㄥ悓姝ュ埌浠撳簱锛屽疄鐜板璁惧鏁版嵁鍏变韩</p>
-                        <div class="settings-group"><label>浠撳簱鎵€鏈夎€?/label><input type="text" id="githubOwner" class="settings-input" placeholder="GitHub鐢ㄦ埛鍚?></div>
-                        <div class="settings-group"><label>浠撳簱鍚嶇О</label><input type="text" id="githubRepo" class="settings-input" placeholder="浠撳簱鍚?></div>
-                        <div class="settings-group"><label>Token</label><input type="password" id="githubToken" class="settings-input" placeholder="github_pat_xxx"><p class="settings-hint">闇€瑕?Contents 璇诲啓鏉冮檺</p></div>
-                        <button class="secondary-btn" id="saveGithubBtn">淇濆瓨閰嶇疆</button><span class="config-status" id="githubStatus"></span>
+                    <div class="settings-card"><h3>GitHub 数据同步</h3><p class="settings-desc">配置后数据自动同步到仓库，实现多设备数据共享</p>
+                        <div class="settings-group"><label>仓库所有者</label><input type="text" id="githubOwner" class="settings-input" placeholder="GitHub用户名"></div>
+                        <div class="settings-group"><label>仓库名称</label><input type="text" id="githubRepo" class="settings-input" placeholder="仓库名"></div>
+                        <div class="settings-group"><label>Token</label><input type="password" id="githubToken" class="settings-input" placeholder="github_pat_xxx"><p class="settings-hint">需要 Contents 读写权限</p></div>
+                        <button class="secondary-btn" id="saveGithubBtn">保存配置</button><span class="config-status" id="githubStatus"></span>
                     </div>
                     </div>
-                    <div class="settings-card"><h3>瀵嗙爜绠＄悊</h3><p class="settings-desc">淇敼 HC 鎴?LSY 鐨勭櫥褰曞瘑鐮?/p>
-                        <div class="settings-group"><label>淇敼璋佺殑瀵嗙爜</label><select id="pwdTarget" class="settings-input"><option value="hc">HC</option><option value="lsy">LSY</option></select></div>
-                        <div class="settings-group"><label>鏂板瘑鐮?/label><input type="password" id="newPassword" class="settings-input" placeholder="鑷冲皯4浣?></div>
-                        <button class="secondary-btn" id="changePwdBtn">淇敼瀵嗙爜</button>
+                    <div class="settings-card"><h3>密码管理</h3><p class="settings-desc">修改 HC 或 LSY 的登录密码</p>
+                        <div class="settings-group"><label>修改谁的密码</label><select id="pwdTarget" class="settings-input"><option value="hc">HC</option><option value="lsy">LSY</option></select></div>
+                        <div class="settings-group"><label>新密码</label><input type="password" id="newPassword" class="settings-input" placeholder="至少4位"></div>
+                        <button class="secondary-btn" id="changePwdBtn">修改密码</button>
                     </div>
-                    <div class="settings-card"><h3>鏁版嵁绠＄悊</h3><p class="settings-desc">瀵煎嚭銆佸鍏ャ€佹竻绌烘暟鎹?/p>
-                        <div class="settings-row"><button class="secondary-btn" id="exportDataBtn">瀵煎嚭鏁版嵁</button><button class="secondary-btn" id="importDataBtn">瀵煎叆鏁版嵁</button><button class="danger-btn" id="clearDataBtn">娓呯┖鏈湴鏁版嵁</button></div>
+                    <div class="settings-card"><h3>数据管理</h3><p class="settings-desc">导出、导入、清空数据</p>
+                        <div class="settings-row"><button class="secondary-btn" id="exportDataBtn">导出数据</button><button class="secondary-btn" id="importDataBtn">导入数据</button><button class="danger-btn" id="clearDataBtn">清空本地数据</button></div>
                         <input type="file" id="importInput" accept=".json" hidden>
                     </div>
-                    <div class="settings-card"><h3>鐩稿唽绠＄悊</h3><p class="settings-desc">绠＄悊鐓х墖鍒嗙被鐩稿唽锛屼笂浼犳椂鍙€夋嫨褰掑睘鐩稿唽</p>
+                    <div class="settings-card"><h3>相册管理</h3><p class="settings-desc">管理照片分类相册，上传时可选择归属相册</p>
                         <div class="album-list" id="albumList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:180px;overflow-y:auto;"></div>
-                        <div class="settings-row"><input type="text" id="newAlbumName" class="settings-input" placeholder="鏂扮浉鍐屽悕绉?><button class="secondary-btn" id="addAlbumBtn">娣诲姞鐩稿唽</button></div>
+                        <div class="settings-row"><input type="text" id="newAlbumName" class="settings-input" placeholder="新相册名称"><button class="secondary-btn" id="addAlbumBtn">添加相册</button></div>
                     </div>
-                    <div class="settings-card"><h3>鍥炴敹绔?/h3><p class="settings-desc">鍒犻櫎鐨勫唴瀹规殏瀛?澶╋紝鍙仮澶?/p>
-                        <div class="recycle-list" id="recycleList"><div class="empty-state" style="padding:12px;">鍥炴敹绔欎负绌?/div></div>
+                    <div class="settings-card"><h3>回收站</h3><p class="settings-desc">删除的内容暂存7天，可恢复</p>
+                        <div class="recycle-list" id="recycleList"><div class="empty-state" style="padding:12px;">回收站为空</div></div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- 涓婁紶鐓х墖寮圭獥 -->
+    <!-- 上传照片弹窗 -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <div class="modal-header"><h3>涓婁紶鐓х墖/瑙嗛</h3><button class="modal-close" data-close="uploadModal">鉁?/button></div>
+            <div class="modal-header"><h3>上传照片/视频</h3><button class="modal-close" data-close="uploadModal">✕</button></div>
             <div class="modal-body">
                 <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">馃摳</div><p>鐐瑰嚮鎴栨嫋鎷芥枃浠跺埌姝ゅ</p><p class="upload-hint">鏀寔 JPG銆丳NG銆乄EBP銆丮P4锛屽彲澶氶€?/p>
+                    <div class="upload-icon">📸</div><p>点击或拖拽文件到此处</p><p class="upload-hint">支持 JPG、PNG、WEBP、MP4，可多选</p>
                     <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden>
                 </div>
                 <div class="upload-preview" id="uploadPreview"></div>
-                <div class="form-group"><label>鎻忚堪锛堝彲閫夛級</label><input type="text" id="photoCaption" class="settings-input" placeholder="缁欒繖浜涘唴瀹瑰啓鍙ヨ瘽..."></div>
-                <div class="form-group"><label>鏃ユ湡</label><input type="date" id="photoDate" class="settings-input"></div>
-                <div class="form-group"><label>鐩稿唽</label><select id="photoAlbum" class="settings-input"></select></div>
+                <div class="form-group"><label>描述（可选）</label><input type="text" id="photoCaption" class="settings-input" placeholder="给这些内容写句话..."></div>
+                <div class="form-group"><label>日期</label><input type="date" id="photoDate" class="settings-input"></div>
+                <div class="form-group"><label>相册</label><select id="photoAlbum" class="settings-input"></select></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="uploadModal">鍙栨秷</button><button class="primary-btn" id="confirmUploadBtn">涓婁紶</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="uploadModal">取消</button><button class="primary-btn" id="confirmUploadBtn">上传</button></div>
         </div>
     </div>
 
-    <!-- 鍐欐棩璁板脊绐?-->
+    <!-- 写日记弹窗 -->
     <div class="modal" id="diaryModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3 id="diaryModalTitle">鍐欐棩璁?/h3><button class="modal-close" data-close="diaryModal">鉁?/button></div>
+            <div class="modal-header"><h3 id="diaryModalTitle">写日记</h3><button class="modal-close" data-close="diaryModal">✕</button></div>
             <div class="modal-body">
-                <div class="form-group"><label>鏍囬</label><input type="text" id="diaryTitle" class="settings-input" placeholder="缁欎粖澶╄捣涓爣棰?.."></div>
+                <div class="form-group"><label>标题</label><input type="text" id="diaryTitle" class="settings-input" placeholder="给今天起个标题..."></div>
                 <div class="form-row">
-                    <div class="form-group flex-1"><label>鏃ユ湡</label><input type="date" id="diaryDate" class="settings-input"></div>
-                    <div class="form-group flex-1"><label>蹇冩儏</label>
+                    <div class="form-group flex-1"><label>日期</label><input type="date" id="diaryDate" class="settings-input"></div>
+                    <div class="form-group flex-1"><label>心情</label>
                         <div class="mood-selector">
-                            <button type="button" class="mood-btn" data-mood="馃槉">馃槉</button><button type="button" class="mood-btn" data-mood="馃グ">馃グ</button>
-                            <button type="button" class="mood-btn" data-mood="馃槃">馃槃</button><button type="button" class="mood-btn" data-mood="馃槍">馃槍</button>
-                            <button type="button" class="mood-btn" data-mood="馃槩">馃槩</button><button type="button" class="mood-btn" data-mood="馃槨">馃槨</button>
-                            <button type="button" class="mood-btn" data-mood="馃">馃</button><button type="button" class="mood-btn" data-mood="馃槾">馃槾</button>
+                            <button type="button" class="mood-btn" data-mood="😊">😊</button><button type="button" class="mood-btn" data-mood="🥰">🥰</button>
+                            <button type="button" class="mood-btn" data-mood="😄">😄</button><button type="button" class="mood-btn" data-mood="😌">😌</button>
+                            <button type="button" class="mood-btn" data-mood="😢">😢</button><button type="button" class="mood-btn" data-mood="😡">😡</button>
+                            <button type="button" class="mood-btn" data-mood="🤔">🤔</button><button type="button" class="mood-btn" data-mood="😴">😴</button>
                         </div>
                     </div>
                 </div>
-                <div class="form-group"><label>鏃ヨ妯℃澘锛堝彲閫夛級</label>
+                <div class="form-group"><label>日记模板（可选）</label>
                     <div class="diary-template-selector" id="diaryTemplateSelector">
-                        <button type="button" class="diary-template-btn" data-tpl="daily">鈽?鏃ュ父纰庣蹇?/button>
-                        <button type="button" class="diary-template-btn" data-tpl="travel">鉁堬笍 鏃呰鏃ヨ</button>
-                        <button type="button" class="diary-template-btn" data-tpl="anniversary">馃帀 绾康鏃?/button>
-                        <button type="button" class="diary-template-btn" data-tpl="food">馃崪 缇庨璁板綍</button>
-                        <button type="button" class="diary-template-btn" data-tpl="reconcile">馃挐 鍚垫灦鍜屽ソ</button>
-                        <button type="button" class="diary-template-btn" data-tpl="blank">馃摑 绌虹櫧</button>
+                        <button type="button" class="diary-template-btn" data-tpl="daily">☕ 日常碎碎念</button>
+                        <button type="button" class="diary-template-btn" data-tpl="travel">✈️ 旅行日记</button>
+                        <button type="button" class="diary-template-btn" data-tpl="anniversary">🎉 纪念日</button>
+                        <button type="button" class="diary-template-btn" data-tpl="food">🍜 美食记录</button>
+                        <button type="button" class="diary-template-btn" data-tpl="reconcile">💝 吵架和好</button>
+                        <button type="button" class="diary-template-btn" data-tpl="blank">📝 空白</button>
                     </div>
                 </div>
-                <div class="form-group"><label>鍐呭</label><textarea id="diaryContent" class="settings-input diary-textarea" placeholder="浠婂ぉ鍙戠敓浜嗕粈涔堝憿..."></textarea></div>
-                <div class="form-group"><label>鎻掑叆鐓х墖锛堝彲閫夛級</label>
+                <div class="form-group"><label>内容</label><textarea id="diaryContent" class="settings-input diary-textarea" placeholder="今天发生了什么呢..."></textarea></div>
+                <div class="form-group"><label>插入照片（可选）</label>
                     <div class="diary-photo-area">
                         <div class="diary-photos-preview" id="diaryPhotosPreview"></div>
-                        <button type="button" class="secondary-btn" id="diaryAddPhotoBtn">+ 娣诲姞鐓х墖</button>
+                        <button type="button" class="secondary-btn" id="diaryAddPhotoBtn">+ 添加照片</button>
                         <input type="file" id="diaryPhotoInput" accept="image/*" multiple hidden>
                     </div>
                 </div>
                 <div class="form-group" style="display:flex;gap:10px;align-items:center;">
-                    <button type="button" class="secondary-btn" id="diaryShareBtn">馃摛 鐢熸垚鍒嗕韩鍗＄墖</button>
+                    <button type="button" class="secondary-btn" id="diaryShareBtn">📤 生成分享卡片</button>
                 </div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="diaryModal">鍙栨秷</button><button class="primary-btn" id="saveDiaryBtn">淇濆瓨</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="diaryModal">取消</button><button class="primary-btn" id="saveDiaryBtn">保存</button></div>
         </div>
     </div>
 
-    <!-- 蹇冩効寮圭獥 -->
+    <!-- 心愿弹窗 -->
     <div class="modal" id="wishModal">
         <div class="modal-content">
-            <div class="modal-header"><h3 id="wishModalTitle">娣诲姞蹇冩効</h3><button class="modal-close" data-close="wishModal">鉁?/button></div>
+            <div class="modal-header"><h3 id="wishModalTitle">添加心愿</h3><button class="modal-close" data-close="wishModal">✕</button></div>
             <div class="modal-body">
-                <div class="form-group"><label>蹇冩効鍐呭</label><input type="text" id="wishContent" class="settings-input" placeholder="渚嬪锛氫竴璧峰幓鐪嬫捣"></div>
-                <div class="form-group"><label>鍒嗙被</label><select id="wishCategory" class="settings-input"><option value="鏃呰">鏃呰</option><option value="缇庨">缇庨</option><option value="鐢熸椿">鐢熸椿</option><option value="绀肩墿">绀肩墿</option><option value="鍏朵粬">鍏朵粬</option></select></div>
+                <div class="form-group"><label>心愿内容</label><input type="text" id="wishContent" class="settings-input" placeholder="例如：一起去看海"></div>
+                <div class="form-group"><label>分类</label><select id="wishCategory" class="settings-input"><option value="旅行">旅行</option><option value="美食">美食</option><option value="生活">生活</option><option value="礼物">礼物</option><option value="其他">其他</option></select></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="wishModal">鍙栨秷</button><button class="primary-btn" id="saveWishBtn">淇濆瓨</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="wishModal">取消</button><button class="primary-btn" id="saveWishBtn">保存</button></div>
         </div>
     </div>
 
-    <!-- 鐣欒█寮圭獥 -->
+    <!-- 留言弹窗 -->
     <div class="modal" id="messageModal">
         <div class="modal-content">
-            <div class="modal-header"><h3>鍐欑暀瑷€</h3><button class="modal-close" data-close="messageModal">鉁?/button></div>
+            <div class="modal-header"><h3>写留言</h3><button class="modal-close" data-close="messageModal">✕</button></div>
             <div class="modal-body">
-                <div class="form-group"><label>鐣欒█鍐呭</label><textarea id="messageContent" class="settings-input diary-textarea" placeholder="鎯冲TA璇寸殑璇?.."></textarea></div>
-                <div class="form-group"><label>渚跨棰滆壊</label>
+                <div class="form-group"><label>留言内容</label><textarea id="messageContent" class="settings-input diary-textarea" placeholder="想对TA说的话..."></textarea></div>
+                <div class="form-group"><label>便签颜色</label>
                     <div class="color-selector">
                         <button type="button" class="color-btn active" data-color="pink" style="background:#f5c6cf;"></button>
                         <button type="button" class="color-btn" data-color="cream" style="background:#f0e0c8;"></button>
@@ -400,91 +400,91 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="messageModal">鍙栨秷</button><button class="primary-btn" id="saveMessageBtn">鍙戦€?/button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="messageModal">取消</button><button class="primary-btn" id="saveMessageBtn">发送</button></div>
         </div>
     </div>
 
-    <!-- 瀹氭椂淇′欢寮圭獥 -->
+    <!-- 定时信件弹窗 -->
     <div class="modal" id="letterModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3>鍐欎竴灏佷俊</h3><button class="modal-close" data-close="letterModal">鉁?/button></div>
+            <div class="modal-header"><h3>写一封信</h3><button class="modal-close" data-close="letterModal">✕</button></div>
             <div class="modal-body">
-                <div class="form-group"><label>淇′欢鏍囬</label><input type="text" id="letterTitle" class="settings-input" placeholder="缁欒繖灏佷俊璧蜂釜鏍囬..."></div>
-                <div class="form-group"><label>瑙ｉ攣鏃ユ湡</label><input type="date" id="letterUnlockDate" class="settings-input"></div>
-                <div class="form-group"><label>淇′欢鍐呭</label><textarea id="letterContent" class="settings-input diary-textarea" style="min-height:200px;" placeholder="鍐欑粰鏈潵鐨勮瘽..."></textarea></div>
+                <div class="form-group"><label>信件标题</label><input type="text" id="letterTitle" class="settings-input" placeholder="给这封信起个标题..."></div>
+                <div class="form-group"><label>解锁日期</label><input type="date" id="letterUnlockDate" class="settings-input"></div>
+                <div class="form-group"><label>信件内容</label><textarea id="letterContent" class="settings-input diary-textarea" style="min-height:200px;" placeholder="写给未来的话..."></textarea></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="letterModal">鍙栨秷</button><button class="primary-btn" id="saveLetterBtn">灏佸瓨淇′欢</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="letterModal">取消</button><button class="primary-btn" id="saveLetterBtn">封存信件</button></div>
         </div>
     </div>
 
-    <!-- 鏌ョ湅淇′欢寮圭獥 -->
+    <!-- 查看信件弹窗 -->
     <div class="modal" id="letterViewModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3 id="letterViewTitle">淇′欢</h3><button class="modal-close" data-close="letterViewModal">鉁?/button></div>
+            <div class="modal-header"><h3 id="letterViewTitle">信件</h3><button class="modal-close" data-close="letterViewModal">✕</button></div>
             <div class="modal-body">
                 <div class="letter-view-meta" id="letterViewMeta"></div>
                 <div class="letter-view-content" id="letterViewContent"></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="letterViewModal">鍏抽棴</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="letterViewModal">关闭</button></div>
         </div>
     </div>
 
-    <!-- 鏃呰璁″垝寮圭獥 -->
+    <!-- 旅行计划弹窗 -->
     <div class="modal" id="tripModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3 id="tripModalTitle">鏂板缓鏃呰璁″垝</h3><button class="modal-close" data-close="tripModal">鉁?/button></div>
+            <div class="modal-header"><h3 id="tripModalTitle">新建旅行计划</h3><button class="modal-close" data-close="tripModal">✕</button></div>
             <div class="modal-body">
                 <div class="form-row">
-                    <div class="form-group flex-1"><label>鏃呰鍚嶇О</label><input type="text" id="tripName" class="settings-input" placeholder="渚嬪锛氫笁浜氫簲鏃ユ父"></div>
-                    <div class="form-group flex-1"><label>鐩殑鍦?/label><input type="text" id="tripDestination" class="settings-input" placeholder="渚嬪锛氫笁浜?></div>
+                    <div class="form-group flex-1"><label>旅行名称</label><input type="text" id="tripName" class="settings-input" placeholder="例如：三亚五日游"></div>
+                    <div class="form-group flex-1"><label>目的地</label><input type="text" id="tripDestination" class="settings-input" placeholder="例如：三亚"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group flex-1"><label>鍑哄彂鏃ユ湡</label><input type="date" id="tripStartDate" class="settings-input"></div>
-                    <div class="form-group flex-1"><label>杩斿洖鏃ユ湡</label><input type="date" id="tripEndDate" class="settings-input"></div>
+                    <div class="form-group flex-1"><label>出发日期</label><input type="date" id="tripStartDate" class="settings-input"></div>
+                    <div class="form-group flex-1"><label>返回日期</label><input type="date" id="tripEndDate" class="settings-input"></div>
                 </div>
-                <div class="form-group"><label>棰勭畻锛堝厓锛?/label><input type="number" id="tripBudget" class="settings-input" placeholder="渚嬪锛?000"></div>
-                <div class="form-group"><label>琛岀▼娓呭崟锛堟瘡琛屼竴椤癸級</label><textarea id="tripItems" class="settings-input diary-textarea" style="min-height:120px;" placeholder="璁㈡満绁?#10;璁㈤厭搴?#10;鍘绘捣杈?></textarea></div>
-                <div class="form-group"><label>澶囨敞</label><textarea id="tripNotes" class="settings-input" style="min-height:60px;" placeholder="鍏朵粬娉ㄦ剰浜嬮」..."></textarea></div>
+                <div class="form-group"><label>预算（元）</label><input type="number" id="tripBudget" class="settings-input" placeholder="例如：5000"></div>
+                <div class="form-group"><label>行程清单（每行一项）</label><textarea id="tripItems" class="settings-input diary-textarea" style="min-height:120px;" placeholder="订机票&#10;订酒店&#10;去海边"></textarea></div>
+                <div class="form-group"><label>备注</label><textarea id="tripNotes" class="settings-input" style="min-height:60px;" placeholder="其他注意事项..."></textarea></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="tripModal">鍙栨秷</button><button class="primary-btn" id="saveTripBtn">淇濆瓨璁″垝</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="tripModal">取消</button><button class="primary-btn" id="saveTripBtn">保存计划</button></div>
         </div>
     </div>
 
-    <!-- 闂瓟寮圭獥 -->
+    <!-- 问答弹窗 -->
     <div class="modal" id="qaModal">
         <div class="modal-content">
-            <div class="modal-header"><h3 id="qaModalTitle">鍥炵瓟闂</h3><button class="modal-close" data-close="qaModal">鉁?/button></div>
+            <div class="modal-header"><h3 id="qaModalTitle">回答问题</h3><button class="modal-close" data-close="qaModal">✕</button></div>
             <div class="modal-body">
                 <div class="qa-question" id="qaQuestionText"></div>
-                <div class="form-group"><label>浣犵殑鍥炵瓟</label><textarea id="qaAnswer" class="settings-input diary-textarea" style="min-height:100px;" placeholder="鍐欎笅浣犵殑绛旀..."></textarea></div>
+                <div class="form-group"><label>你的回答</label><textarea id="qaAnswer" class="settings-input diary-textarea" style="min-height:100px;" placeholder="写下你的答案..."></textarea></div>
             </div>
-            <div class="modal-footer"><button class="secondary-btn" data-close="qaModal">鍙栨秷</button><button class="primary-btn" id="saveQaBtn">淇濆瓨鍥炵瓟</button></div>
+            <div class="modal-footer"><button class="secondary-btn" data-close="qaModal">取消</button><button class="primary-btn" id="saveQaBtn">保存回答</button></div>
         </div>
     </div>
 
-    <!-- 绾︿細鐩茬洅寮圭獥 -->
+    <!-- 约会盲盒弹窗 -->
     <div class="modal" id="blindboxModal">
         <div class="modal-content">
-            <div class="modal-header"><h3>馃巵 绾︿細鐩茬洅</h3><button class="modal-close" data-close="blindboxModal">鉁?/button></div>
+            <div class="modal-header"><h3>🎁 约会盲盒</h3><button class="modal-close" data-close="blindboxModal">✕</button></div>
             <div class="modal-body" style="text-align:center;padding:40px 20px;">
-                <div class="blindbox-box" id="blindboxBox">馃巵</div>
+                <div class="blindbox-box" id="blindboxBox">🎁</div>
                 <div class="blindbox-result" id="blindboxResult" style="display:none;">
                     <div class="blindbox-title" id="blindboxTitle"></div>
                     <div class="blindbox-desc" id="blindboxDesc"></div>
                 </div>
-                <button class="primary-btn" id="blindboxDrawBtn" style="margin-top:20px;">鎶藉彇绾︿細鐏垫劅</button>
-                <button class="secondary-btn" id="blindboxAgainBtn" style="margin-top:10px;display:none;">鍐嶆娊涓€娆?/button>
+                <button class="primary-btn" id="blindboxDrawBtn" style="margin-top:20px;">抽取约会灵感</button>
+                <button class="secondary-btn" id="blindboxAgainBtn" style="margin-top:10px;display:none;">再抽一次</button>
             </div>
         </div>
     </div>
 
-    <!-- 骞村害鍥為【寮圭獥 -->
+    <!-- 年度回顾弹窗 -->
     <div class="modal" id="annualModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3>馃搳 骞村害鍥為【</h3><button class="modal-close" data-close="annualModal">鉁?/button></div>
+            <div class="modal-header"><h3>📊 年度回顾</h3><button class="modal-close" data-close="annualModal">✕</button></div>
             <div class="modal-body" id="annualBody">
                 <div class="annual-year-select" style="text-align:center;margin-bottom:20px;">
-                    <label style="font-size:13px;color:var(--text-secondary);">閫夋嫨骞翠唤锛?/label>
+                    <label style="font-size:13px;color:var(--text-secondary);">选择年份：</label>
                     <select id="annualYear" class="settings-input" style="width:auto;display:inline-block;"></select>
                 </div>
                 <div id="annualContent"></div>
@@ -492,66 +492,66 @@
         </div>
     </div>
 
-    <!-- 鐓х墖鎷艰创寮圭獥 -->
+    <!-- 照片拼贴弹窗 -->
     <div class="modal" id="collageModal">
         <div class="modal-content modal-wide">
-            <div class="modal-header"><h3>馃柤锔?鐓х墖鎷艰创</h3><button class="modal-close" data-close="collageModal">鉁?/button></div>
+            <div class="modal-header"><h3>🖼️ 照片拼贴</h3><button class="modal-close" data-close="collageModal">✕</button></div>
             <div class="modal-body">
-                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">閫夋嫨 2-9 寮犵収鐗囩敓鎴愭嫾璐村浘锛堟渶澶?寮狅級</p>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">选择 2-9 张照片生成拼贴图（最多9张）</p>
                 <div class="collage-select" id="collageSelect" style="max-height:300px;overflow-y:auto;margin-bottom:16px;"></div>
                 <div class="settings-row">
-                    <button class="primary-btn" id="collageGenerateBtn">鐢熸垚鎷艰创</button>
+                    <button class="primary-btn" id="collageGenerateBtn">生成拼贴</button>
                 </div>
                 <div class="collage-result" id="collageResult" style="margin-top:16px;text-align:center;display:none;">
                     <canvas id="collageCanvas" style="max-width:100%;border-radius:12px;box-shadow:var(--shadow-md);"></canvas>
-                    <div style="margin-top:12px;"><button class="primary-btn" id="collageDownloadBtn">涓嬭浇鎷艰创鍥?/button></div>
+                    <div style="margin-top:12px;"><button class="primary-btn" id="collageDownloadBtn">下载拼贴图</button></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 鍒嗕韩鍗＄墖寮圭獥 -->
+    <!-- 分享卡片弹窗 -->
     <div class="modal" id="shareModal">
         <div class="modal-content">
-            <div class="modal-header"><h3>馃摛 鍒嗕韩鍗＄墖</h3><button class="modal-close" data-close="shareModal">鉁?/button></div>
+            <div class="modal-header"><h3>📤 分享卡片</h3><button class="modal-close" data-close="shareModal">✕</button></div>
             <div class="modal-body" style="text-align:center;">
                 <canvas id="shareCanvas" style="max-width:100%;border-radius:16px;box-shadow:var(--shadow-lg);"></canvas>
-                <div style="margin-top:16px;"><button class="primary-btn" id="shareDownloadBtn">涓嬭浇鍗＄墖</button></div>
+                <div style="margin-top:16px;"><button class="primary-btn" id="shareDownloadBtn">下载卡片</button></div>
             </div>
         </div>
     </div>
 
-    <!-- 鐏 -->
+    <!-- 灯箱 -->
     <div class="modal lightbox" id="lightboxModal">
         <div class="lightbox-content">
-            <button class="lightbox-close" data-close="lightboxModal">鉁?/button>
-            <button class="lightbox-nav lightbox-prev" id="lightboxPrev">鈥?/button>
+            <button class="lightbox-close" data-close="lightboxModal">✕</button>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
             <div class="lightbox-media" id="lightboxMedia"></div>
-            <button class="lightbox-nav lightbox-next" id="lightboxNext">鈥?/button>
+            <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
             <div class="lightbox-caption" id="lightboxCaption"></div>
             <div class="lightbox-slideshow-bar" id="lightboxSlideshowBar" style="display:none;position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);display:none;gap:10px;align-items:center;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:20px;">
-                <button id="slideshowPlayPause" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;padding:0 4px;">鈴?/button>
-                <span style="color:white;font-size:11px;opacity:0.8;">闂撮殧</span>
+                <button id="slideshowPlayPause" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;padding:0 4px;">⏸</button>
+                <span style="color:white;font-size:11px;opacity:0.8;">间隔</span>
                 <select id="slideshowSpeed" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:2px 6px;font-size:11px;outline:none;">
-                    <option value="2000">2绉?/option>
-                    <option value="3000" selected>3绉?/option>
-                    <option value="5000">5绉?/option>
-                    <option value="8000">8绉?/option>
+                    <option value="2000">2秒</option>
+                    <option value="3000" selected>3秒</option>
+                    <option value="5000">5秒</option>
+                    <option value="8000">8秒</option>
                 </select>
                 <span id="slideshowCounter" style="color:white;font-size:11px;opacity:0.8;">1/1</span>
             </div>
             <div style="position:absolute;bottom:-64px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;">
                 <select id="lightboxAlbum" style="min-width:110px;background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:14px;padding:5px 24px 5px 10px;font-size:11px;outline:none;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%2210%22 viewBox=%220 0 10 10%22><path fill=%22white%22 d=%22M0 3l5 5 5-5z%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;">
-                    <option value="">绉诲姩鍒扮浉鍐?..</option>
+                    <option value="">移动到相册...</option>
                 </select>
                 <input type="date" id="lightboxDate" style="background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:14px;padding:5px 10px;font-size:11px;outline:none;color-scheme:dark;">
             </div>
-            <button class="lightbox-delete" id="lightboxDelete">鍒犻櫎</button>
+            <button class="lightbox-delete" id="lightboxDelete">删除</button>
         </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-    <script src="js/app.js?v=47"></script>
+    <script src="js/app.js?v=48"></script>
 </body>
 </html>
 
