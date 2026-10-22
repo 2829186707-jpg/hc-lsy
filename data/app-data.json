@@ -327,6 +327,16 @@
       "author": "lsy",
       "photos": [],
       "createdAt": "2026-09-22T04:37:13.698Z"
+    },
+    {
+      "id": "mvj2b0vypy2s3q5j6",
+      "title": "学习是lsy的一生之敌",
+      "date": "2026-10-22",
+      "content": "为什么罗斯宇的大学总在学习，大一学四级大二学四级大三学四级大四学公务员，好累啊",
+      "mood": "😡",
+      "author": "lsy",
+      "photos": [],
+      "createdAt": "2026-10-22T04:49:53.470Z"
     }
   ],
   "wishes": [],
@@ -565,6 +575,19 @@
     },
     "2026-09-28": {
       "hc": true
+    },
+    "2026-09-30": {
+      "lsy": true,
+      "hc": true
+    },
+    "2026-10-07": {
+      "hc": true
+    },
+    "2026-10-09": {
+      "lsy": true
+    },
+    "2026-10-19": {
+      "lsy": true
     }
   },
   "recycleBin": [
@@ -632,13 +655,13 @@
   },
   "pwdVersion": 2,
   "sharedTs": {
-    "weather": 1792113644100,
+    "weather": 1787721228261,
     "anniversary": 1787721228261,
     "coverImage": 1787721228261,
     "music": 1787721228261,
-    "missYou": 1790574448792,
-    "period": 1787790838307
+    "missYou": 1792417810446,
+    "period": 1787721228261
   },
   "anniversary": "2022-07-11",
-  "version": 1790574448829
+  "version": 1792644594895
 }
